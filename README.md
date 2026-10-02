@@ -122,13 +122,8 @@ flowchart LR
 
 ```text
 .
-├── Research_Nhom_3.pdf        # Báo cáo chi tiết đề tài NCKH Lần 2 (Nhóm 3)
 ├── README.md                 # Tài liệu tổng quan & Insights repository
 ├── LICENSE                   # Giấy phép nguồn mở MIT
-├── resources/                # Tài nguyên dữ liệu & mô hình
-├── output_b2/                # Kết quả trích xuất & artifacts báo cáo
-├── skills/                   # Các kịch bản & công cụ xử lý tự động
-└── scratch/                  # Scripts thử nghiệm & kiểm tra dữ liệu
 ```
 
 ---
