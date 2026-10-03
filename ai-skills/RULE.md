@@ -29,9 +29,10 @@
 ## 📁 3. Quy tắc Quản lý Thư mục & Mã nguồn (Code & Directory Structure)
 
 5. **Phân loại File Đúng Thư mục:**
-   * `ai-skills/`: Chứa các file quy tắc (`RULE.md`), kịch bản hướng dẫn và cấu hình cho trợ lý AI.
+   * `ai-skills/`: Chứa các file quy tắc (`RULE.md`, `set_name.md`), kịch bản hướng dẫn và cấu hình cho trợ lý AI.
    * `data/`: Chứa các Jupyter Notebook thực thi EDA (kết nối CSDL TAWOS local tại `C:/tawos`).
-   * `note_archive/`: Chứa toàn bộ tài nguyên dữ liệu, bài báo nghiên cứu, tài liệu tham khảo và artifacts báo cáo.
+   * `paper-information/`: Chứa các file ghi chú / phân tích bài báo khoa học dạng Markdown (.md) theo chuẩn `set_name.md`.
+   * `note_archive/`: Chứa các tài nguyên tài liệu, file PDF/Word gốc.
    * `scratch/`: Chứa các script thử nghiệm tạm thời, code debug.
    * Không để file rác, file log tạm hay ảnh chụp màn hình nằm tự do ở thư mục gốc root ngoại trừ các file tài liệu chuẩn (`README.md`, `OVERVIEW.md`, `LICENSE`).
 

@@ -49,11 +49,13 @@ Toàn bộ thông tin chi tiết về sản phẩm, bối cảnh nghiên cứu, 
 ├── github_push.md            # Hướng dẫn chi tiết các bước push project lên GitHub
 ├── LICENSE                   # Giấy phép nguồn mở MIT
 ├── ai-skills/                # Quy tắc & hướng dẫn làm việc cho trợ lý AI
-│   └── RULE.md               # Các quy tắc phát triển, đồng bộ và kiểm soát dữ liệu
+│   ├── RULE.md               # Các quy tắc phát triển, đồng bộ và kiểm soát dữ liệu
+│   └── set_name.md           # Quy tắc đặt tên file phân tích bài báo khoa học
 ├── data/                     # Thư mục chứa kịch bản EDA (kết nối CSDL local C:/tawos)
 │   ├── README.md             # Hướng dẫn quy trình thực thi EDA Notebook
 │   └── EDA_TAWOS.ipynb       # Notebook phân tích trực quan hóa dữ liệu EDA
-├── note_archive/             # Thư mục lưu trữ tài nguyên, báo cáo và tài liệu tham khảo
+├── paper-information/        # Thư mục chứa các file phân tích bài báo khoa học (.md)
+├── note_archive/             # Thư mục lưu trữ tài nguyên PDF/Word gốc
 └── scratch/                  # Scripts thử nghiệm & kiểm tra dữ liệu
 ```
 
