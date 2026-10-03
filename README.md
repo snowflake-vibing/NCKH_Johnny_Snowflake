@@ -50,15 +50,23 @@ Toàn bộ thông tin chi tiết về sản phẩm, bối cảnh nghiên cứu, 
 ├── ai-skills/                # Quy tắc & hướng dẫn làm việc cho trợ lý AI
 │   ├── RULE.md               # Các quy tắc phát triển, đồng bộ và kiểm soát dữ liệu
 │   └── set_name.md           # Quy tắc đặt tên file phân tích bài báo khoa học & requirements
-├── tutorial/                 # Thư mục chứa các tài liệu hướng dẫn thực thi quy trình
-│   └── github_push.md        # Hướng dẫn chi tiết các bước push project lên GitHub
+├── tutorial/                 # Thư mục chứa tài liệu hướng dẫn vận hành dự án
+│   └── github_push.md        # Hướng dẫn quy trình push code & xử lý xác thực GitHub
 ├── data/                     # Thư mục chứa kịch bản EDA (kết nối CSDL local C:/tawos)
 │   ├── README.md             # Hướng dẫn quy trình thực thi EDA Notebook
-│   └── EDA_TAWOS.ipynb       # Notebook phân tích trực quan hóa dữ liệu EDA
-├── requirements/             # Thư mục chứa các file phân tích đối chiếu yêu cầu (Requirements_[X].md)
-├── paper-information/        # Thư mục chứa các file phân tích bài báo khoa học (.md)
-├── note_archive/             # Thư mục lưu trữ tài nguyên PDF/Word gốc
-└── scratch/                  # Scripts thử nghiệm & kiểm tra dữ liệu
+│   └── EDA_TAWOS.ipynb       # Notebook phân tích trực quan hóa dữ liệu EDA TAWOS
+├── requirements/             # Thư mục chứa các file phân tích đối chiếu yêu cầu NCKH với GitHub
+│   ├── Requirements_1_Task_Definition.md
+│   ├── Requirements_2_Dataset_and_Leakage_Control.md
+│   ├── Requirements_3_Model_Replication_and_Evaluation.md
+│   └── Requirements_4_Github_Gap_Analysis_and_Roadmap.md
+├── paper-information/        # Thư mục chứa các file phân tích bài báo khoa học chuẩn Markdown
+│   ├── paper_tawosi_2022_replication.md
+│   ├── paper_fu_2023_gpt2sp.md
+│   ├── paper_choetkiertikul_2019_deep_se.md
+│   ├── paper_yalciner_2024_sbert_gbt.md
+│   └── paper_wijaya_2024_tbe_erm.md
+└── note_archive/             # Thư mục lưu trữ tài nguyên PDF/Word gốc (TAWOS, Paper PDFs)
 ```
 
 ---
