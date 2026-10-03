@@ -31,10 +31,6 @@ paper_<tác_giả_chính>_<năm>_<từ_khóa_chủ_đề>.md
 | `paper_deep-learning.pdf` | `paper_choetkiertikul_2019_deep_se.md` | Choetkiertikul et al. (2019) | Deep-SE baseline model |
 | `paper_SBERT&GPT.pdf` | `paper_yalciner_2024_sbert_gbt.md` | Yalçıner et al. (2024) | SBERT + Gradient Boosted Trees |
 | `paper_TBE&ERM.pdf` | `paper_wijaya_2024_tbe_erm.md` | Wijaya et al. (2024) | Transformer Embeddings + Ensemble Regression |
-| `mmc2.pdf` / `literature_note_mmc2.md` | `paper_kapoor_2023_leakage.md` | Kapoor & Narayanan (2023) | Data Leakage & Reproducibility crisis (Patterns) |
-| `Research_Nhom_3.pdf` | `paper_nhom3_2026_research_report.md` | Nhóm 3 (2026) | Báo cáo NCKH Lần 2 (Ước lượng SP kiểm soát Leakage) |
-| `Hop lan 1.pdf` | `paper_uit_2026_intro_nckh.md` | ThS/TS. Tạ Việt Phương (2026) | Tài liệu định hướng & Nhập môn NCKH |
-| `Huong 3 b2.pdf` | `paper_uit_2026_huong3_plan.md` | ThS/TS. Tạ Việt Phương (2026) | Tài liệu Kế hoạch Hướng 3 (Agile SP Estimation) |
 
 ---
 
