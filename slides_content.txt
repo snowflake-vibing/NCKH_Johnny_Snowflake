@@ -1,0 +1,76 @@
+Total slides: 8
+
+=== SLIDE 1 ===
+- BÁO CÁO NGHIÊN CỨU NHÓM 3
+- Ước lượng Story Point trong Agile & Đánh giá Rủi ro Data Leakage từ Jira Change Log
+- Nghiên cứu TAWOS Dataset, Tái lập GPT2SP và Thiết lập Pipeline Ước lượng An toàn Thời gian
+- Thực hiện: Nhóm 3 (Đức Hiệu & Đức Huy) | Đề tài NCKH 2026
+
+=== SLIDE 2 ===
+- Chương I. Đặt Vấn Đề & Định Nghĩa Nhiệm Vụ (Task Definition v1)
+- Phân định rõ ràng thời điểm ước lượng (Estimation-time) để ngăn chặn Data Leakage
+- 📌 Định Nghĩa Nhiệm Vụ
+- Task Goal: Dự báo Story Point ban đầu (Initial SP) tại mốc SP_Estimation_Date cho một Jira Issue.
+- Target User: Hỗ trợ Product Owner (PO) và Scrum Team trong Sprint Planning.
+- Input Rule HỢP LỆ: Chỉ dùng thông tin thực sự có tại thời điểm ước lượng (Initial Summary, Description, Priority).
+- Input Rule CẤM DÙNG: Trạng thái Closed, Resolution Date, Code Snippet và Text bổ sung sau khi làm xong task.
+
+=== SLIDE 3 ===
+- Chương II. Tổng Quan Tài Liệu (Literature Review)
+- Ma trận tổng hợp 7 bài báo khoa học nền tảng & các bài nghiên cứu gần nhất
+
+=== SLIDE 4 ===
+- Chương III. Dataset Card v1: TAWOS Dataset & CSDL Quan Hệ
+- Hồ sơ kỹ thuật về bộ dữ liệu TAWOS và sơ đồ kiến trúc các bảng CSDL
+- 📋 Tổng Quan TAWOS Dataset
+- Nguồn & Tác giả: SOLAR Group, UCL (Tawosi et al., IEEE TSE 2022).
+- Raw TAWOS: 44 dự án mã nguồn mở, >500.000+ issues.
+- Tawosi Benchmark: 26 dự án tiêu chuẩn, 31.960 issues đã lọc.
+- Local EDA Set: 39 dự án trong file SQLite hiện tại.
+- Đặc điểm CSDL: CSDL quan hệ 6 bảng. Bảng CHANGELOG cho phép khôi phục lịch sử thuộc tính tại estimation time.
+
+=== SLIDE 5 ===
+- Chương IV. Phân Tích Khám Phá Dữ Liệu (EDA Cơ Bản)
+- Thống kê chỉ số cốt lõi và biểu đồ phân bố Story Point trên TAWOS v1.1
+- 39
+- Số Dự Án (Projects)
+- 458.232
+- Tổng Số Issues
+- 63.011
+- Issues Có Story Point (13,75%)
+- 447.356
+- Issues Có Changelog
+
+=== SLIDE 6 ===
+- Chương IV. EDA Chuyên Sâu Nhóm 3: Rủi Ro Leakage Văn Bản
+- Bằng chứng thực nghiệm về biến động văn bản và độ trễ sửa đổi sau mốc Estimation
+- 🔍 Insights & Case Studies
+- 11.969 Issues (~19%): Có văn bản Title/Description bị thay đổi sau mốc gán Story Point.
+- 51.485 Lượt Cập Nhật: Tổng số lần sửa văn bản post-estimation.
+- Trung vị Độ Trễ 55,3h: 25% sửa trong 0,38h và 75% sửa trong 34,88 ngày.
+- Case XD-3765: Title ban đầu được rút gọn và thêm từ khóa giải pháp sau khi xong task.
+- Case XD-3754 & 3750: Liên tục cập nhật Title và Fix Versions trong vòng đời Sprint.
+- ⚠️ Kết Luận EDA: Không thể coi Final Title/Description là thông tin sẵn có tại planning time!
+
+=== SLIDE 7 ===
+- Chương V. Kết Quả Tái Lập (Reproduction Candidate: GPT2SP)
+- Tái lập thực nghiệm paper Fu et al. (IEEE TSE 2023) trên bộ dữ liệu Spring XD
+- ⚙️ Thiết Lập & Đánh Giá
+- Dataset & Split: Spring XD (3.526 issues). Split: 60/20/20 Chronological (2.115 Train, 705 Val, 706 Test).
+- Baseline Median: MAE = 1.7153 -> KHỚP hoàn hảo với paper gốc (1.72) sau khi làm tròn.
+- GPT2SP Checkpoint: MAE = 1.7330 -> CHƯA KHỚP với paper (0.96) và kém cả Median baseline.
+- Nguyên Nhân Sai Lệch: Xung đột phiên bản PyTorch/Transformers cũ và sự khác biệt giữa paper (Title+Description) với notebook công khai (chỉ dùng Title).
+- Tính Tái Lập Khách Quan: Nhóm giữ nguyên sai lệch như một báo cáo reproducible khoa học trung thực.
+
+=== SLIDE 8 ===
+- Chương VI & VII. Quy Trình Thực Nghiệm & Kết Luận
+- Sơ đồ kiến trúc Leakage-Safe Pipeline 8 bước và định hướng đóng góp nghiên cứu
+- 🎯 Đóng Góp Đã Hoàn Thành
+- • Hoàn thiện trọn vẹn Task Definition v1, Dataset Card v1 và Literature Matrix (7 bài).
+- • Thực hiện EDA chi tiết chứng minh rủi ro Data Leakage thực tế trên 458.232 issues TAWOS.
+- • Tái lập thành công Median baseline & đánh giá checkpoint GPT2SP.
+- 🚀 Định Hướng Tiếp Theo
+- 1. Hoàn thiện Leakage-Safe Pipeline để tái lập snapshot tại SP_Estimation_Date.
+- 2. So sánh đối chứng trên 2 setting: Final Snapshot vs Planning-time Snapshot.
+- 3. Đánh giá MAE/MdAE theo từng dự án riêng biệt kèm kiểm định paired bootstrap.
+
