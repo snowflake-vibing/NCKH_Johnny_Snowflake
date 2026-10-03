@@ -17,10 +17,10 @@
 > **Bộ dữ liệu TAWOS (`tawos_eda.db` ~3.46GB, `TAWOS.sql` ~4.3GB) có dung lượng rất lớn nên KHÔNG được push lên GitHub.**
 > Dữ liệu được lưu trữ trực tiếp trên ổ đĩa local tại thư mục cố định: `C:/tawos/`.
 
-* **Đường dẫn CSDL SQLite:** `C:/tawos/tawos_eda.db`
-* Trong file `EDA_TAWOS.ipynb`, biến kết nối CSDL đã được thiết lập mặc định:
+* **Đường dẫn CSDL SQLite:** `../tawos_eda.db` (đường dẫn tương đối tới CSDL TAWOS local)
+* Trong file `EDA_TAWOS.ipynb`, biến kết nối CSDL sử dụng đường dẫn tương đối:
   ```python
-  db_path = 'C:/tawos/tawos_eda.db'
+  db_path = '../tawos_eda.db'
   conn = sqlite3.connect(db_path)
   ```
 

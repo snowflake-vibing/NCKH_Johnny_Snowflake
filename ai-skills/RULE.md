@@ -12,6 +12,9 @@
 2. **Cập nhật Cấu trúc Thư mục trong `README.md` khi tạo file/thư mục mới:**
    * Ngay sau khi tạo bất kỳ file hoặc thư mục mới nào trong dự án, **phải cập nhật lại sơ đồ Cấu trúc Thư mục Dự án** trong [README.md](file:///d:/NCKH_3/README.md) tương ứng.
 
+3. **Bắt buộc đọc `set_name.md` khi tạo file mới:**
+   * Mỗi khi tạo bất kỳ file phân tích bài báo khoa học hay file tài liệu mới nào trong dự án (đặc biệt trong thư mục `paper-information/`), trợ lý AI và developer **bắt buộc phải đọc kỹ và tuân thủ đúng quy tắc đặt tên** trong file [set_name.md](file:///d:/NCKH_3/ai-skills/set_name.md).
+
 ---
 
 ## 🔬 2. Quy tắc Đề tài Nghiên cứu (Temporal & Data Leakage Rule)
