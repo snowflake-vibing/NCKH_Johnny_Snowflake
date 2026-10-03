@@ -30,8 +30,7 @@
 
 5. **Phân loại File Đúng Thư mục:**
    * `ai-skills/`: Chứa các file quy tắc (`RULE.md`), kịch bản hướng dẫn và cấu hình cho trợ lý AI.
-   * `resources/`: Chứa dữ liệu gốc, dataset TAWOS, và tài nguyên mô hình.
-   * `output_b2/`: Chứa kết quả trích xuất dữ liệu, artifacts báo cáo và biểu đồ EDA.
+   * `note_archive/`: Chứa toàn bộ tài nguyên dữ liệu, bài báo nghiên cứu, tài liệu tham khảo và artifacts báo cáo.
    * `scratch/`: Chứa các script thử nghiệm tạm thời, code debug.
    * Không để file rác, file log tạm hay ảnh chụp màn hình nằm tự do ở thư mục gốc root ngoại trừ các file tài liệu chuẩn (`README.md`, `OVERVIEW.md`, `LICENSE`).
 

@@ -50,8 +50,7 @@ Toàn bộ thông tin chi tiết về sản phẩm, bối cảnh nghiên cứu, 
 ├── LICENSE                   # Giấy phép nguồn mở MIT
 ├── ai-skills/                # Quy tắc & hướng dẫn làm việc cho trợ lý AI
 │   └── RULE.md               # Các quy tắc phát triển, đồng bộ và kiểm soát dữ liệu
-├── resources/                # Tài nguyên dữ liệu & mô hình gốc
-├── output_b2/                # Kết quả trích xuất & artifacts báo cáo
+├── note_archive/             # Thư mục lưu trữ tài nguyên, báo cáo và tài liệu tham khảo
 └── scratch/                  # Scripts thử nghiệm & kiểm tra dữ liệu
 ```
 
