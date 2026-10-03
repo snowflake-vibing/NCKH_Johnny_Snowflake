@@ -32,7 +32,6 @@
    * `ai-skills/`: Chứa các file quy tắc (`RULE.md`), kịch bản hướng dẫn và cấu hình cho trợ lý AI.
    * `resources/`: Chứa dữ liệu gốc, dataset TAWOS, và tài nguyên mô hình.
    * `output_b2/`: Chứa kết quả trích xuất dữ liệu, artifacts báo cáo và biểu đồ EDA.
-   * `skills/`: Chứa các kịch bản tự động hóa, pipeline xử lý chính.
    * `scratch/`: Chứa các script thử nghiệm tạm thời, code debug.
    * Không để file rác, file log tạm hay ảnh chụp màn hình nằm tự do ở thư mục gốc root ngoại trừ các file tài liệu chuẩn (`README.md`, `OVERVIEW.md`, `LICENSE`).
 

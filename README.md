@@ -52,9 +52,7 @@ Toàn bộ thông tin chi tiết về sản phẩm, bối cảnh nghiên cứu, 
 │   └── RULE.md               # Các quy tắc phát triển, đồng bộ và kiểm soát dữ liệu
 ├── resources/                # Tài nguyên dữ liệu & mô hình gốc
 ├── output_b2/                # Kết quả trích xuất & artifacts báo cáo
-├── skills/                   # Các kịch bản & công cụ xử lý tự động
-├── scratch/                  # Scripts thử nghiệm & kiểm tra dữ liệu
-└── tmp_eda_images/           # Biểu đồ & hình ảnh phân tích EDA
+└── scratch/                  # Scripts thử nghiệm & kiểm tra dữ liệu
 ```
 
 ---
