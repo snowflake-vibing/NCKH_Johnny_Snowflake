@@ -34,6 +34,7 @@
 5. **Phân loại File Đúng Thư mục:**
    * `ai-skills/`: Chứa các file quy tắc (`RULE.md`, `set_name.md`), kịch bản hướng dẫn và cấu hình cho trợ lý AI.
    * `data/`: Chứa các Jupyter Notebook thực thi EDA (kết nối CSDL TAWOS local tại `C:/tawos`).
+   * `requirements/`: Chứa các file phân tích yêu cầu & đối chiếu sản phẩm dạng Markdown (`Requirements_[X].md`).
    * `paper-information/`: Chứa các file ghi chú / phân tích bài báo khoa học dạng Markdown (.md) theo chuẩn `set_name.md`.
    * `note_archive/`: Chứa các tài nguyên tài liệu, file PDF/Word gốc.
    * `scratch/`: Chứa các script thử nghiệm tạm thời, code debug.

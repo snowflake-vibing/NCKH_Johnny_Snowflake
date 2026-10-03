@@ -47,4 +47,17 @@ Mỗi file phân tích bài báo `.md` phải bảo đảm chứa đầy đủ c
 7. **Giá trị Thực tiễn cho Đề tài NCKH của Nhóm (Team Application)**
 
 ---
+
+## 📋 4. Quy tắc Đặt tên File Phân tích Yêu cầu (`requirements/`)
+
+Tất cả các file phân tích yêu cầu và đối chiếu sản phẩm nằm trong thư mục `requirements/` **bắt buộc phải đặt tên theo định dạng:**
+
+```text
+Requirements_[X].md
+```
+
+* Trong đó `[X]` đại diện cho tên hoặc mã số chủ đề phân tích yêu cầu (ví dụ: `Requirements_1_Task_Definition.md`, `Requirements_2_Dataset_and_Leakage_Control.md`, `Requirements_3_Model_Replication_and_Evaluation.md`, `Requirements_4_Github_Gap_Analysis_and_Roadmap.md`).
+* **Mô tả đối chiếu:** Mỗi file `Requirements_[X].md` phải đối chiếu trực tiếp giữa **Yêu cầu NCKH** (từ `Huong 3 b2.pdf` và `Research_Nhom_3.pdf`) với **Thực trạng Sản phẩm/Mã nguồn trên GitHub repository**.
+
+---
 © 2026 **Nhóm 3 — NCKH Agile Story Point Estimation Project**
