@@ -1,0 +1,121 @@
+# ==============================================================================
+# 1. DỮ LIỆU & CSDL LỚN (DATASETS & DATABASES - TAWOS & JIRA)
+# ==============================================================================
+# Bỏ qua nội dung dữ liệu bên trong nhưng giữ lại file .gitkeep
+data/raw/*
+!data/raw/.gitkeep
+data/clean/*
+!data/clean/.gitkeep
+
+# Các định dạng CSDL và dữ liệu lớn
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+*.csv.gz
+*.tar.gz
+*.zip
+*.7z
+*.parquet
+
+# ==============================================================================
+# 2. PYTHON ENVIRONMENT & CACHE
+# ==============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Môi trường ảo (Virtual Environments)
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ==============================================================================
+# 3. JUPYTER NOTEBOOKS & IDE
+# ==============================================================================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*.pytest_cache/
+.coverage
+htmlcov/
+
+# VS Code / JetBrains / IDEs
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ==============================================================================
+# 4. MACHINE LEARNING / DEEP LEARNING (WEIGHTS & LOGS)
+# ==============================================================================
+# Model checkpoints & weights (PyTorch, Hugging Face, Transformers)
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+*.onnx
+checkpoints/
+saved_models/
+weights/
+
+# Training logs & experiments
+runs/
+wandb/
+lightning_logs/
+tensorboard/
+*.log
+
+# Hugging Face & PyTorch cache
+.cache/
+hf_cache/
+
+# ==============================================================================
+# 5. BẢO MẬT & FILE MÔI TRƯỜNG (SECRETS & ENVIRONMENT)
+# ==============================================================================
+.env
+.env.local
+.env.*.local
+*.pem
+credentials.json
+*secret*
+*token*
+
+# ==============================================================================
+# 6. HỆ ĐIỀU HÀNH (OS SPECIFIC)
+# ==============================================================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*

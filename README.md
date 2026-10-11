@@ -135,6 +135,7 @@ flowchart LR
 │   ├── notes/                # Biên bản họp nhóm & ghi chú định hướng
 │   └── reports/              # Báo cáo đề tài NCKH chính thức
 ├── notebooks/                # Jupyter Notebooks phục vụ phân tích & thực nghiệm
+├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn và checkpoint ML
 ├── AGENTS.md                 # Quy tắc và hướng dẫn làm việc cho AI Agent
 └── README.md                 # Cổng thông tin chính & tổng quan đề tài
 ```
