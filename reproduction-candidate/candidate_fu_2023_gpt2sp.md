@@ -82,4 +82,70 @@
 | **Thách thức (Khó)** | Xử lý chênh lệch phiên bản thư viện; tái dựng pipeline cắt ngắn token (`max_length=20` vs full text) để giải thích sai lệch. |
 
 ---
+
+## 🔄 7. Quy trình Thực hiện Tái lập (End-to-End Workflow: Từ Input đến Output)
+
+Quy trình thực nghiệm được chuẩn hóa qua 5 bước logic rõ ràng từ dữ liệu thô ban đầu đến kết quả đánh giá cuối cùng:
+
+```
+[Input: Raw Jira Issues] 
+         │
+         ▼
+[Bước 1: Chuẩn bị Dữ liệu & Chronological Split (60/20/20)]
+         │
+         ▼
+[Bước 2: Tiền xử lý Văn bản & Tokenizer (BPE GPT-2)]
+         │
+         ▼
+[Bước 3: Tải Mô hình & Fine-tuning / Inference (GPT2SP Regressor)]
+         │
+         ▼
+[Bước 4: Đánh giá Sai số (MAE, MdAE, SA)]
+         │
+         ▼
+[Output: Bảng So sánh Kết quả & Báo cáo Sai lệch Khoa học]
+```
+
+### 🔹 Bước 1: Tiếp nhận Input & Phân chia Dữ liệu theo Thời gian
+* **Đầu vào (Input):** File dữ liệu chứa 3.526 issues của dự án Spring XD (các cột: `issue_id`, `created_date`, `title`, `description`, `storypoint`).
+* **Thao tác thực hiện:**
+  1. Lọc bỏ các dòng bị khuyết nhãn Story Point hoặc Story Point âm/bằng 0.
+  2. Sắp xếp toàn bộ dữ liệu tăng dần theo mốc thời gian tạo issue (`created_date` theo chuẩn UTC).
+  3. Chia tập theo tỷ lệ thời gian **60% Train (2.115 mẫu)**, **20% Validation (705 mẫu)**, **20% Test (706 mẫu)**. Tuyệt đối không dùng Random Split để bảo đảm tính thực tế.
+* **Đầu ra bước 1:** 3 tập dữ liệu độc lập `train.csv`, `val.csv`, `test.csv`.
+
+### 🔹 Bước 2: Tiền xử lý Văn bản & Tokenization
+* **Đầu vào:** Cột văn bản của các issues (`title` hoặc kết hợp `title + description`).
+* **Thao tác thực hiện:**
+  1. Loại bỏ các ký tự đặc biệt, đường link URL rác, làm sạch khoảng trắng.
+  2. Đưa qua **BPE Tokenizer** của GPT-2 (`gpt2` pre-trained tokenizer).
+  3. Cắt ngắn chuỗi (truncation) và chèn padding về cùng kích thước:
+     * *Thử nghiệm 1 (Theo artifact tác giả):* Chỉ lấy `title`, đặt `max_length = 20`.
+     * *Thử nghiệm 2 (Theo mô tả bài báo):* Ghép `title + " " + description`, đặt `max_length = 128` (hoặc `256`).
+* **Đầu ra bước 2:** Tensor ma trận `input_ids` và `attention_mask` sẵn sàng nạp vào mạng nơ-ron.
+
+### 🔹 Bước 3: Nạp Mô hình & Thực thi (Inference hoặc Fine-tuning)
+* **Đầu vào:** Tensor văn bản tokenized từ Bước 2 và trọng số mô hình.
+* **Thao tác thực hiện:**
+  * **Chế độ 1 (Tái lập nhanh qua Checkpoint):** Tải trực tiếp mô hình checkpoint đã huấn luyện sẵn từ HuggingFace (`MickyMike/0-GPT2SP-springxd`). Đưa tập Test vào mô hình để dự đoán giá trị điểm liên tục $\hat{y}_i$.
+  * **Chế độ 2 (Huấn luyện lại từ đầu - Retraining):** Khởi tạo `GPT2Model` kết hợp lớp Dense Regressor (`Linear(768, 1)`). Huấn luyện với hàm mất mát MSE/L1 Loss, thuật toán AdamW, learning rate $2 \times 10^{-5}$ qua 5–10 epochs trên tập Train, lưu checkpoint có validation loss tốt nhất.
+* **Đầu ra bước 3:** Vector mảng giá trị Story Point dự đoán $\hat{Y}_{test} = [\hat{y}_1, \hat{y}_2, ..., \hat{y}_{706}]$.
+
+### 🔹 Bước 4: Đánh giá Đo lường Sai số
+* **Đầu vào:** Mảng giá trị dự đoán $\hat{Y}_{test}$ và Ground Truth thực tế $Y_{test}$.
+* **Thao tác thực hiện:**
+  1. Tính sai số tuyệt đối từng mẫu: $e_i = |\hat{y}_i - y_i|$.
+  2. Tính sai số trung bình **MAE**: $MAE = \frac{1}{N} \sum_{i=1}^N e_i$.
+  3. Tính sai số trung vị **MdAE**: $MdAE = \text{median}(e_1, e_2, ..., e_N)$.
+  4. Tính chỉ số cải thiện chuẩn hóa **SA** so với đường cơ sở Median Baseline:
+     $$SA = 1 - \frac{MAE_{GPT2SP}}{MAE_{Median\_Baseline}}$$
+* **Đầu ra bước 4:** Bộ chỉ số định lượng chính xác (MAE, MdAE, SA).
+
+### 🔹 Bước 5: Phân tích Sai lệch & Xuất Output Báo cáo
+* **Đầu ra cuối cùng (Final Output):** 
+  1. Bảng đối chiếu 3 cột: *Kết quả Bài báo công bố* vs *Kết quả Chạy lại thực tế* vs *Median Baseline*.
+  2. Biểu đồ trực quan hóa phân phối sai số (Error Boxplot / Residual Distribution).
+  3. Báo cáo phân tích nguyên nhân sai lệch (Discrepancy Report) và phát hiện hiện tượng rò rỉ dữ liệu (Future-Information Leakage).
+
+---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**

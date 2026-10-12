@@ -73,4 +73,80 @@
 | **Thách thức (Khó)** | Độ phức tạp số lượng cặp $O(N^2)$ có thể gây tràn bộ nhớ (RAM) nếu không áp dụng kỹ thuật Pair Subsampling hợp lý. |
 
 ---
+
+## 🔄 7. Quy trình Thực hiện Tái lập (End-to-End Workflow: Từ Input đến Output)
+
+Quy trình tái lập mô hình Học so sánh cặp (Comparative Learning) theo Khan et al. (2025) được tổ chức theo 5 bước logic:
+
+```
+[Input: Tập User Stories có nhãn Story Point]
+                       │
+                       ▼
+[Bước 1: Chia tập theo thời gian & Sinh cặp so sánh (Pair Generation)]
+                       │
+                       ▼
+[Bước 2: Trích xuất Text Embedding (SBERT / Sentence-Transformers)]
+                       │
+                       ▼
+[Bước 3: Huấn luyện Mô hình Phân loại Cặp đôi (Pairwise Classifier)]
+                       │
+                       ▼
+[Bước 4: Suy luận Thứ hạng Toàn cục (Global Rank Inference)]
+                       │
+                       ▼
+[Output: Đánh giá Tương quan Spearman & Bảng So sánh Baselines]
+```
+
+### 🔹 Bước 1: Tiếp nhận Input, Phân chia & Sinh Cặp So sánh (Pair Sampling)
+* **Đầu vào (Input):** Danh sách các issues từ tập Spring XD / Choetkiertikul (văn bản `title + description` và giá trị nhãn Story Point $y_i$).
+* **Thao tác thực hiện:**
+  1. Phân chia Train / Test theo Chronological Split (60% Train / 40% Test hoặc 60/20/20).
+  2. **Sinh cặp so sánh nỗ lực (Pairwise Sampling):** Với 2 issues bất kỳ $(Story_i, Story_j)$:
+     * Nếu $y_i > y_j \rightarrow$ Nhãn cặp $z_{ij} = 1$ ($Story_i$ tốn nhiều công sức hơn $Story_j$).
+     * Nếu $y_i < y_j \rightarrow$ Nhãn cặp $z_{ij} = 0$ ($Story_i$ tốn ít công sức hơn $Story_j$).
+     * Nếu $y_i = y_j \rightarrow$ Có thể loại bỏ (tie filtering) hoặc gán nhãn trung lập.
+  3. Để tránh bùng nổ tổ hợp $O(N^2)$ mẫu làm tràn bộ nhớ, áp dụng kỹ thuật **Random Pair Subsampling** (lấy mẫu ngẫu nhiên $K$ cặp cho mỗi issue, thường $K \approx 10 - 20$).
+* **Đầu ra bước 1:** Tập dữ liệu các cặp so sánh $D_{pair} = \{ (Story_i, Story_j, z_{ij}) \}$.
+
+### 🔹 Bước 2: Mã hóa Ngữ nghĩa Văn bản (Text Embedding)
+* **Đầu vào:** Văn bản của từng cặp $(Story_i, Story_j)$.
+* **Thao tác thực hiện:**
+  1. Sử dụng mô hình tiền huấn luyện **Sentence-BERT (`all-MiniLM-L6-v2` hoặc `all-mpnet-base-v2`)**.
+  2. Biểu diễn mỗi User Story thành vector nhúng ngữ nghĩa chiều cố định:
+     $v_i = \text{SBERT}(Story_i) \in \mathbb{R}^d$ và $v_j = \text{SBERT}(Story_j) \in \mathbb{R}^d$.
+  3. Tạo vector đặc trưng biểu diễn quan hệ giữa 2 task:
+     $$x_{ij} = [v_i, v_j, v_i - v_j, v_i \odot v_j]$$
+     (kết hợp nối vector, vector hiệu và tích phần tử Hadamard).
+* **Đầu ra bước 2:** Ma trận đặc trưng cặp $X_{pair}$ và nhãn nhị phân $Z_{pair}$.
+
+### 🔹 Bước 3: Huấn luyện Bộ Phân loại Cặp đôi (Pairwise Classifier)
+* **Đầu vào:** Tập đặc trưng $(X_{pair}, Z_{pair})$ trên tập Train.
+* **Thao tác thực hiện:**
+  1. Huấn luyện bộ phân loại nhị phân (Binary Classifier: Logistic Regression, LightGBM, hoặc Mạng Nơ-ron MLP 2 lớp) để dự đoán xác suất:
+     $P(Story_i \succ Story_j) = \sigma(f(x_{ij}))$.
+  2. Sử dụng hàm mất mát Binary Cross-Entropy (BCE Loss).
+* **Đầu ra bước 3:** Mô hình so sánh cặp đã được tối ưu hóa trọng số.
+
+### 🔹 Bước 4: Suy luận Thứ hạng Toàn cục (Global Effort Ranking)
+* **Đầu vào:** Toàn bộ các issues trong tập Test.
+* **Thao tác thực hiện:**
+  1. Với mỗi issue $k$ trong tập Test, cho mô hình so sánh cặp với một tập các mốc tham chiếu (anchors) hoặc so sánh chéo từng cặp trong tập Test.
+  2. Tính điểm số nỗ lực tương đối (Win-rate hoặc Borda Count Score):
+     $$Score_k = \frac{1}{|Test| - 1} \sum_{m \neq k} P(Story_k \succ Story_m)$$
+  3. Sắp xếp thứ tự các User Story trong tập Test dựa trên $Score_k$ từ cao xuống thấp để nhận được vector thứ hạng dự báo $\hat{R}_{test}$.
+* **Đầu ra bước 4:** Vector thứ hạng dự báo $\hat{R}_{test}$ và thứ hạng thực tế $R_{test}$ (xếp theo Ground Truth Story Point).
+
+### 🔹 Bước 5: Đánh giá Tương quan & Xuất Output Báo cáo
+* **Đầu vào:** Vector thứ hạng $\hat{R}_{test}$ và $R_{test}$.
+* **Thao tác thực hiện:**
+  1. Tính **Hệ số tương quan thứ hạng Spearman ($\rho$)**:
+     $$\rho = 1 - \frac{6 \sum d_k^2}{N(N^2 - 1)}$$
+     (trong đó $d_k$ là chênh lệch thứ hạng của issue thứ $k$).
+  2. Đo độ chính xác phân loại cặp (Pairwise Accuracy): Tỷ lệ đoán đúng quan hệ thứ tự $Story_i \succ Story_j$.
+* **Đầu ra cuối cùng (Final Output):**
+  1. Bảng đối chiếu hệ số Spearman $\rho$ giữa *Comparative Learning Model* và các *Mô hình Hồi quy Tuyệt đối truyền thống (Direct Regression)*.
+  2. Biểu đồ xếp hạng nỗ lực (Rank Correlation Scatter Plot).
+  3. Báo cáo đánh giá mức độ giảm tải thời gian estimate trong quy trình Sprint Planning thực tế.
+
+---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**

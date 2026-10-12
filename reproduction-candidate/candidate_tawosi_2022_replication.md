@@ -75,4 +75,70 @@
 | **Thách thức (Khó)** | Đòi hỏi nắm vững lý thuyết thống kê phi tham số (Non-parametric testing) và chuẩn hóa dữ liệu chặt chẽ theo dòng thời gian. |
 
 ---
+
+## 🔄 7. Quy trình Thực hiện Tái lập (End-to-End Workflow: Từ Input đến Output)
+
+Quy trình tái lập thực nghiệm theo chuẩn mực của Tawosi et al. (2022) gồm 5 bước bài bản:
+
+```
+[Input: TAWOS / Choetkiertikul Issues Dataset]
+                       │
+                       ▼
+[Bước 1: Lọc Dữ liệu Sạch & Chronological Split (60/20/20)]
+                       │
+                       ▼
+[Bước 2: Xây dựng Đường cơ sở Thống kê (Mean, Median Baseline)]
+                       │
+                       ▼
+[Bước 3: Huấn luyện Baseline Học máy (TF-IDF + SVM / Ridge)]
+                       │
+                       ▼
+[Bước 4: Kiểm định Thống kê Nghiêm ngặt (Wilcoxon Test & Vargha-Delaney A12)]
+                       │
+                       ▼
+[Output: Bảng Tổng hợp Hiệu năng & Kết luận Ý nghĩa Thống kê]
+```
+
+### 🔹 Bước 1: Tiếp nhận Input & Phân chia Dữ liệu Chuẩn
+* **Đầu vào (Input):** Bảng dữ liệu issues từ CSDL TAWOS (gồm các trường: `issue_key`, `created`, `summary`, `description`, `storypoint`).
+* **Thao tác thực hiện:**
+  1. Loại bỏ các issues không có Story Point hoặc Story Point $\le 0$.
+  2. Sắp xếp các issue theo thứ tự tăng dần của trường mốc thời gian tạo (`created`).
+  3. Chia dữ liệu theo mốc thời gian: 60% Train / 20% Validation / 20% Test (cho từng dự án).
+  4. **Quy tắc vàng chống Data Leakage:** Tuyệt đối không áp dụng kỹ thuật bóp outlier (ví dụ: gọt 90th percentile) lên toàn bộ dữ liệu trước khi chia, mà chỉ được tính toán ngưỡng trên tập Train.
+* **Đầu ra bước 1:** Bộ dữ liệu Train, Validation, Test chuẩn hóa không bị rò rỉ dữ liệu.
+
+### 🔹 Bước 2: Thiết lập Đường cơ sở Thống kê (Statistical Baselines)
+* **Đầu vào:** Cột nhãn Story Point của tập Train $Y_{train}$.
+* **Thao tác thực hiện:**
+  1. **Median Baseline:** Tính trung vị của tập Train: $\hat{y}_{median} = \text{median}(Y_{train})$. Gán giá trị hằng số này làm dự đoán cho toàn bộ tập Test.
+  2. **Mean Baseline:** Tính trung bình cộng của tập Train: $\hat{y}_{mean} = \text{mean}(Y_{train})$.
+  3. **Random Guessing (RG):** Sinh số ngẫu nhiên đều trong khoảng $[ \min(Y_{train}), \max(Y_{train}) ]$.
+* **Đầu ra bước 2:** Các mảng kết quả dự báo cơ sở $\hat{Y}_{median}, \hat{Y}_{mean}, \hat{Y}_{RG}$ trên tập Test.
+
+### 🔹 Bước 3: Huấn luyện Mô hình Học máy Cổ điển (TF-IDF + SVM)
+* **Đầu vào:** Văn bản `summary + description` và nhãn Story Point tập Train.
+* **Thao tác thực hiện:**
+  1. Trích xuất đặc trưng văn bản bằng **TF-IDF Vectorizer** (giới hạn số lượng từ vựng phổ biến `max_features = 1000` đến `5000`).
+  2. Huấn luyện mô hình hồi quy Support Vector Machine (SVR với Linear Kernel hoặc RBF Kernel) hoặc Ridge Regression.
+  3. Tối ưu siêu tham số ($C, \epsilon, \alpha$) trên tập Validation.
+  4. Dự đoán Story Point trên tập Test.
+* **Đầu ra bước 3:** Vector dự đoán $\hat{Y}_{SVM}$ trên tập Test.
+
+### 🔹 Bước 4: Kiểm định Thống kê Phi tham số (Statistical Significance & Effect Size)
+* **Đầu vào:** Các vector sai số tuyệt đối của từng mô hình trên tập Test: $E_{model} = [e_1, ..., e_N]$ và $E_{median} = [e'_1, ..., e'_N]$.
+* **Thao tác thực hiện:**
+  1. **Kiểm định Wilcoxon Signed-Rank Test:** Kiểm tra giả thuyết $H_0$ (sai số giữa mô hình và Median baseline không có sự khác biệt có ý nghĩa thống kê) với ngưỡng ý nghĩa $\alpha = 0.05$.
+  2. **Đo kích thước hiệu ứng Vargha-Delaney $\hat{A}_{12}$:**
+     * $\hat{A}_{12} > 0.5$: Mô hình tốt hơn Median baseline.
+     * $\hat{A}_{12} = 0.5$: Không có sự khác biệt.
+     * $\hat{A}_{12} < 0.5$: Mô hình kém hơn Median baseline.
+* **Đầu ra bước 4:** Giá trị $p$-value và chỉ số $\hat{A}_{12}$ effect size định lượng chính xác.
+
+### 🔹 Bước 5: Xuất Báo cáo Kết quả (Output)
+* **Đầu ra cuối cùng (Final Output):**
+  1. Bảng so sánh đa chỉ số: MAE, MdAE, SA của từng mô hình trên các dự án (Spring XD, Mule,...).
+  2. Kết luận kiểm định thống kê: Xác định mô hình có thực sự đánh bại Median Baseline hay chỉ là biến thiên ngẫu nhiên.
+
+---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**
