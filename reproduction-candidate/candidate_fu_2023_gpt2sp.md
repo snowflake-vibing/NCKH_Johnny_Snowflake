@@ -14,24 +14,28 @@
 * **Tác giả:** Michael Fu and Chakkrit Tantithamthavorn
 * **Nơi xuất bản:** *IEEE Transactions on Software Engineering (TSE)*, Vol. 49, No. 4, 2023
 * **DOI:** [10.1109/TSE.2022.3158252](https://doi.org/10.1109/TSE.2022.3158252)
-* **Xếp hạng học thuật (Tier):** **Tier 1 (A*)** — Tạp chí đầu ngành Software Engineering (Q1 Scopus, CCF-A).
-* **Điểm đánh giá tái lập:** **98 / 100 điểm** (Ưu tiên số 1).
+* **Xếp hạng học thuật (Tier):** **Tier 1 (A*)** — Tạp chí đầu ngành Software Engineering thế giới (Q1 Scopus, CCF-A, H-index 180+).
+* **Điểm đánh giá tái lập:** **98 / 100 điểm** (Ứng viên ưu tiên số 1).
 
 ---
 
 ## 🎯 3. Tại sao chọn bài báo này? (Rationale)
 1. **Uy tín & Tiên phong:** Là công trình tiên phong chuyển dịch bài toán Agile Story Point từ mạng học sâu truyền thống (Deep-SE) sang kiến trúc **Pre-trained Transformer/LLM (GPT-2)**, đăng trên tạp chí uy tín nhất ngành (IEEE TSE).
-2. **Khả năng tiếp cận Artifacts:** Tác giả công bố checkpoint mô hình và notebook mẫu trên HuggingFace (`MickyMike/0-GPT2SP-springxd`), giúp việc tải và kiểm chứng có cơ sở thực tế vững chắc.
+2. **Khả năng tiếp cận Artifacts & Mã nguồn:** Tác giả công bố đầy đủ mã nguồn và checkpoint trên GitHub & HuggingFace, giúp việc kiểm chứng có cơ sở thực tế vững chắc.
 3. **Mối liên hệ sống còn với đề tài Nhóm 3:**
    * GPT2SP huấn luyện trên snapshot tĩnh sau khi task hoàn thành (Final Snapshot), không kiểm soát rò rỉ thời gian.
-   * Tái lập GPT2SP là cơ sở đối chứng cốt lõi (**Core Baseline**) để nhóm chứng minh luận điểm: *"Khi loại bỏ rò rỉ thông tin tương lai, hiệu năng thực tế của các mô hình LLM tại thời điểm Sprint Planning sẽ thay đổi như thế nào?"*.
+   * Tái lập GPT2SP là cơ sở đối chứng cốt lõi (**Core Baseline**) để nhóm chứng minh luận điểm: *"Khi loại bỏ rò rỉ thông tin tương lai, hiệu năng thực tế của các mô hình LLM tại thời điểm Sprint Planning sẽ suy giảm đáng kể như thế nào?"*.
 
 ---
 
 ## 🔍 4. Thiết lập bài toán tái lập (Task Reproduced)
-* **Dataset:** 
-  * Dự án mã nguồn mở **Spring XD** (thuộc tập Choetkiertikul / TAWOS).
-  * Quy mô: **3.526 issues**.
+* **Dataset & Đường dẫn dữ liệu (Data Links):** 
+  * Dự án mã nguồn mở **Spring XD** (thuộc tập Choetkiertikul / TAWOS). Quy mô: **3.526 issues**.
+  * **Link Dataset Repository:** [morakotch/datasets (GitHub)](https://github.com/morakotch/datasets) | [SOLAR-group/TAWOS (GitHub)](https://github.com/SOLAR-group/TAWOS)
+  * **Link HuggingFace Mirror:** [giseldo/deep-se (HuggingFace Datasets)](https://huggingface.co/datasets/giseldo/deep-se)
+* **Mã nguồn & Checkpoints (Code & Model Links):**
+  * **GitHub Replication Package:** [awsm-research/gpt2sp (GitHub)](https://github.com/awsm-research/gpt2sp)
+  * **HuggingFace Checkpoint Model:** [MickyMike/0-GPT2SP-springxd (HuggingFace Hub)](https://huggingface.co/MickyMike/0-GPT2SP-springxd)
 * **Target / Ground Truth:** 
   * Giá trị Story Point (SP) thực tế ghi nhận trong hệ thống Jira của Spring XD.
 * **Baseline / Model:**
@@ -49,28 +53,33 @@
 
 ---
 
-## 📊 5. Kết quả cụ thể muốn tái lập (Targeted Results)
-* **Phạm vi tái lập:** Tập trung tái lập sâu trên dự án **Spring XD** (dự án lớn nhất và có sẵn checkpoint công khai của tác giả).
+## 📊 5. Kết quả cụ thể muốn tái lập & Kỳ vọng khoa học (Targeted Results & Expectations)
+* **Phạm vi tái lập cụ thể:** Tái lập sâu trên dự án **Spring XD** (3.526 issues) với checkpoint có sẵn của tác giả.
 * **Kết quả trong bài báo công bố:**
   * MAE công bố: **~0.96** (cải thiện ~44.2% so với Median Baseline là 1.72).
 * **Kết quả Partial Reproduction thực tế của Nhóm 3:**
-  * MAE đạt được: **1.7330**
-  * MdAE đạt được: **1.2994**
-  * Median Baseline: **1.7153**
-* **Nguyên nhân phát hiện sai lệch khoa học (Scientific Discrepancy):**
-  1. *Khác biệt đầu vào:* Bài báo mô tả kết hợp cả `Title + Description`, nhưng artifact/code thực tế của tác giả chỉ chạy riêng trên `Title` với `max_length = 20`.
+  * MAE đạt được: **1.7330** | MdAE: **1.2994** | Median Baseline: **1.7153**
+* **Nguyên nhân sai lệch khoa học phát hiện được:**
+  1. *Khác biệt Input:* Bài báo mô tả kết hợp cả `Title + Description`, nhưng artifact/code thực tế của tác giả chỉ chạy riêng trên `Title` với `max_length = 20`.
   2. *Môi trường thư viện:* Thay đổi phiên bản Transformers và PyTorch ảnh hưởng đến pooling/padding representation.
+* **🎯 Kỳ vọng đạt được nếu tái lập & mở rộng thành công:**
+  * **Xếp hạng hội nghị / Tạp chí kỳ vọng:** Báo cáo xuất sắc tại Hội nghị Sinh viên Nghiên cứu Khoa học cấp Trường (UIT); hướng đến công bố tại các hội thảo/tạp chí chuyên ngành uy tín:
+    * **Hội thảo Quốc tế:** **IEEE/ACM MSR (Mining Software Repositories - CORE Rank A)** hoặc **IEEE SANER (CORE Rank A)** (nhánh Registered Reports / Replication Track).
+    * **Tạp chí Quốc tế:** **Empirical Software Engineering (EMSE - Q1/Tier 2)** hoặc **Journal of Systems and Software (JSS - Q1/Tier 2)**.
+  * **Giá trị đóng góp đề tài:** Cung cấp bằng chứng thực nghiệm vững chắc chứng minh hiện tượng **Overoptimistic Performance** trong các nghiên cứu LLM ước lượng Story Point trước đây do rò rỉ dữ liệu (Data/Temporal Leakage).
 
 ---
 
-## 🛠️ 6. Khả năng tái lập: Code / Data & Dự kiến Khó / Dễ
+## 🛠️ 6. Khả năng tái lập: Công cụ, Thời gian & Dự kiến Khó / Dễ
 
-| Tiêu chí | Hiện trạng | Đánh giá & Giải pháp |
-| :--- | :--- | :--- |
-| **Dữ liệu (Data)** | **Có sẵn** | Có sẵn trong CSDL TAWOS v1.1 local và bộ dữ liệu Choetkiertikul. |
-| **Mã nguồn (Code)** | **Có sẵn** | Checkpoint HuggingFace `MickyMike/0-GPT2SP-springxd` và notebook Google Colab. |
-| **Điểm thuận lợi (Dễ)** | Thực thi linh hoạt | Chạy tốt trên Google Colab GPU (Tesla T4) với chi phí tài nguyên tính toán vừa phải. |
-| **Điểm khó khăn (Khó)** | Lệch phiên bản & Rò rỉ | Cần xử lý tương thích giữa các phiên bản thư viện; phát hiện và phân tích bản chất rò rỉ dữ liệu (Future-Information Leakage) trong tập test. |
+| Tiêu chí | Chi tiết đánh giá |
+| :--- | :--- |
+| **Dữ liệu (Data)** | **Có sẵn trực tuyến:** Đã có link GitHub/HuggingFace và tích hợp sẵn trong CSDL TAWOS local. |
+| **Mã nguồn (Code)** | **Có sẵn trực tuyến:** Đã có repo `awsm-research/gpt2sp` và checkpoint trên Hugging Face. |
+| **Công cụ & Môi trường cần thiết** | • **Ngôn ngữ:** Python 3.9+<br>• **Thư viện AI/ML:** PyTorch (>=2.0), HuggingFace `transformers` (v4.39.3), `datasets`, `accelerate`, `scikit-learn`, `pandas`<br>• **Phần cứng:** Google Colab GPU (Nvidia Tesla T4 16GB VRAM) hoặc GPU cục bộ RTX 3060 trở lên. |
+| **Thời gian tái lập dự kiến** | • **Chạy Inference từ Checkpoint:** ~0.5 – 1 giờ.<br>• **Fine-tuning lại từ đầu trên Spring XD:** ~3 – 5 giờ GPU.<br>• **Tổng thời gian hoàn thiện & phân tích sai số:** **1 – 2 ngày làm việc**. |
+| **Độ thuận lợi (Dễ)** | Đã có sẵn checkpoint lưu trữ công khai, kiến trúc HuggingFace chuẩn hóa cao, dễ debug. |
+| **Thách thức (Khó)** | Xử lý chênh lệch phiên bản thư viện; tái dựng pipeline cắt ngắn token (`max_length=20` vs full text) để giải thích sai lệch. |
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**
