@@ -135,6 +135,10 @@ flowchart LR
 │   ├── notes/                # Biên bản họp nhóm & ghi chú định hướng
 │   └── reports/              # Báo cáo đề tài NCKH chính thức
 ├── notebooks/                # Jupyter Notebooks phục vụ phân tích & thực nghiệm
+├── reproduction-candidate/   # Thư mục báo cáo chi tiết các ứng viên tái lập (Reproduction Candidates)
+│   ├── candidate_fu_2023_gpt2sp.md
+│   ├── candidate_tawosi_2022_replication.md
+│   └── candidate_khan_2025_comparative_learning.md
 ├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn và checkpoint ML
 ├── AGENTS.md                 # Quy tắc và hướng dẫn làm việc cho AI Agent
 └── README.md                 # Cổng thông tin chính & tổng quan đề tài
