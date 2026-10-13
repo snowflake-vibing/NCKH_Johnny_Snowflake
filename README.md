@@ -139,6 +139,11 @@ flowchart LR
 │   ├── candidate_fu_2023_gpt2sp.md
 │   ├── candidate_tawosi_2022_replication.md
 │   └── candidate_khan_2025_comparative_learning.md
+├── literature/               # Thư mục Literature Review 18 trường thông tin chuẩn hóa
+│   ├── template.md
+│   ├── candidate_fu_2023_gpt2sp.md
+│   ├── candidate_tawosi_2022_replication.md
+│   └── candidate_khan_2025_comparative_learning.md
 ├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn và checkpoint ML
 ├── AGENTS.md                 # Quy tắc và hướng dẫn làm việc cho AI Agent
 └── README.md                 # Cổng thông tin chính & tổng quan đề tài
