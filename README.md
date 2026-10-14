@@ -161,6 +161,8 @@ flowchart LR
 │   ├── sentence_bert.md
 │   ├── spearman.md
 │   └── tf_idf.md
+├── draft/                    # Thư mục chứa các bản thảo định hướng, đánh giá hội nghị & bài viết NCKH
+│   └── draft_conference_evaluation_ease_wsese.md
 ├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn và checkpoint ML
 ├── AGENTS.md                 # Quy tắc và hướng dẫn làm việc cho AI Agent
 └── README.md                 # Cổng thông tin chính & tổng quan đề tài
