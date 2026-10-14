@@ -1,8 +1,20 @@
-# 📖 Bảng Thuật Ngữ Nghiên Cứu (Research Glossary Template)
+# 📜 Quy Tắc & Mẫu Thuật Ngữ Nghiên Cứu (Glossary Rules & Template)
 
-> **Mục tiêu:** Giải thích các khái niệm, thuật ngữ chuyên ngành trong đề tài nghiên cứu một cách trực quan, dễ hiểu nhất; dùng ngôn ngữ đời thường và các hình ảnh ẩn dụ thực tế, tuyệt đối **không** dùng một thuật ngữ khó khác để giải thích.
+> **Mục tiêu:** Quy định chuẩn mực viết giải thích thuật ngữ trong đề tài nghiên cứu theo tiêu chí: trực quan, dễ hiểu nhất, dùng ngôn ngữ đời thường, hình ảnh ẩn dụ thực tế và kèm tài liệu tham chiếu có link DOI. Tuyệt đối **không** dùng một thuật ngữ khó khác để giải thích.
 
 ---
+
+## 🚨 QUY TẮC BẮT BUỘC KHI TẠO THUẬT NGỮ MỚI (MANDATORY RULE)
+
+> [!IMPORTANT]
+> **Quy tắc Tự động Đồng bộ `overview.md`:**  
+> Mỗi khi tạo mới hoặc cập nhật một file thuật ngữ trong thư mục `glossary/`, người viết (hoặc AI Agent) **bắt buộc phải cập nhật bảng danh mục thuật ngữ theo thứ tự A - Z trong file [overview.md](file:///d:/NCKH_3/glossary/overview.md)**, đồng thời cập nhật sơ đồ cây thư mục trong [README.md](file:///d:/NCKH_3/README.md).
+
+---
+
+## 📋 Mẫu Định Dạng Thuật Ngữ Chuẩn (Standard Glossary Template)
+
+Mỗi file thuật ngữ mới trong `glossary/` phải tuân thủ đúng 8 trường thông tin sau:
 
 - 📌 **Term (Thuật ngữ tiếng Anh):** [Tên thuật ngữ tiếng Anh gốc, ví dụ: Story Point, Data Leakage, Chronological Split]
 - 🔤 **Acronym (Từ viết tắt):** [Viết tắt thường dùng, ví dụ: SP, MAE, LLM. Nếu không có thì ghi "Không có"]
