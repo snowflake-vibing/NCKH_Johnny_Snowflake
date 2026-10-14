@@ -9,9 +9,9 @@
   - Khi thấy trong mô tả công việc có chữ "nguy hiểm", nếu dùng hồi quy thông thường, mô hình có thể bị thổi phồng điểm số từ 2 lên 50 Story Points.
   - Khi dùng Ridge Regression, thuật toán sẽ ghìm hệ số ảnh hưởng của từ "nguy hiểm" lại ở mức vừa phải, chỉ tăng lên mức hợp lý như 5 hoặc 8 điểm.
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** Choetkiertikul et al. (IEEE TSE 2019); Fu & Tantithamthavorn (IEEE TSE 2023).
-- 📑 **References (Tài liệu đọc thêm chi tiết):**
-  - Hoerl, A. E., & Kennard, R. W. (1970). *Ridge regression: Biased estimation for nonorthogonal problems*. Technometrics, 12(1), 55-67.
-  - Hastie, T., Tibshirani, R., & Friedman, J. (2009). *The Elements of Statistical Learning: Data Mining, Inference, and Prediction*. Springer.
+- 📑 **References (Tài liệu đọc thêm chi tiết kèm link DOI):**
+  - Hoerl, A. E., & Kennard, R. W. (1970). *Ridge regression: Biased estimation for nonorthogonal problems*. Technometrics, 12(1), 55-67. DOI: https://doi.org/10.1080/00401706.1970.10488634
+  - Hastie, T., Tibshirani, R., & Friedman, J. (2009). *The Elements of Statistical Learning: Data Mining, Inference, and Prediction*. Springer. DOI: https://doi.org/10.1007/978-0-387-84858-7
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**

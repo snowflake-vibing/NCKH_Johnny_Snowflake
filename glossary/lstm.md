@@ -9,9 +9,9 @@
   - Đọc đoạn mô tả: *"Ban đầu nhóm tưởng đây chỉ là lỗi nhỏ ở giao diện nút bấm, NHƯNG khi kiểm tra sâu thì toàn bộ máy chủ cơ sở dữ liệu đã bị sập hoàn toàn"*.
   - Mạng LSTM sẽ tự động giảm nhớ phần đầu ("lỗi nhỏ ở nút bấm") và ghi nhớ đậm nét phần quan trọng phía sau ("sập máy chủ hoàn toàn") để dự đoán công việc này tốn rất nhiều Story Point (8 hoặc 13 điểm).
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** Choetkiertikul et al. (IEEE TSE 2019) — *Deep-SE*; Fu & Tantithamthavorn (IEEE TSE 2023).
-- 📑 **References (Tài liệu đọc thêm chi tiết):**
-  - Hochreiter, S., & Schmidhuber, J. (1997). *Long short-term memory*. Neural Computation, 9(8), 1735-1780.
-  - Choetkiertikul, M., et al. (2019). *A deep learning model for estimating story points*. IEEE Transactions on Software Engineering, 45(7), 637-656.
+- 📑 **References (Tài liệu đọc thêm chi tiết kèm link DOI):**
+  - Hochreiter, S., & Schmidhuber, J. (1997). *Long short-term memory*. Neural Computation, 9(8), 1735-1780. DOI: https://doi.org/10.1162/neco.1997.9.8.1735
+  - Choetkiertikul, M., Dam, H. K., Tran, T., Pham, T., Ghose, A., & Menzies, T. (2019). *A deep learning model for estimating story points*. IEEE Transactions on Software Engineering, 45(7), 637-656. DOI: https://doi.org/10.1109/TSE.2018.2792473
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**

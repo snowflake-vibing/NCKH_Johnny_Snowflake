@@ -11,8 +11,9 @@
 - 🎭 **Ẩn dụ đời thực (Real-world Analogy):** [Ví von khái niệm này giống như một câu chuyện, tình huống quen thuộc nào trong cuộc sống hàng ngày (như nấu ăn, đi chợ, thi cử, xem phim,...)]
 - 🔍 **Example (Ví dụ minh họa cụ thể):** [Một tình huống hoặc số liệu ví dụ cụ thể, thực tế gắn liền với dự án phần mềm Jira hoặc bài toán của nhóm]
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** [Tên bài báo, tác giả, năm hoặc liên kết tài liệu nơi thuật ngữ này xuất hiện tiêu biểu nhất]
-- 📑 **References (Tài liệu đọc thêm chi tiết):**
-  - [Liệt kê 2-3 bài báo khoa học gốc hoặc tài liệu kinh điển giải thích sâu về lý thuyết và phương pháp toán học của thuật ngữ đó]
+- 📑 **References (Tài liệu đọc thêm chi tiết kèm link DOI):**
+  - [Tác giả A, et al. (Năm). *Tên bài báo khoa học*. Tên hội thảo/Tạp chí. DOI / Link: https://doi.org/...]
+  - [Tác giả B, et al. (Năm). *Tên bài báo khoa học*. Tên hội thảo/Tạp chí. DOI / Link: https://doi.org/...]
 
 ---
 
@@ -27,9 +28,10 @@
   - Nhiệm vụ "Đổi màu nút Đăng nhập" rất dễ $\rightarrow$ Nhóm chấm **1 Story Point**.
   - Nhiệm vụ "Tích hợp cổng thanh toán ngân hàng bảo mật cao" rất phức tạp $\rightarrow$ Nhóm chấm **8 Story Points**.
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** Choetkiertikul et al. (IEEE TSE 2019) — *A Deep Learning Model for Estimating Story Points*; Tawosi et al. (IEEE TSE 2022).
-- 📑 **References (Tài liệu đọc thêm chi tiết):**
-  - Cohn, M. (2005). *Agile Estimating and Planning*. Prentice Hall.
-  - Choetkiertikul, M., et al. (2019). *A deep learning model for estimating story points*. IEEE Transactions on Software Engineering, 45(7), 637-656.
+- 📑 **References (Tài liệu đọc thêm chi tiết kèm link DOI):**
+  - Cohn, M. (2005). *Agile Estimating and Planning*. Prentice Hall. Link: https://www.scrumalliance.org/learn-about-scrum/agile-estimating-and-planning
+  - Choetkiertikul, M., Dam, H. K., Tran, T., Pham, T., Ghose, A., & Menzies, T. (2019). *A deep learning model for estimating story points*. IEEE Transactions on Software Engineering, 45(7), 637-656. DOI: https://doi.org/10.1109/TSE.2018.2792473
+  - Tawosi, V., Moussa, R., & Sarro, F. (2022). *Agile effort estimation: Have we solved the problem yet? Insights from a replication study*. IEEE Transactions on Software Engineering, 49(4), 2673-2691. DOI: https://doi.org/10.1109/TSE.2022.3204902
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**

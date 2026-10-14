@@ -10,9 +10,9 @@
   - Nhóm lấy **60% công việc tạo ra đầu tiên** (từ 2013 đến giữa 2015) để dạy mô hình.
   - Nhóm dùng **20% công việc tạo ra sau cùng** (cuối 2015 đến 2016) để kiểm tra xem mô hình đoán Story Point có đúng không.
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** Fu & Tantithamthavorn (IEEE TSE 2023) — *GPT2SP*; Tawosi et al. (IEEE TSE 2022).
-- 📑 **References (Tài liệu đọc thêm chi tiết):**
-  - Tawosi, V., Moussa, R., & Sarro, F. (2022). *Agile effort estimation: Have we solved the problem yet? Insights from a replication study*. IEEE Transactions on Software Engineering, 49(4), 2673-2691.
-  - Tantithamthavorn, C., et al. (2017). *The impact of min-max data preprocessing on defect prediction models*. IEEE Transactions on Software Engineering, 45(7), 683-703.
+- 📑 **References (Tài liệu đọc thêm chi tiết kèm link DOI):**
+  - Tawosi, V., Moussa, R., & Sarro, F. (2022). *Agile effort estimation: Have we solved the problem yet? Insights from a replication study*. IEEE Transactions on Software Engineering, 49(4), 2673-2691. DOI: https://doi.org/10.1109/TSE.2022.3204902
+  - Tantithamthavorn, C., McIntosh, S., Hassan, A. E., & Matsumoto, K. (2017). *The impact of min-max data preprocessing on defect prediction models*. IEEE Transactions on Software Engineering, 45(7), 683-703. DOI: https://doi.org/10.1109/TSE.2017.2784435
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**

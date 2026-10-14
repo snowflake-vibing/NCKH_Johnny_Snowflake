@@ -10,9 +10,9 @@
   - **Sau khi xong (Final Snapshot - Bị rò rỉ thông tin tương lai):** Lập trình viên vào sửa lại thành: *"Nút thanh toán bị đơ do lỗi deadlock ở hàm xử lý cổng Momo tại file PaymentController.java dòng 45"*.
   - Đề tài của Nhóm 3 tập trung khôi phục lại đúng bản **Planning-Time Snapshot** để mô hình AI làm việc trung thực và thực tế như con người.
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** Báo cáo Nghiên cứu Đề tài Nhóm 3 (UIT, 2026); Kapoor & Narayanan (Patterns 2023) — *Leakage and the Reproducibility Crisis in Machine-Learning-Based Science*.
-- 📑 **References (Tài liệu đọc thêm chi tiết):**
-  - Kapoor, S., & Narayanan, A. (2023). *Leakage and the reproducibility crisis in machine-learning-based science*. Patterns, 4(9), 100804.
-  - Pasuksmit, V., et al. (2024). *A systematic literature review on reasons and approaches for accurate effort estimations in agile*. arXiv preprint arXiv:2405.01569.
+- 📑 **References (Tài liệu đọc thêm chi tiết kèm link DOI):**
+  - Kapoor, S., & Narayanan, A. (2023). *Leakage and the reproducibility crisis in machine-learning-based science*. Patterns, 4(9), 100804. DOI: https://doi.org/10.1016/j.patter.2023.100804
+  - Pasuksmit, V., et al. (2024). *A systematic literature review on reasons and approaches for accurate effort estimations in agile*. arXiv preprint arXiv:2405.01569. DOI: https://doi.org/10.48550/arXiv.2405.01569
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**

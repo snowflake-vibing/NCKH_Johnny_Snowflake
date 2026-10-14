@@ -9,9 +9,9 @@
   - Trong 10.000 công việc Jira, từ "hệ thống" xuất hiện ở khắp nơi $\rightarrow$ Điểm TF-IDF gần bằng 0 (vô nghĩa).
   - Nhưng cụm từ "deadlock_database" (nghẽn khóa cơ sở dữ liệu) chỉ xuất hiện trong đúng công việc này $\rightarrow$ Điểm TF-IDF cực kỳ cao, giúp mô hình biết ngay đây là một lỗi kỹ thuật nặng cần chấm nhiều Story Point.
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** Choetkiertikul et al. (IEEE TSE 2019); Fu & Tantithamthavorn (IEEE TSE 2023).
-- 📑 **References (Tài liệu đọc thêm chi tiết):**
-  - Salton, G., & Buckley, C. (1988). *Term-weighting approaches in automatic text retrieval*. Information Processing & Management, 24(5), 513-523.
-  - Manning, C. D., Raghavan, P., & Schütze, H. (2008). *Introduction to Information Retrieval*. Cambridge University Press.
+- 📑 **References (Tài liệu đọc thêm chi tiết kèm link DOI):**
+  - Salton, G., & Buckley, C. (1988). *Term-weighting approaches in automatic text retrieval*. Information Processing & Management, 24(5), 513-523. DOI: https://doi.org/10.1016/0306-4573(88)90021-0
+  - Manning, C. D., Raghavan, P., & Schütze, H. (2008). *Introduction to Information Retrieval*. Cambridge University Press. DOI: https://doi.org/10.1017/CBO9780511809071
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**

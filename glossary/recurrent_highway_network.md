@@ -9,9 +9,9 @@
   - Trong mô hình Deep-SE (2019), User Story có văn bản rất dài. Khi thông tin đi qua 5 đến 10 lớp tính toán bên trong, ý nghĩa của các từ khóa ban đầu rất dễ bị "quên sạch".
   - Nhờ có làn đường cao tốc (Highway), ý nghĩa của từ khóa ban đầu được chuyển thẳng trực tiếp tới lớp dự đoán cuối cùng để chấm điểm Story Point chính xác.
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** Choetkiertikul et al. (IEEE TSE 2019) — *Deep-SE*; Tawosi et al. (IEEE TSE 2022).
-- 📑 **References (Tài liệu đọc thêm chi tiết):**
-  - Zilly, J. G., Srivastava, R. K., Koutník, J., & Schmidhuber, J. (2017). *Recurrent highway networks*. In Proceedings of ICML 2017 (pp. 4189-4198).
-  - Srivastava, R. K., Greff, K., & Schmidhuber, J. (2015). *Highway networks*. arXiv preprint arXiv:1505.00387.
+- 📑 **References (Tài liệu đọc thêm chi tiết kèm link DOI):**
+  - Zilly, J. G., Srivastava, R. K., Koutník, J., & Schmidhuber, J. (2017). *Recurrent highway networks*. In Proceedings of the 34th International Conference on Machine Learning (ICML 2017), PMLR 70:4189-4198. Link: http://proceedings.mlr.press/v70/zilly17a.html
+  - Srivastava, R. K., Greff, K., & Schmidhuber, J. (2015). *Training very deep networks*. Advances in Neural Information Processing Systems (NeurIPS 2015), 28. Link: https://proceedings.neurips.cc/paper/2015/hash/215a71a12769b056c3c32e7299f1c5ed-Abstract.html (arXiv:1505.00387)
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**
