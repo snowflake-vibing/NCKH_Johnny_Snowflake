@@ -145,7 +145,15 @@ flowchart LR
 │   ├── candidate_tawosi_2022_replication.md
 │   └── candidate_khan_2025_comparative_learning.md
 ├── glossary/                 # Thư mục Bảng thuật ngữ chuyên ngành giải thích trực quan
-│   └── template.md
+│   ├── template.md
+│   ├── baseline.md
+│   ├── chronological_split.md
+│   ├── bpe_tokenizer.md
+│   ├── tf_idf.md
+│   ├── ridge_regression.md
+│   ├── lstm.md
+│   ├── recurrent_highway_network.md
+│   └── planning_time_snapshot.md
 ├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn và checkpoint ML
 ├── AGENTS.md                 # Quy tắc và hướng dẫn làm việc cho AI Agent
 └── README.md                 # Cổng thông tin chính & tổng quan đề tài

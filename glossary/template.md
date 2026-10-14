@@ -11,6 +11,8 @@
 - 🎭 **Ẩn dụ đời thực (Real-world Analogy):** [Ví von khái niệm này giống như một câu chuyện, tình huống quen thuộc nào trong cuộc sống hàng ngày (như nấu ăn, đi chợ, thi cử, xem phim,...)]
 - 🔍 **Example (Ví dụ minh họa cụ thể):** [Một tình huống hoặc số liệu ví dụ cụ thể, thực tế gắn liền với dự án phần mềm Jira hoặc bài toán của nhóm]
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** [Tên bài báo, tác giả, năm hoặc liên kết tài liệu nơi thuật ngữ này xuất hiện tiêu biểu nhất]
+- 📑 **References (Tài liệu đọc thêm chi tiết):**
+  - [Liệt kê 2-3 bài báo khoa học gốc hoặc tài liệu kinh điển giải thích sâu về lý thuyết và phương pháp toán học của thuật ngữ đó]
 
 ---
 
@@ -25,6 +27,9 @@
   - Nhiệm vụ "Đổi màu nút Đăng nhập" rất dễ $\rightarrow$ Nhóm chấm **1 Story Point**.
   - Nhiệm vụ "Tích hợp cổng thanh toán ngân hàng bảo mật cao" rất phức tạp $\rightarrow$ Nhóm chấm **8 Story Points**.
 - 📚 **Source bài báo (Nguồn tài liệu tham chiếu):** Choetkiertikul et al. (IEEE TSE 2019) — *A Deep Learning Model for Estimating Story Points*; Tawosi et al. (IEEE TSE 2022).
+- 📑 **References (Tài liệu đọc thêm chi tiết):**
+  - Cohn, M. (2005). *Agile Estimating and Planning*. Prentice Hall.
+  - Choetkiertikul, M., et al. (2019). *A deep learning model for estimating story points*. IEEE Transactions on Software Engineering, 45(7), 637-656.
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**
