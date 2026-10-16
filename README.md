@@ -131,40 +131,30 @@ flowchart LR
 │   ├── raw/                  # Dữ liệu thô (CSDL TAWOS gốc, bản trích xuất Jira thô)
 │   └── clean/                # Dữ liệu sau tiền xử lý & kiểm soát rò rỉ (Reconstructed Snapshot)
 ├── docs/                     # Toàn bộ tài liệu nghiên cứu khoa học của đề tài
-│   ├── articles/             # Bài báo khoa học & báo cáo phân tích liên quan
+│   ├── articles/             # Quản lý bài báo khoa học & số hóa tri thức
+│   │   ├── paper-information/# Phân tích chi tiết từng bài báo (kết hợp ma trận 21 trường)
+│   │   │   ├── template.md
+│   │   │   ├── paper_choetkiertikul_2019_deep_se.md
+│   │   │   ├── paper_fu_2023_gpt2sp.md
+│   │   │   ├── paper_khan_2025_comparative_learning.md
+│   │   │   ├── paper_tawosi_2022_replication.md
+│   │   │   ├── paper_wijaya_2024_tbe_erm.md
+│   │   │   └── paper_yalciner_2024_sbert_gbt.md
+│   │   ├── *.pdf             # Bản sao file PDF gốc của các bài báo khoa học
+│   │   └── README.md         # Quy trình quản lý & bảng tra cứu bài báo
+│   ├── draft/                # Bản thảo định hướng, đánh giá hội nghị & lộ trình thực hiện
+│   │   ├── draft_conference_evaluation_ease_wsese.md
+│   │   └── timeline.md       # Kế hoạch chi tiết, thời gian, mức độ thử thách & xác suất hoàn thành
+│   ├── glossary/             # Thư mục bảng thuật ngữ nội bộ (được bỏ qua khi push git)
+│   ├── reproduction-candidate/ # Ứng viên tái lập & hệ thống chấm điểm định lượng
+│   │   ├── candidate_fu_2023_gpt2sp.md
+│   │   ├── candidate_khan_2025_comparative_learning.md
+│   │   ├── candidate_tawosi_2022_replication.md
+│   │   └── reproduction-score.md # Đánh giá 3 ứng viên theo thang điểm 100
 │   ├── notes/                # Biên bản họp nhóm & ghi chú định hướng
 │   └── reports/              # Báo cáo đề tài NCKH chính thức
 ├── notebooks/                # Jupyter Notebooks phục vụ phân tích & thực nghiệm
-├── reproduction-candidate/   # Thư mục báo cáo chi tiết các ứng viên tái lập (Reproduction Candidates)
-│   ├── candidate_fu_2023_gpt2sp.md
-│   ├── candidate_tawosi_2022_replication.md
-│   └── candidate_khan_2025_comparative_learning.md
-├── literature/               # Thư mục Literature Review 18 trường thông tin chuẩn hóa
-│   ├── template.md
-│   ├── candidate_fu_2023_gpt2sp.md
-│   ├── candidate_tawosi_2022_replication.md
-│   └── candidate_khan_2025_comparative_learning.md
-├── glossary/                 # Thư mục Bảng thuật ngữ chuyên ngành giải thích trực quan
-│   ├── rule.md               # Quy tắc định dạng & bắt buộc tự động đồng bộ overview.md
-│   ├── overview.md           # Bảng tra cứu & liên kết toàn bộ thuật ngữ từ A đến Z
-│   ├── baseline.md
-│   ├── binary_cross_entropy.md
-│   ├── bpe_tokenizer.md
-│   ├── chronological_split.md
-│   ├── hadamard_product.md
-│   ├── lstm.md
-│   ├── mlp.md
-│   ├── pairwise_binary_classifier.md
-│   ├── planning_time_snapshot.md
-│   ├── recurrent_highway_network.md
-│   ├── ridge_regression.md
-│   ├── sentence_bert.md
-│   ├── spearman.md
-│   └── tf_idf.md
-├── draft/                    # Thư mục chứa các bản thảo định hướng, đánh giá hội nghị & bài viết NCKH
-│   ├── draft_conference_evaluation_ease_wsese.md
-│   └── timeline.md           # Kế hoạch chi tiết, thời gian, mức độ thử thách & xác suất hoàn thành
-├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn và checkpoint ML
+├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn, model weights & glossary
 ├── AGENTS.md                 # Quy tắc và hướng dẫn làm việc cho AI Agent
 └── README.md                 # Cổng thông tin chính & tổng quan đề tài
 ```
@@ -172,8 +162,8 @@ flowchart LR
 ### 📋 Mô tả Vai trò các Thư mục Chính:
 
 - **`data/`**: Phân chia rõ ràng giữa dữ liệu nguyên bản (`raw/`) và dữ liệu đã kiểm soát rò rỉ thời gian (`clean/`) nhằm đảm bảo tính tái lập (reproducibility).
+- **`docs/`**: Kho lưu trữ tri thức toàn diện của đề tài, bao gồm các bài báo gốc, ghi chú học thuật chuyên sâu, các ứng viên tái lập, bản thảo hội nghị và báo cáo tiến độ.
 - **`notebooks/`**: Nơi lưu trữ các kịch bản tương tác phục vụ EDA, kiểm định giả thuyết thống kê và trực quan hóa phân phối dữ liệu.
-- **`docs/`**: Kho lưu trữ tri thức toàn diện của đề tài, bao gồm các bài báo gốc, ghi chú học thuật chuyên sâu và các bản báo cáo tiến độ.
 - **`.agents/` & `AGENTS.md`**: Bộ quy tắc và các kỹ năng chuyên biệt giúp trợ lý AI làm việc chính xác, an toàn và tuân thủ chặt chẽ các giả định nghiên cứu khoa học.
 
 ---
