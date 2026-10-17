@@ -145,9 +145,12 @@ flowchart LR
 │   ├── dataset-card/         # Thẻ dữ liệu (Dataset Card) phân tích nguồn gốc & rủi ro chất lượng TAWOS
 │   │   └── dataset_card_tawos.md # Báo cáo chi tiết định danh, ERD, dấu vết thời gian & so sánh
 │   ├── draft/                # Thư mục lưu trữ các bản thảo nghiên cứu (Work-in-progress drafts)
-│   │   ├── EDA_SpringXD_Leakage_Free.ipynb   # Notebook EDA & xuất cleaned_dataset không rò rỉ cho Spring XD
-│   │   ├── eda_springxd_leakage_insights.md  # Báo cáo chuyên sâu EDA & kiểm toán rò rỉ trên Spring XD
-│   │   └── springxd_cleaned_dataset.csv      # Bộ dữ liệu sạch không rò rỉ của dự án Spring XD (3,542 dòng)
+│   │   ├── 01_data_scale_and_overview.md          # Phần 1: Giới thiệu quy mô dữ liệu & cấu trúc thông tin lưu trữ
+│   │   ├── 02_attribute_breakdown_and_counts.md   # Phần 2: Bảng dữ liệu đầy đủ & số lượng từng loại trong mỗi thuộc tính
+│   │   ├── 03_anomalies_and_cleaning_solutions.md # Phần 3: Phát hiện các điểm bất thường & giải pháp xử lý tương ứng
+│   │   ├── 04_clean_data_verification_audit.md    # Phần 4: Thẩm định lại Clean Data đảm bảo không còn Data Leakage
+│   │   ├── EDA_SpringXD_Leakage_Free.ipynb        # Notebook EDA & xuất cleaned_dataset không rò rỉ cho Spring XD
+│   │   └── springxd_cleaned_dataset.csv           # Bộ dữ liệu sạch không rò rỉ của dự án Spring XD (3,542 dòng)
 │   ├── glossary/             # Thư mục bảng thuật ngữ nội bộ (được bỏ qua khi push git)
 │   ├── reproduction-candidate/ # Ứng viên tái lập & hệ thống chấm điểm định lượng
 │   │   ├── candidate_fu_2023_gpt2sp.md
