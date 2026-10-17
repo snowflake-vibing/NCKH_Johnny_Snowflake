@@ -56,18 +56,84 @@ Dưới đây là bảng đánh giá định lượng 100 điểm giữa 3 ứng
 ```mermaid
 erDiagram
     PROJECT ||--o{ ISSUE : "contains"
-    USER ||--o{ ISSUE : "creates/assigned to"
-    ISSUE ||--o{ CHANGE_LOG : "tracks edits"
+    USER ||--o{ ISSUE : "creates"
+    ISSUE ||--o{ CHANGE_LOG : "tracks"
     ISSUE ||--o{ COMMENT : "receives"
     SPRINT ||--o{ ISSUE : "schedules"
 
-    PROJECT { int project_id PK, string project_name, string project_key }
-    ISSUE { int issue_id PK, string issue_key, string summary, string description, float story_point, timestamp created_date }
-    CHANGE_LOG { int changelog_id PK, int issue_id FK, string field_name, text old_value, text new_value, timestamp changed_date }
-    USER { int user_id PK, string user_name }
-    SPRINT { int sprint_id PK, string sprint_name, timestamp start_date, timestamp end_date }
-    COMMENT { int comment_id PK, int issue_id FK, text body, timestamp created_date }
+    PROJECT {
+        int project_id PK
+        string project_name
+        string project_key
+    }
+    ISSUE {
+        int issue_id PK
+        string issue_key
+        int project_id FK
+        string summary
+        string description
+        float story_point
+        timestamp created_date
+    }
+    CHANGE_LOG {
+        int changelog_id PK
+        int issue_id FK
+        string field_name
+        text old_value
+        text new_value
+        timestamp changed_date
+    }
+    USER {
+        int user_id PK
+        string user_name
+    }
+    SPRINT {
+        int sprint_id PK
+        string sprint_name
+        timestamp start_date
+        timestamp end_date
+    }
+    COMMENT {
+        int comment_id PK
+        int issue_id FK
+        text body
+        timestamp created_date
+    }
 ```
+
+### ❓ Vì sao bài báo GPT2SP ghi có 16 dự án mà TAWOS lại có tới 39 dự án?
+
+> **Tóm tắt ngắn gọn:** **16 dự án của GPT2SP thực chất là một TẬP CON (Subset) nằm trọn vẹn bên trong 39 dự án của TAWOS!**
+
+```mermaid
+flowchart TD
+    subgraph TAWOS["CSDL TAWOS v1.1 (Tổng cộng 39 Dự án / 458.232 issues)"]
+        direction TB
+        subgraph Sub1["Tập dữ liệu Choetkiertikul (16 dự án) — GPT2SP sử dụng"]
+            P1["Spring XD (XD) - 3.526 issues"]
+            P2["Apache Mesos (MESOS)"]
+            P3["Appcelerator Titanium (TIMOB)"]
+            P4["Mulesoft (MULE), DuraCloud..."]
+        end
+        subgraph Sub2["Tập dữ liệu Porru et al. (8 dự án)"]
+            P5["Bamboo, Clover, Crowd..."]
+        end
+        subgraph Sub3["Tập dữ liệu Mở rộng của UCL (15 dự án)"]
+            P6["MongoDB, Hyperledger, DNN..."]
+        end
+    end
+```
+
+* **1. Nguồn gốc con số 16 (Bài báo GPT2SP):**  
+  Tác giả Fu & Tantithamthavorn (2023) kế thừa trực tiếp bộ dữ liệu cũ của Choetkiertikul et al. (2019) gồm **16 dự án mã nguồn mở**. Họ chỉ lấy file CSV tĩnh của 16 dự án này để huấn luyện mô hình GPT-2.
+* **2. Nguồn gốc con số 39 (CSDL TAWOS v1.1):**  
+  Năm 2022, nhóm nghiên cứu tại Đại học UCL (Tawosi et al.) muốn làm một nghiên cứu tái lập quy mô lớn nhất từ trước đến nay, nên họ đã:
+  * Thu thập lại **toàn bộ 16 dự án của Choetkiertikul** (gồm cả Spring XD).
+  * Thu thập thêm **8 dự án của Porru et al. (2016)**.
+  * Thu thập thêm **15 dự án mã nguồn mở khác** từ các tổ chức lớn (MongoDB, Hyperledger...).
+  * $\rightarrow$ Tổng cộng: $16 + 8 + 15 = \mathbf{39\text{ dự án}}$ (được lưu trữ có hệ thống trong CSDL quan hệ cùng bảng `CHANGE_LOG`).
+* **3. Chiến lược của Nhóm 3:**  
+  Nhóm mình **không cần chạy hết 39 dự án của TAWOS**. Nhóm chỉ lọc ra **đúng 16 dự án của GPT2SP (đặc biệt là Spring XD)** từ CSDL TAWOS. Nhờ đó, nhóm vừa có đúng tập dữ liệu để đối đầu 1-1 với tác giả bài báo GPT2SP, vừa có thêm bảng `CHANGE_LOG` mà bài báo GPT2SP bị thiếu!
 
 ---
 
