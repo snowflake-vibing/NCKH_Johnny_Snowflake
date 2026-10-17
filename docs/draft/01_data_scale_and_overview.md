@@ -49,6 +49,30 @@ Dữ liệu của `3,542` công việc có Story Point trong dự án Spring XD 
 
 ---
 
+## 4. Ví Dụ Mẫu 5 Dòng Dữ Liệu Thực Tế Từ Dự Án Spring XD (`Issue` & `Change_Log`)
+
+Dưới đây là 5 dòng dữ liệu mẫu đầu tiên trích xuất trực tiếp từ bảng `Issue` (`ID = 65` đến `69`, tương ứng `XD-3768` đến `XD-3764`) của dự án Spring XD:
+
+| `ID` | `Issue_Key` | `Title` (Gốc trong bảng `Issue`) | `Description_Text` (Rút gọn) | `Type` | `Priority` | `Status` | `Resolution` | `Creation_Date` | `Estimation_Date` | `Story_Point` | `Creator_ID` | `Assignee_ID` |
+| :-: | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `65` | **`XD-3768`** | `\"How do I make a job restartable in spring xd\"` | `\"\"\"The jobs that appear under Executions section of Jobs in spring xd admin ui, has restart button disabled...\"\"\"` | `Bug` | `Major` | `To Do` | `NULL` | `2017-07-10 13:41:25` | `2017-07-10 12:41:25` | **`1.0`** | `68` | `NULL` |
+| `66` | **`XD-3767`** | `\"admin config timezone command does not work\"` | `\"\"\"Working with Spring-XD version 1.3.2.RELEASE Starting the server with {{xd-singlenode}} command...\"\"\"` | `Bug` | `Trivial` | `To Do` | `NULL` | `2017-06-26 16:26:27` | `2017-06-26 15:26:27` | **`1.0`** | `69` | `NULL` |
+| `67` | **`XD-3766`** | `\"Module Upload command not pushing jar to all containers\"` | `\"\"\"My project 7 node cluster and in that 2 node are Admin containers and remaining are non admin containers...\"\"\"` | `Bug` | `Major` | `To Do` | `NULL` | `2017-05-19 22:28:43` | `2017-05-19 21:28:43` | **`10.0`** | `70` | `NULL` |
+| `68` | **`XD-3765`** | `\"Fix stream failover \"` | `\"\"\"See https://github.com/spring-projects/spring-xd/issues/1924\"\"\"` | `Story` | `Minor` | `Done` | `Complete` | `2017-03-21 16:54:44` | `2017-03-21 16:54:44` | **`8.0`** | `72` | `71` |
+| `69` | **`XD-3764`** | `\"SpringXD Job is still executing even after forceful Server shutdown\"` | `\"\"\"I'm trying to run a Job on SpringXD and the job has 7 steps, When I reach step 4 i'm shutting down...\"\"\"` | `Bug` | `Major` | `To Do` | `NULL` | `2017-03-06 20:01:41` | `2017-03-06 20:01:41` | **`5.0`** | `73` | `NULL` |
+
+Và 5 dòng dữ liệu mẫu tương ứng trong bảng lịch sử `Change_Log` của dự án Spring XD:
+
+| `ID` | `Issue_ID` (`Issue_Key`) | `Field` | `From_String` (Giá trị cũ) | `To_String` (Giá trị mới) | `Change_Type` | `Creation_Date` | `Author_ID` |
+| :-: | :---: | :---: | :--- | :--- | :---: | :---: | :---: |
+| `6` | `68` (`XD-3765`) | `Fix Version` | `NULL` | `1.3.2` | `FIX_VERSION` | `2017-03-21 16:54:56` | `72` |
+| `7` | `68` (`XD-3765`) | `resolution` | `NULL` | `Complete` | `RESOLUTION` | `2017-03-21 16:55:23` | `72` |
+| `8` | `68` (`XD-3765`) | `status` | `To Do` | `Done` | `STATUS` | `2017-03-21 16:55:23` | `72` |
+| `9` | `68` (`XD-3765`) | `summary` | `Fix stream failover on YARN` | `Fix stream failover ` | `SUMMARY` | `2017-03-22 18:27:01` | `72` |
+| `43` | `79` (`XD-3754`) | `summary` | `Composed Module Validated Too Early` | `Composed Module Child Module Validated Too Early` | `SUMMARY` | `2016-05-02 23:14:39` | `82` |
+
+---
+
 ## 🔗 Điều Hướng Tài Liệu Trong Chuỗi Báo Cáo (`docs/draft/`)
 
 1. 📌 **[Phần 1: Giới thiệu quy mô dữ liệu & cấu trúc thông tin lưu trữ](01_data_scale_and_overview.md)** *(Tài liệu hiện tại)*

@@ -8,38 +8,38 @@
 
 Bảng dưới đây trình bày toàn bộ 30 thuộc tính trong bảng `Issue` đối với 3,542 công việc có Story Point của dự án Spring XD:
 
-| STT | Tên thuộc tính (`Column`) | Kiểu dữ liệu | Số mẫu có dữ liệu (`Present`) | Số mẫu khuyết (`Missing / NULL`) | Tỷ lệ khuyết (%) | Số giá trị phân biệt (`Unique`) | Ý nghĩa và đặc điểm phân phối trên tập `N = 3,542` |
-| :-: | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **1** | `ID` | `int64` | `3,542` | `0` | `0.00%` | `3,542` | Khóa chính định danh Issue trong CSDL (`65` $\rightarrow$ `3773`). |
-| **2** | `Jira_ID` | `int64` | `3,542` | `0` | `0.00%` | `3,542` | ID nội bộ của Issue trên máy chủ Jira (`14772` $\rightarrow$ `87615`). |
-| **3** | `Issue_Key` | `str` | `3,542` | `0` | `0.00%` | `3,542` | Mã công việc trên Jira (`XD-1` $\rightarrow$ `XD-3769`). |
-| **4** | `URL` | `str` | `3,542` | `0` | `0.00%` | `3,542` | Đường dẫn REST API của từng Issue. |
-| **5** | `Title` | `str` | `3,542` | `0` | `0.00%` | `3,477` | Tiêu đề tóm tắt công việc (độ dài trung bình `8.13` từ). |
-| **6** | `Description` | `str` | `3,373` | `169` | `4.77%` | `3,341` | Nội dung mô tả đầy đủ (gồm cả văn bản và đoạn mã). |
-| **7** | `Description_Text` | `str` | `3,370` | `172` | `4.86%` | `3,337` | Phần văn bản tự nhiên của mô tả (trung bình `52.97` từ). |
-| **8** | `Description_Code` | `str` | `637` | `2,905` | `82.02%` | `634` | Đoạn mã nguồn hoặc stack trace trích xuất từ mô tả. |
-| **9** | `Type` | `str` | `3,542` | `0` | `0.00%` | `5` | Loại công việc (`Story`, `Bug`, `Improvement`, `Technical task`, `Epic`). |
-| **10** | `Priority` | `str` | `3,542` | `0` | `0.00%` | `5` | Độ ưu tiên (`Minor`, `Major`, `Critical`, `Blocker`, `Trivial`). |
-| **11** | `Status` | `str` | `3,542` | `0` | `0.00%` | `4` | Trạng thái cuối (`Done`, `To Do`, `In Progress`, `In PR`). |
-| **12** | `Resolution` | `str` | `2,940` | `602` | `17.00%` | `9` *(+ NULL)* | Kết quả giải quyết khi đóng (`Complete`, `Invalid`, `Duplicate`...). |
-| **13** | `Creation_Date` | `datetime` | `3,542` | `0` | `0.00%` | `3,537` | Thời điểm tạo Issue (`2013-04-17 08:48:08` $\rightarrow$ `2018-11-16 15:57:31`). |
-| **14** | `Estimation_Date` | `datetime` | `3,542` | `0` | `0.00%` | `3,537` | Mốc ước lượng lưu sẵn trong bảng `Issue` (`2013-04-17` $\rightarrow$ `2018-11-16`). |
-| **15** | `Resolution_Date` | `datetime` | `2,940` | `602` | `17.00%` | `2,877` | Thời điểm đóng Issue (`2013-05-03 18:10:02` $\rightarrow$ `2017-03-21 16:55:23`). |
-| **16** | `Last_Updated` | `datetime` | `3,542` | `0` | `0.00%` | `2,520` | Thời điểm cập nhật cuối cùng (`2013-06-01` $\rightarrow$ `2018-11-20`). |
-| **17** | `Story_Point` | `float64` | `3,542` | `0` | `0.00%` | `25` | Điểm nỗ lực (`Min = 0.2`, `Median = 3.0`, `Mean = 3.98`, `Max = 2567.0`). |
-| **18** | `Timespent` | `float64` | `2` | `3,540` | `99.94%` | `2` | Chỉ có 2 mẫu có giá trị (`1.0` và `20.0`), 99.94% bị bỏ trống. |
-| **19** | `In_Progress_Minutes` | `float64` | `3,542` | `0` | `0.00%` | `1,462` | Số phút ở trạng thái đang làm (`1,813` mẫu bằng `0`; `1,729` mẫu `> 0`). |
-| **20** | `Total_Effort_Minutes` | `float64` | `3,542` | `0` | `0.00%` | `1,640` | Tổng số phút nỗ lực (`1,603` mẫu bằng `0`; `1,939` mẫu `> 0`). |
-| **21** | `Resolution_Time_Minutes` | `float64` | `3,542` | `0` | `0.00%` | `2,716` | Tổng thời gian giải quyết (`602` mẫu chưa đóng có giá trị `0`; `2,940` mẫu `> 0`). |
-| **22** | `Title_Changed_After_Estimation` | `int64` | `3,542` | `0` | `0.00%` | `2` (`0`, `1`) | Cờ báo sửa tiêu đề sau ước lượng (`0`: 2,921 mẫu; `1`: 621 mẫu). |
-| **23** | `Description_Changed_After_Estimation` | `int64` | `3,542` | `0` | `0.00%` | `1` (`chỉ có 0`) | Cờ báo sửa mô tả sau ước lượng (`0`: 3,542 mẫu — bị lỗi ghi nhận thiếu). |
-| **24** | `Story_Point_Changed_After_Estimation` | `int64` | `3,542` | `0` | `0.00%` | `2` (`0`, `1`) | Cờ báo sửa Story Point sau ước lượng (`0`: 3,071 mẫu; `1`: 471 mẫu). |
-| **25** | `Pull_Request_URL` | `str` | `617` | `2,925` | `82.58%` | `602` | Có `617` mẫu (`17.42%`) có link Pull Request; `2,925` mẫu để trống. |
-| **26** | `Creator_ID` | `int64` | `3,542` | `0` | `0.00%` | `146` | Có `146` người dùng khác nhau từng khởi tạo Issue. |
-| **27** | `Reporter_ID` | `int64` | `3,542` | `0` | `0.00%` | `146` | Có `146` người dùng khác nhau đứng tên báo cáo Issue. |
-| **28** | `Assignee_ID` | `float64` | `2,550` | `992` | `28.01%` | `31` *(+ NULL)* | Có `2,550` mẫu (`71.99%`) có người nhận việc (thuộc 31 lập trình viên); `992` mẫu `NULL`. |
-| **29** | `Project_ID` | `int64` | `3,542` | `0` | `0.00%` | `1` (`ID = 1`) | Hằng số `1` (định danh dự án Spring XD). |
-| **30** | `Sprint_ID` | `float64` | `2,114` | `1,428` | `40.32%` | `66` *(+ NULL)* | Có `2,114` mẫu (`59.68%`) gắn vào 66 Sprint; `1,428` mẫu không gắn Sprint (`NULL`). |
+| STT | Tên thuộc tính (`Column`) | Kiểu dữ liệu | Số mẫu có dữ liệu (`Present`) | Số mẫu khuyết (`Missing / NULL`) | Số giá trị phân biệt (`Unique`) | Ý nghĩa và đặc điểm phân phối trên tập `N = 3,542` |
+| :-: | :--- | :---: | :---: | :---: | :---: | :--- |
+| **1** | `ID` | `int64` | `3,542` | `0` | `3,542` | Khóa chính định danh Issue trong CSDL (`65` $\rightarrow$ `3773`). |
+| **2** | `Jira_ID` | `int64` | `3,542` | `0` | `3,542` | ID nội bộ của Issue trên máy chủ Jira (`14772` $\rightarrow$ `87615`). |
+| **3** | `Issue_Key` | `str` | `3,542` | `0` | `3,542` | Mã công việc trên Jira (`XD-1` $\rightarrow$ `XD-3769`). |
+| **4** | `URL` | `str` | `3,542` | `0` | `3,542` | Đường dẫn REST API của từng Issue. |
+| **5** | `Title` | `str` | `3,542` | `0` | `3,477` | Tiêu đề tóm tắt công việc (độ dài trung bình `8.13` từ). |
+| **6** | `Description` | `str` | `3,373` | `169` | `3,341` | Nội dung mô tả đầy đủ (gồm cả văn bản và đoạn mã). |
+| **7** | `Description_Text` | `str` | `3,370` | `172` | `3,337` | Phần văn bản tự nhiên của mô tả (trung bình `52.97` từ). |
+| **8** | `Description_Code` | `str` | `637` | `2,905` | `634` | Đoạn mã nguồn hoặc stack trace trích xuất từ mô tả. |
+| **9** | `Type` | `str` | `3,542` | `0` | `5` | Loại công việc (`Story`, `Bug`, `Improvement`, `Technical task`, `Epic`). |
+| **10** | `Priority` | `str` | `3,542` | `0` | `5` | Độ ưu tiên (`Minor`, `Major`, `Critical`, `Blocker`, `Trivial`). |
+| **11** | `Status` | `str` | `3,542` | `0` | `4` | Trạng thái cuối (`Done`, `To Do`, `In Progress`, `In PR`). |
+| **12** | `Resolution` | `str` | `2,940` | `602` | `9` *(+ NULL)* | Kết quả giải quyết khi đóng (`Complete`, `Invalid`, `Duplicate`...). |
+| **13** | `Creation_Date` | `datetime` | `3,542` | `0` | `3,537` | Thời điểm tạo Issue (`2013-04-17 08:48:08` $\rightarrow$ `2018-11-16 15:57:31`). |
+| **14** | `Estimation_Date` | `datetime` | `3,542` | `0` | `3,537` | Mốc ước lượng lưu sẵn trong bảng `Issue` (`2013-04-17` $\rightarrow$ `2018-11-16`). |
+| **15** | `Resolution_Date` | `datetime` | `2,940` | `602` | `2,877` | Thời điểm đóng Issue (`2013-05-03 18:10:02` $\rightarrow$ `2017-03-21 16:55:23`). |
+| **16** | `Last_Updated` | `datetime` | `3,542` | `0` | `2,520` | Thời điểm cập nhật cuối cùng (`2013-06-01` $\rightarrow$ `2018-11-20`). |
+| **17** | `Story_Point` | `float64` | `3,542` | `0` | `25` | Điểm nỗ lực (`Min = 0.2`, `Median = 3.0`, `Mean = 3.98`, `Max = 2567.0`). |
+| **18** | `Timespent` | `float64` | `2` | `3,540` | `2` | Chỉ có 2 mẫu có giá trị (`1.0` và `20.0`), 3,540 mẫu bị bỏ trống. |
+| **19** | `In_Progress_Minutes` | `float64` | `3,542` | `0` | `1,462` | Số phút ở trạng thái đang làm (`1,813` mẫu bằng `0`; `1,729` mẫu `> 0`). |
+| **20** | `Total_Effort_Minutes` | `float64` | `3,542` | `0` | `1,640` | Tổng số phút nỗ lực (`1,603` mẫu bằng `0`; `1,939` mẫu `> 0`). |
+| **21** | `Resolution_Time_Minutes` | `float64` | `3,542` | `0` | `2,716` | Tổng thời gian giải quyết (`602` mẫu chưa đóng có giá trị `0`; `2,940` mẫu `> 0`). |
+| **22** | `Title_Changed_After_Estimation` | `int64` | `3,542` | `0` | `2` (`0`, `1`) | Cờ báo sửa tiêu đề sau ước lượng (`0`: 2,921 mẫu; `1`: 621 mẫu). |
+| **23** | `Description_Changed_After_Estimation` | `int64` | `3,542` | `0` | `1` (`chỉ có 0`) | Cờ báo sửa mô tả sau ước lượng (`0`: 3,542 mẫu — bị lỗi ghi nhận thiếu). |
+| **24** | `Story_Point_Changed_After_Estimation` | `int64` | `3,542` | `0` | `2` (`0`, `1`) | Cờ báo sửa Story Point sau ước lượng (`0`: 3,071 mẫu; `1`: 471 mẫu). |
+| **25** | `Pull_Request_URL` | `str` | `617` | `2,925` | `602` | Có `617` mẫu có link Pull Request; `2,925` mẫu để trống. |
+| **26** | `Creator_ID` | `int64` | `3,542` | `0` | `146` | Có `146` người dùng khác nhau từng khởi tạo Issue. |
+| **27** | `Reporter_ID` | `int64` | `3,542` | `0` | `146` | Có `146` người dùng khác nhau đứng tên báo cáo Issue. |
+| **28** | `Assignee_ID` | `float64` | `2,550` | `992` | `31` *(+ NULL)* | Có `2,550` mẫu có người nhận việc (thuộc 31 lập trình viên); `992` mẫu `NULL`. |
+| **29** | `Project_ID` | `int64` | `3,542` | `0` | `1` (`ID = 1`) | Hằng số `1` (định danh dự án Spring XD). |
+| **30** | `Sprint_ID` | `float64` | `2,114` | `1,428` | `66` *(+ NULL)* | Có `2,114` mẫu gắn vào 66 Sprint; `1,428` mẫu không gắn Sprint (`NULL`). |
 
 ---
 
