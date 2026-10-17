@@ -133,7 +133,34 @@ flowchart TD
   * Thu thập thêm **15 dự án mã nguồn mở khác** từ các tổ chức lớn (MongoDB, Hyperledger...).
   * $\rightarrow$ Tổng cộng: $16 + 8 + 15 = \mathbf{39\text{ dự án}}$ (được lưu trữ có hệ thống trong CSDL quan hệ cùng bảng `CHANGE_LOG`).
 * **3. Chiến lược của Nhóm 3:**  
-  Nhóm mình **không cần chạy hết 39 dự án của TAWOS**. Nhóm chỉ lọc ra **đúng 16 dự án của GPT2SP (đặc biệt là Spring XD)** từ CSDL TAWOS. Nhờ đó, nhóm vừa có đúng tập dữ liệu để đối đầu 1-1 với tác giả bài báo GPT2SP, vừa có thêm bảng `CHANGE_LOG` mà bài báo GPT2SP bị thiếu!
+  Nhóm mình **không cần chạy hết 39 dự án của TAWOS**. Nhóm chỉ lọc ra **đúng 16 dự án chuẩn của bài báo GPT2SP (đặc biệt là Spring XD)** từ CSDL TAWOS. Nhờ đó, nhóm vừa có đúng tập dữ liệu để đối đầu 1-1 với tác giả bài báo GPT2SP, vừa có thêm bảng `CHANGE_LOG` mà bài báo GPT2SP bị thiếu!
+
+### 📋 Danh Sách Cụ Thể 16 Dự Án Được Chọn Từ TAWOS Để Tái Lập & Kiểm Chứng
+
+Dưới đây là danh sách chi tiết **16 dự án mã nguồn mở chuẩn mực** được nhóm trích xuất trực tiếp từ CSDL TAWOS v1.1:
+
+| STT | Jira Repository | Tên dự án (Project Name) | Mã dự án (Project Key) | Vai trò & Mục tiêu kiểm chứng trong Đề tài |
+| :-: | :--- | :--- | :---: | :--- |
+| **1** | **Spring** | **Spring XD** | **`XD`** | 🥇 **Dự án mục tiêu tái lập số 1:** Có 3.526 issues, tác giả GPT2SP công bố sẵn checkpoint Hugging Face và chia tập 60/20/20. |
+| **2** | **Apache** | Apache Mesos | **`MESOS`** | 🥈 **Dự án đối chứng lớn:** Hệ thống quản lý cluster phân tán, quy mô hàng nghìn issues có chấm Story Point. |
+| **3** | **Apache** | Apache Usergrid | **`USERGRID`** | Backend-as-a-Service, tập dữ liệu có độ biến thiên Story Point cao. |
+| **4** | **Lyrasis** | Lyrasis DuraCloud | **`DURACLOUD`** | Nền tảng lưu trữ đám mây, benchmark kinh điển từ thời Choetkiertikul 2019. |
+| **5** | **Mulesoft** | Mule ESB Core | **`MULE`** | Nền tảng tích hợp doanh nghiệp, số lượng task kỹ thuật và bug dồi dào. |
+| **6** | **Mulesoft** | Mule APIkit | **`APIKIT`** | Công cụ xây dựng REST API, chu kỳ release nhanh theo đúng chuẩn Agile. |
+| **7** | **Appcelerator** | The Titanium SDK | **`TIMOB`** | Bộ SDK phát triển ứng dụng di động đa nền tảng, text mô tả issue rất chi tiết. |
+| **8** | **Appcelerator** | Titanium Mobile Platform | **`TIDOC`** | Tài liệu và nền tảng di động, nhiều issue dạng User Story. |
+| **9** | **Appcelerator** | Appcelerator Studio | **`TISTUD`** | Môi trường IDE phát triển phần mềm, nhiều task giao diện người dùng. |
+| **10** | **Appcelerator** | Command-Line Interface | **`CLI`** | Công cụ dòng lệnh của Titanium, task ngắn gọn, súc tích. |
+| **11** | **Appcelerator** | Alloy Framework | **`ALOY`** | MVC Framework cho Titanium, phân phối Story Point rất chuẩn mực. |
+| **12** | **Moodle** | Moodle LMS Core | **`MDL`** | Hệ thống quản trị học tập số 1 thế giới, kho issue cực kỳ phong phú. |
+| **13** | **Lsstcorp** | Data Management System | **`DM`** | Hệ thống xử lý dữ liệu thiên văn quy mô lớn, nhiều task thuật toán phức tạp. |
+| **14** | **Atlassian** | Bamboo CI/CD | **`BAM`** | Hệ thống Continuous Integration của Atlassian, mô hình Agile chuẩn mực. |
+| **15** | **Atlassian** | Clover Code Coverage | **`CLOV`** | Công cụ đo lường độ phủ mã nguồn, dự án ổn định qua nhiều năm. |
+| **16** | **Atlassian** | Jira Software Server | **`JSWSERVER`** | Chính nền tảng Jira, đại diện cho quy trình quản trị công việc Agile thực thụ. |
+
+> 🎯 **Chiến lược thực thi thực nghiệm:**  
+> • **Trọng tâm mũi nhọn:** Tái lập sâu và toàn diện trên **`Spring XD`** (3.526 issues) để đập tan con số MAE = 0.96 của GPT2SP.  
+> • **Mở rộng tổng quát:** Đánh giá trên 15 dự án còn lại nhằm chứng minh hiện tượng suy giảm hiệu năng do rò rỉ dữ liệu là **lỗ hổng mang tính hệ thống trên toàn bộ các dự án phần mềm**, chứ không phải sự cố cá biệt của riêng một dự án.
 
 ---
 
