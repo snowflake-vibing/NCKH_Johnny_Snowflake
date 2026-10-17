@@ -117,3 +117,4 @@
 2. 📋 **[Phần 2: Bảng dữ liệu đầy đủ & thống kê số lượng từng loại trong mỗi thuộc tính (`N = 3,542`)](02_attribute_breakdown_and_counts.md)**
 3. 🛠️ **[Phần 3: Phát hiện các điểm bất thường & giải pháp xử lý tương ứng để tạo Clean Data](03_anomalies_and_cleaning_solutions.md)** *(Tài liệu hiện tại)*
 4. ✅ **[Phần 4: Thẩm định lại Clean Data để đảm bảo không còn Data Leakage](04_clean_data_verification_audit.md)**
+5. 📏 **[RULE.md: Bộ quy tắc chuẩn hóa dữ liệu & tài liệu cho các dự án tiếp theo](RULE.md)**

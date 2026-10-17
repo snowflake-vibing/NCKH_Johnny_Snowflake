@@ -61,9 +61,48 @@ Bảng dưới đây đối chiếu 5 bản ghi thực tế trích xuất từ `
 
 ---
 
+## 5. Đối Chiếu Phân Phối Trước Và Sau Khi Khôi Phục Về Mốc Lập Kế Hoạch (`Raw Snapshot` vs. `Clean Planning Snapshot`)
+
+Để thấy rõ sự dịch chuyển định lượng sau khi loại bỏ rò rỉ tương lai trên tập `N = 3,542`, các bảng dưới đây đặt song song số lượng trong bảng `Issue` gốc (đã thống kê ở Phần 2) và số lượng sau khi khôi phục trong `springxd_cleaned_dataset.csv`:
+
+### 5.1. Đối chiếu Loại công việc (`Issue.Type` vs. `Clean_Type`) & Độ ưu tiên (`Issue.Priority` vs. `Clean_Priority`)
+
+| Thuộc tính | Giá trị phân loại | Số lượng ở bảng `Issue` gốc (`Final Snapshot`) | Số lượng sau khi khôi phục (`Clean_Type` / `Clean_Priority`) | Độ lệch do sửa đổi sau ước lượng ($\Delta$) |
+| :--- | :--- | :---: | :---: | :---: |
+| **Loại công việc (`Type`)** | **`Story`** | `2,226` (`62.85%`) | **`2,235`** (`63.10%`) | `+9` issues ban đầu là Story sau bị đổi sang loại khác |
+| | **`Bug`** | `726` (`20.50%`) | **`703`** (`19.85%`) | `-23` issues ban đầu là Story/Improvement sau bị đổi thành Bug |
+| | **`Task`** | `223` (`6.30%`) | **`208`** (`5.87%`) | `-15` issues bị chuyển thành Task sau khi ước lượng |
+| | **`Sub-task`** | `141` (`3.98%`) | **`128`** (`3.61%`) | `-13` issues ban đầu là Story/Task độc lập sau bị hạ xuống Sub-task |
+| | **`Improvement`** | `102` (`2.88%`) | **`128`** (`3.61%`) | `+26` issues ban đầu là Improvement sau bị đổi thành Story/Bug |
+| | **`New Feature`** | `74` (`2.09%`) | **`94`** (`2.65%`) | `+20` issues ban đầu là New Feature sau bị đổi sang Story |
+| | **`Epic`** | `28` (`0.79%`) | **`26`** (`0.73%`) | `-2` issues được nâng lên thành Epic sau khi ước lượng |
+| | **`Spike`** | `19` (`0.54%`) | **`16`** (`0.45%`) | `-3` issues đổi sang Spike sau khi ước lượng |
+| | **`Defect`** / **` Technical task`** | `3` (`0.08%`) | **`4`** (`0.11%`) | `+1` issue ban đầu là Defect sau đổi thành Bug |
+| **Độ ưu tiên (`Priority`)** | **`Major`** | `1,859` (`52.48%`) | **`1,847`** (`52.15%`) | `-12` issues được nâng lên Major trong lúc làm |
+| | **`Minor`** | `1,353` (`38.20%`) | **`1,430`** (`40.37%`) | `+77` issues lúc lập kế hoạch là Minor, sau đó mới nâng cấp độ |
+| | **`Critical`** | `248` (`7.00%`) | **`198`** (`5.59%`) | `-50` issues được đẩy lên Critical sau khi đã ước lượng |
+| | **`Blocker`** | `53` (`1.50%`) | **`37`** (`1.04%`) | `-16` issues phát sinh lỗi chặn (Blocker) trong quá trình code |
+| | **`Trivial`** | `29` (`0.82%`) | **`30`** (`0.85%`) | `+1` issue ban đầu là Trivial |
+
+### 5.2. Đối chiếu Phân phối Nhãn mục tiêu (`Issue.Story_Point` vs. `Initial_Story_Point`)
+
+| Giá trị điểm (`Story Point`) | Số lượng ở bảng `Issue` gốc (`Story_Point`) | Số lượng sau khi khôi phục (`Initial_Story_Point`) | Độ lệch ($\Delta$) | Cờ kiểm soát thang đo (`Is_Valid_Scale_SP`) |
+| :---: | :---: | :---: | :---: | :---: |
+| **`1.0`** | `1,049` (`29.62%`) | **`1,004`** (`28.35%`) | `-45` | `1` *(Hợp lệ)* |
+| **`2.0`** | `855` (`24.14%`) | **`871`** (`24.59%`) | `+16` | `1` *(Hợp lệ)* |
+| **`3.0`** | `722` (`20.38%`) | **`760`** (`21.46%`) | `+38` | `1` *(Hợp lệ)* |
+| **`5.0`** | `573` (`16.18%`) | **`569`** (`16.06%`) | `-4` | `1` *(Hợp lệ)* |
+| **`8.0`** | `254` (`7.17%`) | **`251`** (`7.09%`) | `-3` | `1` *(Hợp lệ)* |
+| **`0.5`** | `30` (`0.85%`) | **`24`** (`0.68%`) | `-6` | `1` *(Hợp lệ)* |
+| **`13.0` / `20.0` / `40.0` / `4.0` / `1.5` / `6.0` / `9.0` / `10.0` / `15.0` / `16.0`** | `53` (`1.50%`) | **`57`** (`1.61%`) | `+4` | `1` *(Hợp lệ — Tổng nhóm chuẩn = `3,536` dòng)* |
+| **`50.0` / `80.0` / `100.0` / `2567.0`** | `6` (`0.17%`) | **`6`** (`0.17%`) | `0` | `0` *(Ngoại lệ vượt trần `> 40` — lọc bỏ khi train)* |
+
+---
+
 ## 🔗 Điều Hướng Tài Liệu Trong Chuỗi Báo Cáo (`docs/draft/`)
 
 1. 📌 **[Phần 1: Giới thiệu quy mô dữ liệu & cấu trúc thông tin lưu trữ](01_data_scale_and_overview.md)**
 2. 📋 **[Phần 2: Bảng dữ liệu đầy đủ & thống kê số lượng từng loại trong mỗi thuộc tính (`N = 3,542`)](02_attribute_breakdown_and_counts.md)**
 3. 🛠️ **[Phần 3: Phát hiện các điểm bất thường & giải pháp xử lý tương ứng để tạo Clean Data](03_anomalies_and_cleaning_solutions.md)**
 4. ✅ **[Phần 4: Thẩm định lại Clean Data để đảm bảo không còn Data Leakage](04_clean_data_verification_audit.md)** *(Tài liệu hiện tại)*
+5. 📏 **[RULE.md: Bộ quy tắc chuẩn hóa dữ liệu & tài liệu cho các dự án tiếp theo](RULE.md)**

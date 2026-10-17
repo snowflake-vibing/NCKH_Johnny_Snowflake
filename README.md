@@ -145,6 +145,7 @@ flowchart LR
 │   ├── dataset-card/         # Thẻ dữ liệu (Dataset Card) phân tích nguồn gốc & rủi ro chất lượng TAWOS
 │   │   └── dataset_card_tawos.md # Báo cáo chi tiết định danh, ERD, dấu vết thời gian & so sánh
 │   ├── draft/                # Thư mục lưu trữ các bản thảo nghiên cứu (Work-in-progress drafts)
+│   │   ├── RULE.md                                # Bộ quy tắc bắt buộc khi làm sạch CSV & viết tài liệu cho các dự án TAWOS
 │   │   ├── 01_data_scale_and_overview.md          # Phần 1: Giới thiệu quy mô dữ liệu & cấu trúc thông tin lưu trữ
 │   │   ├── 02_attribute_breakdown_and_counts.md   # Phần 2: Bảng dữ liệu đầy đủ & số lượng từng loại trong mỗi thuộc tính
 │   │   ├── 03_anomalies_and_cleaning_solutions.md # Phần 3: Phát hiện các điểm bất thường & giải pháp xử lý tương ứng
