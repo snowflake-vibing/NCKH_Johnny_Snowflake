@@ -2,7 +2,7 @@
 
 > **Đề tài nghiên cứu:** *Temporal Data Leakage in Story Point Estimation: An Empirical Evaluation of Estimation-Time-Compatible Features*  
 > **Đơn vị thực hiện:** Nhóm 3 — Khoa Hệ thống Thông tin, Trường Đại học Công nghệ Thông tin, ĐHQG-HCM (UIT - VNUHCM)  
-> **Mục đích tài liệu:** Mô tả toàn diện nguồn gốc, cấu trúc quan hệ, nhãn mục tiêu, dấu vết thời gian (Temporal Availability), các rủi ro chất lượng dữ liệu, và luận chứng lý do lựa chọn bộ dữ liệu TAWOS thay vì tập dữ liệu Choetkiertikul cho bài toán kiểm soát rò rỉ dữ liệu thời gian.
+> **Mục đích tài liệu:** Mô tả toàn diện nguồn gốc, cấu trúc quan hệ, nhãn mục tiêu, dấu vết thời gian (Temporal Availability), các rủi ro chất lượng dữ liệu, so sánh giữa TAWOS v1.0 và v1.1, cùng luận chứng đối chiếu với tập dữ liệu Choetkiertikul và các benchmark liên quan (đính kèm đường dẫn mã nguồn & dữ liệu trực tiếp).
 
 ---
 
@@ -11,7 +11,7 @@
 ### 🟢 1.1. Dataset này cung cấp được những gì cho task của nhóm?
 1. **Dấu vết thời gian chi tiết (Full Historical Audit Trail):** Cung cấp bảng `CHANGE_LOG` ghi lại toàn bộ lịch sử chỉnh sửa từng trường (Field Name, Old Value, New Value, Changed Date) của từng issue. Đây là **điều kiện tiên quyết duy nhất** giúp nhóm hiện thực hóa thuật toán *Historical State Reconstruction* để đưa nội dung issue về đúng mốc `SP_Estimation_Date`.
 2. **Quy mô lớn & Tính đại diện cao:** Bao phủ **458.232 issues** thuộc **39 dự án** phần mềm mã nguồn mở trên **12 Jira Repositories** khác nhau (Apache, Spring, Red Hat, Atlassian...).
-3. **Bao hàm trọn vẹn các benchmark kinh điển:** TAWOS chứa toàn bộ 16 dự án từ bộ dữ liệu của Choetkiertikul et al. (2019) và 8 dự án của Porru et al. (2016), giúp nhóm dễ dàng tái lập mô hình **GPT2SP (Fu 2023)** và **Deep-SE (Choetkiertikul 2019)** trên cùng một cơ sở dữ liệu.
+3. **Bao hàm trọn vẹn các benchmark kinh điển:** TAWOS chứa toàn bộ 16 dự án từ [Bộ dữ liệu Choetkiertikul et al. (2019)](https://github.com/morakotch/datasets) và 8 dự án từ [Bộ dữ liệu Porru et al. (2016)](https://github.com/porru/promise2016), giúp nhóm dễ dàng tái lập mô hình [GPT2SP (Fu 2023)](https://github.com/awsm-research/gpt2sp) và [Deep-SE (Choetkiertikul 2019)](https://doi.org/10.1109/TSE.2016.2628380) trên cùng một cơ sở dữ liệu.
 4. **Cấu trúc quan hệ chuẩn mực (Relational Schema):** Dữ liệu được chuẩn hóa thành các bảng quan hệ rõ ràng: `ISSUE`, `PROJECT`, `USER`, `CHANGE_LOG`, `SPRINT`, `COMMENT`.
 
 ### 🔴 1.2. Dataset còn thiếu sót và tiềm ẩn rủi ro gì?
@@ -22,31 +22,51 @@
 
 ---
 
-## 🏷️ 2. Định Danh & Nguồn Gốc (Dataset Identification)
+## 🏷️ 2. Định Danh & Nguồn Gốc (Dataset Identification & Direct Links)
 
 * **Tên chính thức:** **TAWOS** (*Tailored Agile Work Organization System Dataset*).
-* **Phiên bản:** **Version 1.1** (Phát hành chính thức: Tháng 01/2022).
+* **Phiên bản sử dụng:** **Version 1.1** (Bản phát hành ổn định, loại bỏ các dự án không còn mở công khai).
 * **Nhóm tác giả & Tổ chức:** Vali Tawosi, Rebecca Moussa, Federica Sarro — Nhóm nghiên cứu **SOLAR** (*Software Systems Engineering Group*), Khoa Khoa học Máy tính, **University College London (UCL)**, Vương quốc Anh.
-* **Nguồn công bố chính thức:**
-  * **Tạp chí công bố:** *IEEE Transactions on Software Engineering (TSE)*, Vol. 49, No. 4, 2022.
-  * **Kho lưu trữ mở (Zenodo):** [https://doi.org/10.5281/zenodo.5828456](https://doi.org/10.5281/zenodo.5828456)
-  * **Mã nguồn GitHub:** [https://github.com/SOLAR-group/TAWOS](https://github.com/SOLAR-group/TAWOS)
-  * **Replication Package:** [https://github.com/SOLAR-group/AgileEffortEstimation](https://github.com/SOLAR-group/AgileEffortEstimation)
-* **Giấy phép bản quyền (License):** **MIT License** / **Open Data Commons Attribution License (ODC-By)**, cho phép khai thác, trích xuất và nghiên cứu học thuật phi thương mại.
+* **Danh mục liên kết chính thức (Official Links):**
+  * 🌐 **Mã nguồn Dataset trên GitHub:** [https://github.com/SOLAR-group/TAWOS](https://github.com/SOLAR-group/TAWOS)
+  * 📦 **Kho tải CSDL chính thức (UCL Discovery Repository):** [DOI: 10.5522/04/21308124](http://doi.org/10.5522/04/21308124)
+  * 🗄️ **Kho lưu trữ bảo tồn mở (Zenodo Data Archive):** [DOI: 10.5281/zenodo.5828456](https://doi.org/10.5281/zenodo.5828456)
+  * 🛠️ **Replication Package (Mã nguồn thực nghiệm):** [https://github.com/SOLAR-group/AgileEffortEstimation](https://github.com/SOLAR-group/AgileEffortEstimation)
+  * 📄 **Bài báo công bố CSDL (MSR 2022):** [DOI: 10.1145/3524842.3528029](https://doi.org/10.1145/3524842.3528029)
+  * 📄 **Bài báo nghiên cứu tái lập (IEEE TSE 2022):** [DOI: 10.1109/TSE.2022.3204902](https://doi.org/10.1109/TSE.2022.3204902)
+* **Giấy phép bản quyền (License):** **Apache License 2.0** / **Open Data Commons Attribution License (ODC-By)**, cho phép khai thác, trích xuất và nghiên cứu học thuật hoàn toàn tự do.
 
 ---
 
-## 🌐 3. Bối Cảnh Dữ Liệu (Operational Context)
+## 🔄 3. So Sánh Chi Tiết Giữa TAWOS v1.0 Và TAWOS v1.1
+
+Trong quá trình bảo trì và phát hành bộ dữ liệu, nhóm tác giả SOLAR đã có bản cập nhật từ **v1.0** lên **v1.1**. Dưới đây là bảng đối chiếu chi tiết:
+
+| Đặc tính / Chỉ số | 📦 TAWOS Version 1.0 (Bản sơ khởi MSR 2022) | 🌟 TAWOS Version 1.1 (Bản chuẩn hóa hiện tại - Nhóm 3 chọn) |
+| :--- | :--- | :--- |
+| **Số lượng Jira Repositories** | **13 Repositories** | **12 Repositories** *(Giảm 1 repository)* |
+| **Số lượng dự án (Projects)** | **44 dự án** | **39 dự án** *(Giảm 5 dự án)* |
+| **Dự án bị thay đổi** | Bao gồm repository **Talendforge** với 5 dự án: `Talend Big Data (TBD)`, `Talend Data Management (TMDM)`, `Talend Data Preparation (TDP)`, `Talend Data Quality (TDQ)`, `Talend Enterprise Service Bus (TESB)`. | **Loại bỏ hoàn toàn 5 dự án của Talendforge** ra khỏi bản dump dữ liệu. |
+| **Lý do điều chỉnh (Rationale)** | Được cào dữ liệu từ kho Jira mở của Talendforge vào năm 2020. | Kho lưu trữ Jira của Talendforge đã **bị đóng và gỡ bỏ khỏi phạm vi công cộng (removed from public domain)**. Để bảo đảm tính tuân thủ đạo đức nghiên cứu (Open Science Ethics), bản quyền và tính tái lập độc lập từ nguồn công khai, tác giả đã chủ động rút các dự án này ra. |
+| **Cấu trúc CSDL (ERD Schema)** | Gồm 6 bảng quan hệ (`Issue`, `Change_Log`, `Project`...). | **Giữ nguyên 100% không đổi**, không ảnh hưởng đến bất kỳ truy vấn hay thuật toán nào. |
+| **Độ phủ benchmark cốt lõi** | Chứa 16 dự án Choetkiertikul và 8 dự án Porru. | **Vẫn giữ nguyên 100% các dự án Choetkiertikul và Porru** (bao gồm cả `Spring XD`, `Mesos`, `Appcelerator`...). |
+| **Link tải & Truy cập** | Bản lưu trữ sơ khởi cũ. | [Link Tải TAWOS v1.1 Chính Thức (Zenodo/UCL)](http://doi.org/10.5522/04/21308124). |
+
+> 💡 **Kết luận lựa chọn phiên bản:** Nhóm 3 chọn sử dụng **TAWOS v1.1** vì đây là phiên bản chuẩn hóa, hợp pháp, đảm bảo tính liêm chính khoa học và có thể kiểm chứng độc lập trên toàn thế giới mà không vi phạm bản quyền dữ liệu.
+
+---
+
+## 🌐 4. Bối Cảnh Dữ Liệu (Operational Context)
 
 * **Hệ thống theo dõi lỗi (Issue Tracking System):** Nền tảng **Jira Issue Tracker** của các tổ chức phát triển phần mềm Agile.
-* **Kho lưu trữ Jira (12 Repositories):** Apache Software Foundation, Spring Framework, Red Hat JBoss, Atlassian Ecosystem, DuraSpace, Appcelerator, Moodle, SonarSource, v.v.
+* **Kho lưu trữ Jira (12 Repositories):** Apache Software Foundation, Spring Framework, Red Hat JBoss, Atlassian Ecosystem, DuraSpace, Appcelerator, Moodle, SonarSource, Hyperledger, MongoDB, DNN Tracker, Lsstcorp.
 * **Số lượng dự án (Projects):** **39 dự án** mã nguồn mở với thời gian hoạt động kéo dài nhiều năm (Spring XD, Apache Mesos, DuraCloud, Mule, Titanium...).
 * **Phân loại tác vụ (Issue Types):** User Story, Bug, New Feature, Improvement, Task, Sub-task.
 * **Khoảng thời gian ghi nhận (Time Span):** Dữ liệu lịch sử trải dài từ **năm 2002 đến cuối năm 2021** (~20 năm lịch sử commit và thay đổi Jira).
 
 ---
 
-## 🗄️ 4. Cấu Trúc Quan Hệ & Sơ Đồ Cơ Sở Dữ Liệu (Schema & Structure)
+## 🗄️ 5. Cấu Trúc Quan Hệ & Sơ Đồ Cơ Sở Dữ Liệu (Schema & Structure)
 
 Bộ dữ liệu TAWOS được thiết kế dưới dạng CSDL quan hệ chuẩn (Relational Schema SQLite/MySQL) gồm 6 bảng trung tâm:
 
@@ -118,7 +138,7 @@ erDiagram
 
 ---
 
-## 🎯 5. Nhãn Mục Tiêu (Ground Truth: Story Point)
+## 🎯 6. Nhãn Mục Tiêu (Ground Truth: Story Point)
 
 * **Bản chất nhãn:** Giá trị Story Point (SP) số thực hoặc số nguyên dương (vd: 1, 2, 3, 5, 8, 13...).
 * **Vấn đề Initial SP vs. Current/Final SP:**
@@ -130,7 +150,7 @@ erDiagram
 
 ---
 
-## ⏳ 6. Tính Sẵn Có Theo Thời Gian (Temporal Availability & Leakage Control)
+## ⏳ 7. Tính Sẵn Có Theo Thời Gian (Temporal Availability & Leakage Control)
 
 | Trường dữ liệu (Field Name) | Thời điểm sinh ra (Emission Time) | Khả dụng tại `SP_Estimation_Date`? | Có thể phục dựng từ `CHANGE_LOG`? | Xử lý trong Pipeline chống rò rỉ |
 | :--- | :--- | :---: | :---: | :--- |
@@ -145,7 +165,7 @@ erDiagram
 
 ---
 
-## ⚠️ 7. Các Rủi Ro Chất Lượng Dữ Liệu (Data-Quality Risks Audit)
+## ⚠️ 8. Các Rủi Ro Chất Lượng Dữ Liệu (Data-Quality Risks Audit)
 
 1. **Thiếu nhãn Story Point (Missing SP Rate):**
    * **Thực trạng:** 395.221 / 458.232 issues (`86,25%`) không có Story Point.
@@ -162,24 +182,46 @@ erDiagram
 
 ---
 
-## ⚖️ 8. Luận Chứng: Vì Sao Chọn TAWOS Thay Vì Bộ Dữ Liệu Choetkiertikul?
+## ⚖️ 9. Luận Chứng: Vì Sao Chọn TAWOS Thay Vì Bộ Dữ Liệu Choetkiertikul?
 
 Đây là câu hỏi phương pháp luận cốt lõi mà mọi phản biện (Reviewer) của **EASE / ICSE** đều sẽ đặt ra: *"Tại sao không dùng trực tiếp bộ dữ liệu 16 dự án nổi tiếng của Choetkiertikul et al. (2019) đã được GPT2SP sử dụng?"*. 
 
 Dưới đây là bảng đối chiếu trực diện chứng minh việc lựa chọn TAWOS là **bắt buộc và duy nhất đúng**:
 
-| Tiêu chí so sánh | ❌ Bộ dữ liệu Choetkiertikul et al. (2019) | ✅ Bộ dữ liệu TAWOS v1.1 (Nhóm 3 lựa chọn) |
+| Tiêu chí so sánh | ❌ [Bộ dữ liệu Choetkiertikul et al. (2019)](https://github.com/morakotch/datasets) | ✅ [Bộ dữ liệu TAWOS v1.1](https://github.com/SOLAR-group/TAWOS) (Nhóm 3 lựa chọn) |
 | :--- | :--- | :--- |
-| **Bản chất định dạng** | Các file **CSV phẳng, tĩnh (Flat static CSVs)**. | **CSDL quan hệ hoàn chỉnh (Relational Database)** với đầy đủ khóa ngoại. |
+| **Bản chất định dạng** | Các file **CSV phẳng, tĩnh (Flat static CSVs)**. Xem tại [morakotch/datasets](https://github.com/morakotch/datasets). | **CSDL quan hệ hoàn chỉnh (Relational Database)** với đầy đủ khóa ngoại. Xem tại [SOLAR-group/TAWOS](https://github.com/SOLAR-group/TAWOS). |
 | **Quy mô dữ liệu** | 16 dự án (~23.313 issues có SP). | **39 dự án** (458.232 issues, bao hàm toàn bộ 16 dự án Choetkiertikul). |
 | **Bảng lịch sử chỉnh sửa (`CHANGE_LOG`)** | ❌ **HOÀN TOÀN KHÔNG CÓ.** Chỉ ghi nhận 1 dòng text cuối cùng tại thời điểm cào dữ liệu. | ✅ **CÓ ĐẦY ĐỦ VỚI HÀNG TRIỆU DÒNG CHANGELOG.** Ghi nhận từng giây thay đổi của từng trường. |
 | **Khả năng kiểm soát Temporal Leakage** | ❌ **BẤT KHẢ THI.** Không thể biết câu nào được viết trước, câu nào được viết sau buổi họp planning. | ✅ **HOÀN HẢO.** Cho phép tái dựng chính xác trạng thái văn bản tại ngày `SP_Estimation_Date`. |
 | **Lỗi phương pháp luận nghiêm trọng** | ⚠️ **Mắc bẫy Outlier Capping:** Tác giả Choetkiertikul đã cắt tỉa các điểm ngoại lai (90th percentile) **trên cả tập Test**, làm sai số MAE/MdAE giảm ảo nhân tạo (đã bị Tawosi 2022 vạch trần). | ✅ **Bảo toàn dữ liệu tự nhiên:** Giữ nguyên phân phối thực tế của Agile, không can thiệp bóp méo tập kiểm thử. |
-| **Tính tương thích mô hình GPT2SP** | Chạy được mô hình tĩnh. | **Khớp 100%:** Chứa chính xác các dự án Choetkiertikul (Spring XD, Mule...) mà GPT2SP đã thử nghiệm. |
+| **Tính tương thích mô hình GPT2SP** | Chạy được mô hình tĩnh từ file CSV. | **Khớp 100%:** Chứa chính xác các dự án Choetkiertikul (Spring XD, Mule...) mà GPT2SP đã thử nghiệm. |
 
-### 🎯 Kết luận luận chứng:
-> **Bộ dữ liệu Choetkiertikul (2019) chỉ là một "bức ảnh chụp tĩnh" (Final Snapshot) bị rò rỉ dữ liệu và mắc lỗi phương pháp luận.**  
-> Ngược lại, **TAWOS v1.1 là "cuốn băng ghi hình toàn bộ lịch sử"**. Nhóm 3 chọn TAWOS vì đây là bộ dữ liệu **DUY NHẤT** trong ngành Kỹ nghệ Phần mềm hiện nay có lưu bảng `CHANGE_LOG`, cho phép nhóm thực hiện thành công bài toán *Temporal Data Leakage Control*.
+---
+
+## 🔗 10. Danh Mục Liên Kết Toàn Bộ Các Dataset Được Trình Bày (Dataset Directory)
+
+Dưới đây là danh mục tổng hợp liên kết trực tiếp của toàn bộ các tập dữ liệu liên quan được đề cập trong nghiên cứu:
+
+1. 🌟 **TAWOS Dataset v1.1 (Bộ dữ liệu trung tâm của đề tài):**
+   * Kho dữ liệu Zenodo: [https://doi.org/10.5281/zenodo.5828456](https://doi.org/10.5281/zenodo.5828456)
+   * Kho dữ liệu UCL Discovery: [http://doi.org/10.5522/04/21308124](http://doi.org/10.5522/04/21308124)
+   * Mã nguồn GitHub: [https://github.com/SOLAR-group/TAWOS](https://github.com/SOLAR-group/TAWOS)
+   * Gói thực nghiệm Replication Package: [https://github.com/SOLAR-group/AgileEffortEstimation](https://github.com/SOLAR-group/AgileEffortEstimation)
+2. 📚 **Choetkiertikul et al. (2019) Dataset (16 dự án Jira):**
+   * Kho dữ liệu gốc GitHub: [https://github.com/morakotch/datasets](https://github.com/morakotch/datasets)
+   * Kho lưu trữ Mirror trên Hugging Face: [https://huggingface.co/datasets/giseldo/deep-se](https://huggingface.co/datasets/giseldo/deep-se)
+   * Bài báo gốc IEEE TSE: [https://doi.org/10.1109/TSE.2016.2628380](https://doi.org/10.1109/TSE.2016.2628380)
+3. 📦 **Porru et al. (2016) Dataset (8 dự án Jira):**
+   * Kho dữ liệu GitHub: [https://github.com/porru/promise2016](https://github.com/porru/promise2016)
+   * Bài báo gốc ACM PROMISE: [https://doi.org/10.1145/2972958.2972964](https://doi.org/10.1145/2972958.2972964)
+4. 🤖 **GPT2SP (Fu & Tantithamthavorn, 2023) Artifacts:**
+   * Mã nguồn & Dữ liệu thực nghiệm GitHub: [https://github.com/awsm-research/gpt2sp](https://github.com/awsm-research/gpt2sp)
+   * Checkpoint Pre-trained Model trên Hugging Face: [https://huggingface.co/MickyMike/0-GPT2SP-springxd](https://huggingface.co/MickyMike/0-GPT2SP-springxd)
+   * Bài báo công bố IEEE TSE: [https://doi.org/10.1109/TSE.2022.3158252](https://doi.org/10.1109/TSE.2022.3158252)
+5. ⚖️ **Comparative Learning (Khan et al., 2025) Artifacts:**
+   * Mã nguồn & Dữ liệu cặp GitHub: [https://github.com/hil-se/EfficientSPEComparativeLearning](https://github.com/hil-se/EfficientSPEComparativeLearning)
+   * Bản thảo Tiền xuất bản arXiv: [https://arxiv.org/abs/2507.14642](https://arxiv.org/abs/2507.14642)
 
 ---
 © 2026 **Nhóm 3 — Khoa Hệ thống Thông tin, Trường ĐH Công nghệ Thông tin, ĐHQG-HCM.**
