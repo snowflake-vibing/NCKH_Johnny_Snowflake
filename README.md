@@ -130,6 +130,7 @@ flowchart LR
 ├── data/                     # Dữ liệu nghiên cứu theo các tầng xử lý
 │   ├── raw/                  # Dữ liệu thô (CSDL TAWOS gốc, bản trích xuất Jira thô)
 │   └── clean/                # Dữ liệu sau tiền xử lý & kiểm soát rò rỉ (Reconstructed Snapshot)
+│       └── springxd_cleaned_dataset.csv # Bộ dữ liệu sạch không rò rỉ của dự án Spring XD
 ├── docs/                     # Toàn bộ tài liệu nghiên cứu khoa học của đề tài
 │   ├── articles/             # Quản lý bài báo khoa học & số hóa tri thức
 │   │   ├── paper-information/# Phân tích chi tiết từng bài báo (kết hợp ma trận 21 trường)
@@ -144,6 +145,9 @@ flowchart LR
 │   ├── dataset-card/         # Thẻ dữ liệu (Dataset Card) phân tích nguồn gốc & rủi ro chất lượng TAWOS
 │   │   └── dataset_card_tawos.md # Báo cáo chi tiết định danh, ERD, dấu vết thời gian & so sánh
 │   ├── draft/                # Thư mục lưu trữ các bản thảo nghiên cứu (Work-in-progress drafts)
+│   │   ├── EDA_SpringXD_Leakage_Free.ipynb   # Notebook EDA & xuất cleaned_dataset không rò rỉ cho Spring XD
+│   │   ├── eda_springxd_leakage_insights.md  # Báo cáo chuyên sâu EDA & kiểm toán rò rỉ trên Spring XD
+│   │   └── springxd_cleaned_dataset.csv      # Bộ dữ liệu sạch không rò rỉ của dự án Spring XD (3,542 dòng)
 │   ├── glossary/             # Thư mục bảng thuật ngữ nội bộ (được bỏ qua khi push git)
 │   ├── reproduction-candidate/ # Ứng viên tái lập & hệ thống chấm điểm định lượng
 │   │   ├── candidate_fu_2023_gpt2sp.md
@@ -153,6 +157,7 @@ flowchart LR
 │   ├── notes/                # Biên bản họp nhóm & ghi chú định hướng
 │   └── reports/              # Báo cáo đề tài NCKH chính thức
 ├── notebooks/                # Jupyter Notebooks phục vụ phân tích & thực nghiệm
+│   └── EDA_TAWOS.ipynb       # EDA tổng quan trên toàn bộ CSDL TAWOS v1.1
 ├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn, model weights & glossary
 ├── AGENTS.md                 # Quy tắc và hướng dẫn làm việc cho AI Agent
 └── README.md                 # Cổng thông tin chính & tổng quan đề tài
