@@ -10,7 +10,7 @@
 
 Dưới đây là bảng đánh giá định lượng 100 điểm giữa 3 ứng viên dữ liệu liên quan trực tiếp đến đề tài:
 
-| Tiêu chí đánh giá (Trọng số) | ❌ [Choetkiertikul et al. (2019)](https://github.com/morakotch/datasets) | ⚠️ [TAWOS Version 1.0](https://doi.org/10.1145/3524842.3528029) | 🏆 [TAWOS Version 1.1](https://github.com/SOLAR-group/TAWOS) *(Nhóm 3 chọn)* | Cơ sở lý giải & Đánh giá khoa học |
+| Tiêu chí đánh giá (Trọng số) | ❌ [Choetkiertikul et al. (2019)](https://github.com/morakotch/datasets/tree/master/storypoint/IEEE%20TSE2018/dataset) | ⚠️ [TAWOS Version 1.0](https://doi.org/10.1145/3524842.3528029) | 🏆 [TAWOS Version 1.1](https://github.com/SOLAR-group/TAWOS) *(Nhóm 3 chọn)* | Cơ sở lý giải & Đánh giá khoa học |
 | :--- | :---: | :---: | :---: | :--- |
 | **1. Lịch sử chỉnh sửa & Chống rò rỉ (`CHANGE_LOG`)** *(25đ)* | **0 / 25** | **25 / 25** | **25 / 25** | Choetkiertikul chỉ là file CSV phẳng tĩnh, **hoàn toàn không có CHANGELOG** $\rightarrow$ Bất khả thi để chống rò rỉ thời gian. Cả 2 bản TAWOS đều có bảng `CHANGE_LOG` chi tiết từng giây. |
 | **2. Bản quyền, Tính mở & Tái lập (Open Science)** *(20đ)* | **10 / 20** | **12 / 20** | **20 / 20** | TAWOS v1.1 loại bỏ 5 dự án Talendforge đã bị đóng khỏi internet, cấp phép **Apache 2.0 / ODC-By**, có DOI Zenodo/UCL vĩnh viễn. v1.0 dính 5 dự án không còn mở; Choetkiertikul không có license chuẩn hóa. |
@@ -160,7 +160,8 @@ Dưới đây là danh sách chi tiết **16 dự án mã nguồn mở chuẩn m
 
 > 🎯 **Chiến lược thực thi thực nghiệm:**  
 > • **Trọng tâm mũi nhọn:** Tái lập sâu và toàn diện trên **`Spring XD`** (3.526 issues) để đập tan con số MAE = 0.96 của GPT2SP.  
-> • **Mở rộng tổng quát:** Đánh giá trên 15 dự án còn lại nhằm chứng minh hiện tượng suy giảm hiệu năng do rò rỉ dữ liệu là **lỗ hổng mang tính hệ thống trên toàn bộ các dự án phần mềm**, chứ không phải sự cố cá biệt của riêng một dự án.
+> • **Mở rộng tổng quát:** Đánh giá trên 15 dự án còn lại nhằm chứng minh hiện tượng suy giảm hiệu năng do rò rỉ dữ liệu là **lỗ hổng mang tính hệ thống trên toàn bộ các dự án phần mềm**, chứ không phải sự cố cá biệt của riêng một dự án.  
+> • 📂 **Vị trí 16 file CSV gốc của Choetkiertikul trên GitHub:** Nằm trực tiếp tại thư mục [`morakotch/datasets/tree/master/storypoint/IEEE TSE2018/dataset`](https://github.com/morakotch/datasets/tree/master/storypoint/IEEE%20TSE2018/dataset) (gồm `springxd.csv`, `mesos.csv`, `mule.csv`, `duracloud.csv`...).
 
 ---
 
@@ -199,7 +200,7 @@ Dưới đây là danh sách chi tiết **16 dự án mã nguồn mở chuẩn m
 ## 🔗 8. Danh Mục Toàn Bộ Dataset Được Trình Bày
 
 1. 🌟 **TAWOS Dataset v1.1:** [Zenodo DOI: 10.5281/zenodo.5828456](https://doi.org/10.5281/zenodo.5828456) \| [GitHub Repository](https://github.com/SOLAR-group/TAWOS) \| [Replication Package](https://github.com/SOLAR-group/AgileEffortEstimation).
-2. 📚 **Choetkiertikul et al. (2019) Dataset:** [GitHub Repository](https://github.com/morakotch/datasets) \| [Mirror Hugging Face](https://huggingface.co/datasets/giseldo/deep-se) \| [Paper IEEE TSE](https://doi.org/10.1109/TSE.2016.2628380).
+2. 📚 **Choetkiertikul et al. (2019) Dataset:** [16 file CSV gốc (storypoint/IEEE TSE2018/dataset)](https://github.com/morakotch/datasets/tree/master/storypoint/IEEE%20TSE2018/dataset) \| [Kho GitHub morakotch/datasets](https://github.com/morakotch/datasets) \| [Mirror Hugging Face](https://huggingface.co/datasets/giseldo/deep-se) \| [Paper IEEE TSE](https://doi.org/10.1109/TSE.2016.2628380).
 3. 📦 **Porru et al. (2016) Dataset:** [GitHub Repository](https://github.com/porru/promise2016) \| [Paper PROMISE](https://doi.org/10.1145/2972958.2972964).
 4. 🤖 **GPT2SP (Fu et al., 2023) Artifacts:** [GitHub Repository](https://github.com/awsm-research/gpt2sp) \| [Checkpoint Hugging Face](https://huggingface.co/MickyMike/0-GPT2SP-springxd) \| [Paper IEEE TSE](https://doi.org/10.1109/TSE.2022.3158252).
 5. ⚖️ **Comparative Learning (Khan et al., 2025) Artifacts:** [GitHub Repository](https://github.com/hil-se/EfficientSPEComparativeLearning) \| [Preprint arXiv](https://arxiv.org/abs/2507.14642).
