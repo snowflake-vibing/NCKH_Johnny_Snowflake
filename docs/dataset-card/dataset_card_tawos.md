@@ -139,29 +139,30 @@ flowchart TD
 
 Dưới đây là danh sách chi tiết **16 dự án mã nguồn mở chuẩn mực** được nhóm trích xuất trực tiếp từ CSDL TAWOS v1.1:
 
-| STT | Jira Repository | Tên dự án (Project Name) | Mã dự án (Project Key) | Tên file CSV tương ứng | Vai trò & Mục tiêu kiểm chứng trong Đề tài |
-| :-: | :--- | :--- | :---: | :--- | :--- |
-| **1** | **Spring** | **Spring XD** | **`XD`** | `springxd.csv` | 🥇 **Dự án mục tiêu tái lập số 1:** Có 3.526 issues, tác giả GPT2SP công bố sẵn checkpoint Hugging Face và chia tập 60/20/20. |
-| **2** | **Apache** | Apache Mesos | **`MESOS`** | `mesos.csv` | 🥈 **Dự án đối chứng lớn:** Hệ thống quản lý cluster phân tán, quy mô hàng nghìn issues có chấm Story Point. |
-| **3** | **Apache** | Apache Usergrid | **`USERGRID`** | `usergrid.csv` | Backend-as-a-Service, tập dữ liệu có độ biến thiên Story Point cao. |
-| **4** | **Lyrasis** | Lyrasis DuraCloud | **`DURACLOUD`** | `duracloud.csv` | Nền tảng lưu trữ đám mây, benchmark kinh điển từ thời Choetkiertikul 2019. |
-| **5** | **Mulesoft** | Mule ESB Core | **`MULE`** | `mule.csv` | Nền tảng tích hợp doanh nghiệp, số lượng task kỹ thuật và bug dồi dào. |
-| **6** | **Mulesoft** | Mule APIkit | **`APIKIT`** | `mulestudio.csv` | Công cụ xây dựng REST API, chu kỳ release nhanh theo đúng chuẩn Agile. |
-| **7** | **Appcelerator** | The Titanium SDK | **`TIMOB`** | `titanium.csv` | Bộ SDK phát triển ứng dụng di động đa nền tảng, text mô tả issue rất chi tiết. |
-| **8** | **Appcelerator** | Titanium Mobile Platform | **`TIDOC`** | `titanium.csv` | Tài liệu và nền tảng di động, nhiều issue dạng User Story. |
-| **9** | **Appcelerator** | Appcelerator Studio | **`TISTUD`** | `appceleratorstudio.csv` | Môi trường IDE phát triển phần mềm, nhiều task giao diện người dùng. |
-| **10** | **Appcelerator** | Command-Line Interface | **`CLI`** | `aptanastudio.csv` | Công cụ dòng lệnh của Titanium, task ngắn gọn, súc tích. |
-| **11** | **Appcelerator** | Alloy Framework | **`ALOY`** | `appceleratorstudio.csv` | MVC Framework cho Titanium, phân phối Story Point rất chuẩn mực. |
-| **12** | **Moodle** | Moodle LMS Core | **`MDL`** | `moodle.csv` | Hệ thống quản trị học tập số 1 thế giới, kho issue cực kỳ phong phú. |
-| **13** | **Lsstcorp** | Data Management System | **`DM`** | `datamanagement.csv` | Hệ thống xử lý dữ liệu thiên văn quy mô lớn, nhiều task thuật toán phức tạp. |
-| **14** | **Atlassian** | Bamboo CI/CD | **`BAM`** | `bamboo.csv` | Hệ thống Continuous Integration của Atlassian, mô hình Agile chuẩn mực. |
-| **15** | **Atlassian** | Clover Code Coverage | **`CLOV`** | `clover.csv` | Công cụ đo lường độ phủ mã nguồn, dự án ổn định qua nhiều năm. |
-| **16** | **Atlassian** | Jira Software Server | **`JSWSERVER`** | `jirasoftware.csv` | Chính nền tảng Jira, đại diện cho quy trình quản trị công việc Agile thực thụ. |
+| STT | Jira Repository | Tên dự án trong bài báo (Project Name) | Tên file CSV tương ứng (Choetkiertikul Repo) | Số lượng Issue (#Issues) | Vai trò & Mục tiêu kiểm chứng trong Đề tài |
+| :-: | :--- | :--- | :--- | :-: | :--- |
+| **1** | **Spring** | **Spring XD** | [`springxd.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/springxd.csv) | **3.526** | 🥇 **Mục tiêu tái lập số 1:** Có 3.526 issues, tác giả GPT2SP công bố sẵn checkpoint Hugging Face và chia tập 60/20/20. |
+| **2** | **Apache** | Mesos | [`mesos.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/mesos.csv) | 1.680 | 🥈 **Dự án đối chứng lớn:** Hệ thống quản lý cluster phân tán, quy mô hàng nghìn issues có chấm Story Point. |
+| **3** | **Apache** | Usergrid | [`usergrid.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/usergrid.csv) | 482 | Backend-as-a-Service, tập dữ liệu có độ biến thiên Story Point cao. |
+| **4** | **Appcelerator** | Appcelerator Studio | [`appceleratorstudio.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/appceleratorstudio.csv) | 2.919 | Môi trường IDE phát triển phần mềm, nhiều task giao diện người dùng. |
+| **5** | **Appcelerator** | Aptana Studio | [`aptanastudio.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/aptanastudio.csv) | 829 | IDE mã nguồn mở cho web development (HTML5/JS/Python/Ruby). |
+| **6** | **Appcelerator** | Titanium SDK / CLI | [`titanium.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/titanium.csv) | 2.251 | Bộ SDK & CLI phát triển ứng dụng di động đa nền tảng, text mô tả issue rất chi tiết. |
+| **7** | **Dura Space** | DuraCloud | [`duracloud.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/duracloud.csv) | 666 | Nền tảng lưu trữ đám mây, benchmark kinh điển từ thời Choetkiertikul 2019. |
+| **8** | **Atlassian** | Bamboo | [`bamboo.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/bamboo.csv) | 521 | Hệ thống Continuous Integration của Atlassian, mô hình Agile chuẩn mực. |
+| **9** | **Atlassian** | Clover | [`clover.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/clover.csv) | 384 | Công cụ đo lường độ phủ mã nguồn, dự án ổn định qua nhiều năm. |
+| **10** | **Atlassian** | JIRA Software | [`jirasoftware.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/jirasoftware.csv) | 352 | Chính nền tảng Jira, đại diện cho quy trình quản trị công việc Agile thực thụ. |
+| **11** | **Moodle** | Moodle | [`moodle.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/moodle.csv) | 1.166 | Hệ thống quản trị học tập số 1 thế giới, kho issue cực kỳ phong phú. |
+| **12** | **Lsstcorp** | Data Management | [`datamanagement.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/datamanagement.csv) | 4.667 | Hệ thống xử lý dữ liệu thiên văn quy mô lớn, nhiều task thuật toán phức tạp. |
+| **13** | **Mulesoft** | Mule | [`mule.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/mule.csv) | 889 | Nền tảng tích hợp doanh nghiệp ESB, số lượng task kỹ thuật và bug dồi dào. |
+| **14** | **Mulesoft** | Mule Studio | [`mulestudio.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/mulestudio.csv) | 732 | Công cụ thiết kế trực quan cho Mule ESB, chu kỳ release theo Agile. |
+| **15** | **Talendforge** | Talend Data Quality | [`talenddataquality.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/talenddataquality.csv) | 1.381 | Nền tảng phân tích và chuẩn hóa chất lượng dữ liệu doanh nghiệp. |
+| **16** | **Talendforge** | Talend ESB | [`talendesb.csv`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/dataset/talendesb.csv) | 868 | Enterprise Service Bus đa năng của hệ sinh thái Talend. |
+| **TỔNG** | **8 Repositories** | **16 Dự án benchmark** | **16 file CSV** | **23.313** | **Tổng quy mô benchmark chuẩn của Choetkiertikul et al. và GPT2SP** |
 
 > 🎯 **Chiến lược thực thi thực nghiệm:**  
 > • **Trọng tâm mũi nhọn:** Tái lập sâu và toàn diện trên **`Spring XD`** (3.526 issues) để đập tan con số MAE = 0.96 của GPT2SP.  
 > • **Mở rộng tổng quát:** Đánh giá trên 15 dự án còn lại nhằm chứng minh hiện tượng suy giảm hiệu năng do rò rỉ dữ liệu là **lỗ hổng mang tính hệ thống trên toàn bộ các dự án phần mềm**, chứ không phải sự cố cá biệt của riêng một dự án.  
-> • 📂 **Vị trí 16 file CSV gốc của Choetkiertikul trên GitHub:** Nằm trực tiếp tại thư mục [`morakotch/datasets/tree/master/storypoint/IEEE TSE2018/dataset`](https://github.com/morakotch/datasets/tree/master/storypoint/IEEE%20TSE2018/dataset) (gồm `springxd.csv`, `mesos.csv`, `mule.csv`, `duracloud.csv`...).
+> • 📂 **Vị trí 16 file CSV gốc của Choetkiertikul trên GitHub:** Nằm trực tiếp tại thư mục [`morakotch/datasets/tree/master/storypoint/IEEE TSE2018/dataset`](https://github.com/morakotch/datasets/tree/master/storypoint/IEEE%20TSE2018/dataset) (gồm đúng 16 file CSV: `springxd.csv`, `mesos.csv`, `talenddataquality.csv`, `talendesb.csv`, `titanium.csv`, `appceleratorstudio.csv`, `aptanastudio.csv`...).
 
 ---
 
