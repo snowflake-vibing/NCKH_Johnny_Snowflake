@@ -141,7 +141,8 @@ flowchart LR
 │   │   │   ├── paper_wijaya_2024_tbe_erm.md
 │   │   │   └── paper_yalciner_2024_sbert_gbt.md
 │   │   ├── *.pdf             # Bản sao file PDF gốc của các bài báo khoa học
-│   │   └── README.md         # Quy trình quản lý & bảng tra cứu bài báo
+│   ├── dataset-card/         # Thẻ dữ liệu (Dataset Card) phân tích nguồn gốc & rủi ro chất lượng TAWOS
+│   │   └── dataset_card_tawos.md # Báo cáo chi tiết định danh, ERD, dấu vết thời gian & so sánh
 │   ├── draft/                # Thư mục lưu trữ các bản thảo nghiên cứu (Work-in-progress drafts)
 │   ├── glossary/             # Thư mục bảng thuật ngữ nội bộ (được bỏ qua khi push git)
 │   ├── reproduction-candidate/ # Ứng viên tái lập & hệ thống chấm điểm định lượng
