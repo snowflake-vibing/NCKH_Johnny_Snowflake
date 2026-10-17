@@ -142,9 +142,7 @@ flowchart LR
 │   │   │   └── paper_yalciner_2024_sbert_gbt.md
 │   │   ├── *.pdf             # Bản sao file PDF gốc của các bài báo khoa học
 │   │   └── README.md         # Quy trình quản lý & bảng tra cứu bài báo
-│   ├── draft/                # Bản thảo định hướng, đánh giá hội nghị & lộ trình thực hiện
-│   │   ├── draft_conference_evaluation_ease_wsese.md
-│   │   └── timeline.md       # Kế hoạch chi tiết, thời gian, mức độ thử thách & xác suất hoàn thành
+│   ├── draft/                # Thư mục lưu trữ các bản thảo nghiên cứu (Work-in-progress drafts)
 │   ├── glossary/             # Thư mục bảng thuật ngữ nội bộ (được bỏ qua khi push git)
 │   ├── reproduction-candidate/ # Ứng viên tái lập & hệ thống chấm điểm định lượng
 │   │   ├── candidate_fu_2023_gpt2sp.md
