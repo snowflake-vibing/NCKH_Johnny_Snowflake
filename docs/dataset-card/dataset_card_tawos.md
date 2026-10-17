@@ -139,24 +139,24 @@ flowchart TD
 
 Dưới đây là danh sách chi tiết **16 dự án mã nguồn mở chuẩn mực** được nhóm trích xuất trực tiếp từ CSDL TAWOS v1.1:
 
-| STT | Jira Repository | Tên dự án (Project Name) | Mã dự án (Project Key) | Vai trò & Mục tiêu kiểm chứng trong Đề tài |
-| :-: | :--- | :--- | :---: | :--- |
-| **1** | **Spring** | **Spring XD** | **`XD`** | 🥇 **Dự án mục tiêu tái lập số 1:** Có 3.526 issues, tác giả GPT2SP công bố sẵn checkpoint Hugging Face và chia tập 60/20/20. |
-| **2** | **Apache** | Apache Mesos | **`MESOS`** | 🥈 **Dự án đối chứng lớn:** Hệ thống quản lý cluster phân tán, quy mô hàng nghìn issues có chấm Story Point. |
-| **3** | **Apache** | Apache Usergrid | **`USERGRID`** | Backend-as-a-Service, tập dữ liệu có độ biến thiên Story Point cao. |
-| **4** | **Lyrasis** | Lyrasis DuraCloud | **`DURACLOUD`** | Nền tảng lưu trữ đám mây, benchmark kinh điển từ thời Choetkiertikul 2019. |
-| **5** | **Mulesoft** | Mule ESB Core | **`MULE`** | Nền tảng tích hợp doanh nghiệp, số lượng task kỹ thuật và bug dồi dào. |
-| **6** | **Mulesoft** | Mule APIkit | **`APIKIT`** | Công cụ xây dựng REST API, chu kỳ release nhanh theo đúng chuẩn Agile. |
-| **7** | **Appcelerator** | The Titanium SDK | **`TIMOB`** | Bộ SDK phát triển ứng dụng di động đa nền tảng, text mô tả issue rất chi tiết. |
-| **8** | **Appcelerator** | Titanium Mobile Platform | **`TIDOC`** | Tài liệu và nền tảng di động, nhiều issue dạng User Story. |
-| **9** | **Appcelerator** | Appcelerator Studio | **`TISTUD`** | Môi trường IDE phát triển phần mềm, nhiều task giao diện người dùng. |
-| **10** | **Appcelerator** | Command-Line Interface | **`CLI`** | Công cụ dòng lệnh của Titanium, task ngắn gọn, súc tích. |
-| **11** | **Appcelerator** | Alloy Framework | **`ALOY`** | MVC Framework cho Titanium, phân phối Story Point rất chuẩn mực. |
-| **12** | **Moodle** | Moodle LMS Core | **`MDL`** | Hệ thống quản trị học tập số 1 thế giới, kho issue cực kỳ phong phú. |
-| **13** | **Lsstcorp** | Data Management System | **`DM`** | Hệ thống xử lý dữ liệu thiên văn quy mô lớn, nhiều task thuật toán phức tạp. |
-| **14** | **Atlassian** | Bamboo CI/CD | **`BAM`** | Hệ thống Continuous Integration của Atlassian, mô hình Agile chuẩn mực. |
-| **15** | **Atlassian** | Clover Code Coverage | **`CLOV`** | Công cụ đo lường độ phủ mã nguồn, dự án ổn định qua nhiều năm. |
-| **16** | **Atlassian** | Jira Software Server | **`JSWSERVER`** | Chính nền tảng Jira, đại diện cho quy trình quản trị công việc Agile thực thụ. |
+| STT | Jira Repository | Tên dự án (Project Name) | Mã dự án (Project Key) | Tên file CSV tương ứng | Vai trò & Mục tiêu kiểm chứng trong Đề tài |
+| :-: | :--- | :--- | :---: | :--- | :--- |
+| **1** | **Spring** | **Spring XD** | **`XD`** | `springxd.csv` | 🥇 **Dự án mục tiêu tái lập số 1:** Có 3.526 issues, tác giả GPT2SP công bố sẵn checkpoint Hugging Face và chia tập 60/20/20. |
+| **2** | **Apache** | Apache Mesos | **`MESOS`** | `mesos.csv` | 🥈 **Dự án đối chứng lớn:** Hệ thống quản lý cluster phân tán, quy mô hàng nghìn issues có chấm Story Point. |
+| **3** | **Apache** | Apache Usergrid | **`USERGRID`** | `usergrid.csv` | Backend-as-a-Service, tập dữ liệu có độ biến thiên Story Point cao. |
+| **4** | **Lyrasis** | Lyrasis DuraCloud | **`DURACLOUD`** | `duracloud.csv` | Nền tảng lưu trữ đám mây, benchmark kinh điển từ thời Choetkiertikul 2019. |
+| **5** | **Mulesoft** | Mule ESB Core | **`MULE`** | `mule.csv` | Nền tảng tích hợp doanh nghiệp, số lượng task kỹ thuật và bug dồi dào. |
+| **6** | **Mulesoft** | Mule APIkit | **`APIKIT`** | `mulestudio.csv` | Công cụ xây dựng REST API, chu kỳ release nhanh theo đúng chuẩn Agile. |
+| **7** | **Appcelerator** | The Titanium SDK | **`TIMOB`** | `titanium.csv` | Bộ SDK phát triển ứng dụng di động đa nền tảng, text mô tả issue rất chi tiết. |
+| **8** | **Appcelerator** | Titanium Mobile Platform | **`TIDOC`** | `titanium.csv` | Tài liệu và nền tảng di động, nhiều issue dạng User Story. |
+| **9** | **Appcelerator** | Appcelerator Studio | **`TISTUD`** | `appceleratorstudio.csv` | Môi trường IDE phát triển phần mềm, nhiều task giao diện người dùng. |
+| **10** | **Appcelerator** | Command-Line Interface | **`CLI`** | `aptanastudio.csv` | Công cụ dòng lệnh của Titanium, task ngắn gọn, súc tích. |
+| **11** | **Appcelerator** | Alloy Framework | **`ALOY`** | `appceleratorstudio.csv` | MVC Framework cho Titanium, phân phối Story Point rất chuẩn mực. |
+| **12** | **Moodle** | Moodle LMS Core | **`MDL`** | `moodle.csv` | Hệ thống quản trị học tập số 1 thế giới, kho issue cực kỳ phong phú. |
+| **13** | **Lsstcorp** | Data Management System | **`DM`** | `datamanagement.csv` | Hệ thống xử lý dữ liệu thiên văn quy mô lớn, nhiều task thuật toán phức tạp. |
+| **14** | **Atlassian** | Bamboo CI/CD | **`BAM`** | `bamboo.csv` | Hệ thống Continuous Integration của Atlassian, mô hình Agile chuẩn mực. |
+| **15** | **Atlassian** | Clover Code Coverage | **`CLOV`** | `clover.csv` | Công cụ đo lường độ phủ mã nguồn, dự án ổn định qua nhiều năm. |
+| **16** | **Atlassian** | Jira Software Server | **`JSWSERVER`** | `jirasoftware.csv` | Chính nền tảng Jira, đại diện cho quy trình quản trị công việc Agile thực thụ. |
 
 > 🎯 **Chiến lược thực thi thực nghiệm:**  
 > • **Trọng tâm mũi nhọn:** Tái lập sâu và toàn diện trên **`Spring XD`** (3.526 issues) để đập tan con số MAE = 0.96 của GPT2SP.  
