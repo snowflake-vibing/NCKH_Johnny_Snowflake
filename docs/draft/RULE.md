@@ -19,12 +19,17 @@ Khi phân tích bất kỳ dự án mới nào từ CSDL TAWOS v1.1, bộ tài l
 - **Sai lầm cần tránh:** Đưa cả cột thống kê của các công việc không có điểm (`Story_Point = 0` hoặc `NULL`) vào chung bảng phân tích ở Phần 2 gây loãng số liệu.
 - **Quy tắc bắt buộc:** Ngay từ cuối Phần 1, lọc cô lập tập công việc có `Story_Point > 0` (`N` hợp lệ). Bước sang Phần 2, **100% các bảng thống kê chỉ tính trên tập `N` công việc có Story Point này**.
 
-### Quy tắc A3 — Tuyệt đối không trộn dữ liệu đã làm sạch (`Clean_*`) vào Phần 2
-- **Sai lầm cần tránh:** Đưa các cột mới tạo sau khi làm sạch (`Clean_Type`, `Clean_Priority`, `Initial_Story_Point`, `Has_Clean_Description`) vào ngay các bảng của Phần 2 trong khi đến Phần 3 mới giải thích điểm bất thường và cách xử lý.
+### Quy tắc A3 — Bắt buộc có Sơ đồ ERD ở đầu Phần 2 và tuyệt đối không trộn dữ liệu đã làm sạch (`Clean_*`) vào Phần 2
+- **Sai lầm cần tránh:**
+  1. Đưa các cột mới tạo sau khi làm sạch (`Clean_Type`, `Clean_Priority`, `Initial_Story_Point`, `Has_Clean_Description`) vào ngay các bảng của Phần 2 trong khi đến Phần 3 mới giải thích điểm bất thường và cách xử lý.
+  2. Thống kê `Component` và `Change_Log.Field` mà không có sơ đồ ERD dẫn tới người đọc không hiểu tại sao `Component` không nằm trong 30 cột của `Issue` và tại sao `Field` lại chứa tên của nhiều thuộc tính khác.
 - **Quy tắc bắt buộc:**
+  - **Mục 1 của Phần 2** luôn là **Sơ đồ Quan hệ Thực thể (`erDiagram` Mermaid)** biểu diễn rõ 4 bảng phục vụ phân tích: bảng trung tâm `ISSUE` (30 cột), bảng lịch sử `CHANGE_LOG` (9 cột, nối `1-N`), và cặp bảng phân hệ `ISSUE_COMPONENT` + `COMPONENT` (nối `N-N`).
+  - Giải thích rõ ngay dưới ERD và tại mục thống kê:
+    - **`Component`** là thuộc tính đa giá trị (1 Issue có thể gắn nhiều phân hệ kỹ thuật cùng lúc nên tách ra bảng riêng).
+    - **`Change_Log.Field`** là cột lưu **tên của thuộc tính bị chỉnh sửa** (`status`, `description`, `summary`, `Story Points`...), đi cặp với `From_String` (giá trị cũ) và `To_String` (giá trị mới).
   - **Phần 2** chỉ mô tả **100% dữ liệu gốc (Raw Data)** trong CSDL để người đọc hiểu nguyên trạng dữ liệu trước khi can thiệp.
   - Không để cột `Tỷ lệ khuyết (%)` dư thừa trong bảng liệt kê 30 cột của bảng `Issue` (chỉ để `Số dòng có dữ liệu` và `Số dòng bị trống`).
-  - Ghi rõ tiêu đề là *"Danh sách 30 cột thuộc tính của bảng `Issue`"* (không gọi là "bảng dữ liệu thứ 3" để tránh nhầm với một table trong CSDL).
 
 ### Quy tắc A4 — Trình bày Phần 3 theo cấu trúc cặp `1 Điểm bất thường -> 1 Cách giải quyết`
 - **Sai lầm cần tránh:** Tách rời hoàn toàn danh sách các điểm bất thường ở một mục và danh sách các bước làm sạch ở một mục khác khiến người đọc phải tự dò xem bước làm sạch nào giải quyết điểm bất thường nào.
