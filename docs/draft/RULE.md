@@ -8,28 +8,28 @@
 
 Khi phân tích bất kỳ dự án mới nào từ CSDL TAWOS v1.1, bộ tài liệu báo cáo luôn được chia thành **4 phần độc lập theo trình tự thời gian xử lý** và tuân thủ nghiêm ngặt 5 quy tắc sau:
 
-### Quy tắc A1 — Không liệt kê dàn trải các bảng phụ không sử dụng ở Phần 1
-- **Sai lầm cần tránh:** Liệt kê cả 11–12 bảng của CSDL (`Version`, `Fix_Version`, `Affected_Version`, `Repository`...) ở Phần 1 nhưng đến phần ví dụ mẫu chỉ chiếu ra 2 bảng, làm người đọc không biết bảng nào mới là bảng đang dùng.
-- **Quy tắc bắt buộc:** Ở Phần 1 chỉ tập trung giải thích rõ **2 bảng cốt lõi**:
-  1. **Bảng `Issue`:** Lưu trạng thái cuối cùng (*Final Snapshot*) của mỗi công việc (gồm 30 cột).
-  2. **Bảng `Change_Log`:** Lưu lịch sử chỉnh sửa của từng công việc trong bảng `Issue`, nối với nhau qua khóa `Issue.ID = Change_Log.Issue_ID`.
-- Luôn đi kèm **5 dòng dữ liệu mẫu của bảng `Issue`** và **5 dòng lịch sử tương ứng của chính công việc đó trong bảng `Change_Log`**.
+### Quy tắc A1 — Giới thiệu đúng 4 bảng sử dụng và kèm 5 dòng mẫu cho cả 4 bảng ở Phần 1
+- **Sai lầm cần tránh:** Liệt kê dàn trải cả 11–12 bảng của CSDL nhưng chỉ đưa dữ liệu mẫu của 2 bảng, làm người đọc không hình dung được cấu trúc của `Issue_Component` và `Component`.
+- **Quy tắc bắt buộc:** Ở Phần 1 giới thiệu rõ **4 bảng dữ liệu gốc** phục vụ trực tiếp bài toán:
+  1. **Bảng `Issue` (30 cột):** Lưu trạng thái cuối cùng (*Final Snapshot*) của mỗi công việc.
+  2. **Bảng `Change_Log` (10 cột):** Lưu lịch sử chỉnh sửa của từng công việc, nối 1-Nhiều qua `Issue.ID = Change_Log.Issue_ID`.
+  3. **Bảng `Issue_Component` (2 cột):** Bảng cầu nối Nhiều-Nhiều giữa công việc và phân hệ kỹ thuật.
+  4. **Bảng `Component` (5 cột):** Bảng danh mục tên và mô tả các phân hệ kỹ thuật của dự án.
+- Luôn đi kèm **5 dòng dữ liệu mẫu thực tế cho cả 4 bảng** (`Issue`, `Change_Log`, `Issue_Component`, `Component`).
 
 ### Quy tắc A2 — Chỉ phân tích trên tập có nhãn `Story_Point > 0`
 - **Sai lầm cần tránh:** Đưa cả cột thống kê của các công việc không có điểm (`Story_Point = 0` hoặc `NULL`) vào chung bảng phân tích ở Phần 2 gây loãng số liệu.
-- **Quy tắc bắt buộc:** Ngay từ cuối Phần 1, lọc cô lập tập công việc có `Story_Point > 0` (`N` hợp lệ). Bước sang Phần 2, **100% các bảng thống kê chỉ tính trên tập `N` công việc có Story Point này**.
+- **Quy tắc bắt buộc:** Ngay từ Phần 1, lọc cô lập tập công việc có `Story_Point > 0` (`N` hợp lệ). Bước sang Phần 2, **100% các bảng thống kê chỉ tính trên tập `N` công việc có Story Point này**.
 
-### Quy tắc A3 — Bắt buộc có Sơ đồ ERD ở đầu Phần 2 và tuyệt đối không trộn dữ liệu đã làm sạch (`Clean_*`) vào Phần 2
+### Quy tắc A3 — Sơ đồ ERD Tiếng Việt có dấu & Gộp trực tiếp các loại giá trị vào bảng thuộc tính ở Phần 2
 - **Sai lầm cần tránh:**
-  1. Đưa các cột mới tạo sau khi làm sạch (`Clean_Type`, `Clean_Priority`, `Initial_Story_Point`, `Has_Clean_Description`) vào ngay các bảng của Phần 2 trong khi đến Phần 3 mới giải thích điểm bất thường và cách xử lý.
-  2. Thống kê `Component` và `Change_Log.Field` mà không có sơ đồ ERD dẫn tới người đọc không hiểu tại sao `Component` không nằm trong 30 cột của `Issue` và tại sao `Field` lại chứa tên của nhiều thuộc tính khác.
+  1. Viết chú thích ERD không dấu gây khó đọc.
+  2. Tách rời bảng danh sách thuộc tính và các bảng con đếm số lượng từng loại giá trị ở bên dưới làm tài liệu bị chia vụn và lặp lại.
+  3. Trộn các cột đã làm sạch (`Clean_*`, `Initial_Story_Point`) vào Phần 2.
 - **Quy tắc bắt buộc:**
-  - **Mục 1 của Phần 2** luôn là **Sơ đồ Quan hệ Thực thể (`erDiagram` Mermaid)** biểu diễn rõ 4 bảng phục vụ phân tích: bảng trung tâm `ISSUE` (30 cột), bảng lịch sử `CHANGE_LOG` (9 cột, nối `1-N`), và cặp bảng phân hệ `ISSUE_COMPONENT` + `COMPONENT` (nối `N-N`).
-  - Giải thích rõ ngay dưới ERD và tại mục thống kê:
-    - **`Component`** là thuộc tính đa giá trị (1 Issue có thể gắn nhiều phân hệ kỹ thuật cùng lúc nên tách ra bảng riêng).
-    - **`Change_Log.Field`** là cột lưu **tên của thuộc tính bị chỉnh sửa** (`status`, `description`, `summary`, `Story Points`...), đi cặp với `From_String` (giá trị cũ) và `To_String` (giá trị mới).
-  - **Phần 2** chỉ mô tả **100% dữ liệu gốc (Raw Data)** trong CSDL để người đọc hiểu nguyên trạng dữ liệu trước khi can thiệp.
-  - Không để cột `Tỷ lệ khuyết (%)` dư thừa trong bảng liệt kê 30 cột của bảng `Issue` (chỉ để `Số dòng có dữ liệu` và `Số dòng bị trống`).
+  - **Mục 1 của Phần 2:** Vẽ **Sơ đồ Quan hệ Thực thể (`erDiagram` Mermaid)** của cả 4 bảng (`ISSUE`, `CHANGE_LOG`, `ISSUE_COMPONENT`, `COMPONENT`) với chú thích **Tiếng Việt có dấu đầy đủ**.
+  - **Mục 2 của Phần 2:** Lập bảng danh sách đầy đủ các thuộc tính của cả 4 bảng (`Issue` 30 cột, `Change_Log` 10 cột, `Issue_Component` 2 cột, `Component` 5 cột). **Tại mỗi dòng thuộc tính, ghi trực tiếp tất cả các loại giá trị (hoặc miền giá trị) kèm số lượng dòng tương ứng** (ví dụ: ở dòng `Status` ghi luôn `Done (2,940), To Do (578), In Progress (20), In PR (4)`).
+  - **Không tạo thêm phần "Số lượng chi tiết đối với từng loại giá trị" ở bên dưới** và không để cột `Tỷ lệ khuyết (%)`.
 
 ### Quy tắc A4 — Trình bày Phần 3 theo cấu trúc cặp `1 Điểm bất thường -> 1 Cách giải quyết`
 - **Sai lầm cần tránh:** Tách rời hoàn toàn danh sách các điểm bất thường ở một mục và danh sách các bước làm sạch ở một mục khác khiến người đọc phải tự dò xem bước làm sạch nào giải quyết điểm bất thường nào.
