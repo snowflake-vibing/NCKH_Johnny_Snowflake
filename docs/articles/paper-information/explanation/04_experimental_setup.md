@@ -36,10 +36,10 @@ Nhóm tác giả sử dụng bộ dữ liệu chuẩn mực được công bố 
 | 3 | **Appcelerator** | Appcelerator Studio | `TISTUD` | 2.919 | 1 | 40 | 5,64 | 5 | 11,07 | 3,33 |
 | 4 | **Appcelerator** | Aptana Studio | `APSTUD` | 829 | 1 | 40 | 8,02 | 8 | 35,46 | 5,95 |
 | 5 | **Appcelerator** | Titanium SDK / CLI | `TIMOB` | 2.251 | 1 | 34 | 6,32 | 5 | 25,97 | 5,10 |
-| 6 | **Dura Space** | DuraCloud | `DURACLOUD`| 666 | 1 | 16 | 2,13 | 1 | 4,12 | 2,03 |
+| 6 | **Dura Space** | DuraCloud | `DURACLOUD` | 666 | 1 | 16 | 2,13 | 1 | 4,12 | 2,03 |
 | 7 | **Atlassian** | Bamboo | `BAM` | 521 | 1 | 20 | 2,42 | 2 | 4,60 | 2,14 |
 | 8 | **Atlassian** | Clover | `CLOV` | 384 | 1 | 40 | 4,59 | 2 | 42,95 | 6,55 |
-| 9 | **Atlassian** | JIRA Software | `JSWSERVER`| 352 | 1 | 20 | 4,43 | 3 | 12,35 | 3,51 |
+| 9 | **Atlassian** | JIRA Software | `JSWSERVER` | 352 | 1 | 20 | 4,43 | 3 | 12,35 | 3,51 |
 | 10 | **Moodle** | Moodle | `MDL` | 1.166 | 1 | 100 | 15,54 | 8 | 468,53 | 21,65 |
 | 11 | **Lsstcorp** | Data Management | `DM` | 4.667 | 1 | 100 | 9,57 | 4 | 275,71 | 16,61 |
 | 12 | **Mulesoft** | Mule | `MULE` | 889 | 1 | 21 | 5,08 | 5 | 12,24 | 3,50 |
@@ -75,9 +75,9 @@ Tác giả chia dữ liệu của mỗi dự án thành 3 tập con theo tỷ l�
 | **Chiều ẩn ($d$)** | $768$ | Độ dài vector biểu diễn trạng thái ẩn của mỗi token. |
 | **Số đầu chú ý ($H$)** | $12$ | 12 cơ chế Multi-Head Attention song song. |
 | **Chiều mỗi đầu ($d_{kv}$)** | $64$ | $768 / 12 = 64$, kích thước ma trận Query/Key/Value. |
-| **Kích thước từ điển ($|V|$)** | $50.257$ | Số lượng subword tokens được tiền huấn luyện sẵn của GPT-2. |
+| **Kích thước từ điển ($\lvert V \rvert$)** | $50.257$ | Số lượng subword tokens được tiền huấn luyện sẵn của GPT-2. |
 | **Chiều dài ngữ cảnh tối đa ($c$)** | $1024$ | Số token tối đa mà mô hình tiếp nhận cho một issue. |
-| **Hàm mất mát** | **L1 Loss** | Sai số tuyệt đối $\sum \|y_{\text{true}} - \hat{y}_{\text{pred}}\|$. |
+| **Hàm mất mát** | **L1 Loss** | Sai số tuyệt đối $\sum \lvert y_{\text{true}} - \hat{y}_{\text{pred}} \rvert$. |
 | **Bộ tối ưu hóa** | **AdamW** | Adam với Decoupled Weight Decay. |
 | **Tốc độ học (Learning Rate)** | $5 \times 10^{-4}$ | Learning rate chuẩn cho bước tinh chỉnh. |
 
@@ -90,7 +90,9 @@ Tác giả chia dữ liệu của mỗi dự án thành 3 tập con theo tỷ l�
 ## 📐 4. THANG ĐO ĐÁNH GIÁ (4.5 EVALUATION MEASURE)
 
 Thang đo chính được lựa chọn để đánh giá là **Sai số Tuyệt đối Trung bình (Mean Absolute Error - MAE)**:
+
 $$\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|$$
+
 Trong đó $y_i$ là Story Point thực tế của issue thứ $i$, và $\hat{y}_i$ là giá trị do mô hình dự đoán.
 
 ### Vì sao bài báo chỉ chọn MAE mà loại bỏ các thang đo khác?
@@ -108,11 +110,13 @@ Tác giả giải thích rất rành mạch lý do khoa học của việc khôn
 ### 1. Kiểm định dấu hạng Wilcoxon (Wilcoxon Signed-Rank Test)
 * Kiểm định phi tham số dành cho dữ liệu bắt cặp (paired), không đòi hỏi phân phối chuẩn.
 * Kiểm tra giả thuyết không ($H_0$): Không có sự khác biệt giữa phân phối sai số của GPT2SP và mô hình đối chứng.
-* Bác bỏ $H_0$ khi giá trị xác suất $p$-value $< 0.05$.
+* Bác bỏ $H_0$ khi giá trị xác suất $p\text{-value} < 0.05$.
 
 ### 2. Kích thước hiệu ứng Cliff's Delta ($\delta$)
 * Đo lường mức độ thực chất của sự khác biệt giữa hai phân phối mẫu:
+
   $$\delta = \frac{\# (x_i > y_j) - \# (x_i < y_j)}{m \times n}$$
+
 * Phân loại ngưỡng định lượng của Romano et al. [41]:
   * $|\delta| < 0.147$: Không đáng kể (**Negligible**).
   * $0.147 \le |\delta| < 0.33$: Nhỏ (**Small**).
