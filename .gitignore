@@ -124,4 +124,5 @@ $RECYCLE.BIN/
 # 7. GLOSSARY (LOCAL ONLY - BỎ QUA KHI UP LÊN REPO)
 # ==============================================================================
 docs/glossary/
-glossary/
+/glossary/
+!docs/articles/paper-information/glossary/

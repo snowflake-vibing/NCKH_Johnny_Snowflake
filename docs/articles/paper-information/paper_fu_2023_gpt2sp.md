@@ -1,7 +1,10 @@
 # 📑 Báo Cáo Phân Tích Tài Liệu Khoa Học (Literature Review Note)
 
 > **Tên bài báo:** GPT2SP: A Transformer-Based Agile Story Point Estimation Approach  
-> **Nguồn công bố:** IEEE Transactions on Software Engineering (TSE), Vol. 49, No. 2, 2023
+> **Nguồn công bố:** IEEE Transactions on Software Engineering (TSE), Vol. 49, No. 5, 2023  
+> 🔗 **Tài liệu đào sâu chuyên biệt:**  
+> • 📖 [Phân tích chi tiết từng chương (Chương 1 - 10 & Phụ lục)](explanation/README.md)  
+> • 📚 [Bảng tra cứu thuật ngữ chuyên ngành (Glossary)](glossary/glossary_gpt2sp.md)
 
 ---
 
