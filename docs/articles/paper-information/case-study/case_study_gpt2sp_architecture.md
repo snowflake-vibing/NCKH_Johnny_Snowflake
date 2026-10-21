@@ -93,14 +93,23 @@ $$T = [t_1, t_2, \dots, t_{15}] = \left[\text{"Exp"}, \text{"ression"}, \text{"E
 > 📍 **Ánh xạ sơ đồ Hình 2:** Hộp `Model Building (GPT2SP Model)` gồm 3 bước: `2a Word & Positional Encoding`, `2b 12 x Stacking Transformer Decoders`, và `2c MLP Regressor`.
 
 ### 3.1. Step 2a: Mã hóa từ và vị trí (Word & Positional Encoding)
+
 Với chuỗi $15$ tokens đầu vào, hệ thống thực hiện hai phép tra cứu bảng song song:
-1. **Vector nhúng từ (Word Encoding):** Tra cứu từ ma trận $W_{te} \in \mathbb{R}^{50257 \times 768}$.
-   * Ví dụ: Token $t_1 = \text{"Exp"}$ (chỉ số ID: $11598$) tra cứu được vector $\mathbf{w}_1 \in \mathbb{R}^{768}$.
-2. **Vector nhúng vị trí (Positional Encoding):** Tra cứu từ ma trận $W_{pe} \in \mathbb{R}^{1024 \times 768}$.
-   * Vị trí đầu tiên $i = 1$ tra cứu được vector vị trí $\mathbf{p}_1 \in \mathbb{R}^{768}$.
-3. **Tổng hợp vector đầu vào:**
-   $$\mathbf{e}_1 = \mathbf{w}_1 + \mathbf{p}_1 \in \mathbb{R}^{768}$$
-   Tương tự cho toàn bộ chuỗi $i = 1, \dots, 15$, tạo thành ma trận đầu vào $E = [\mathbf{e}_1, \dots, \mathbf{e}_{15}]^T \in \mathbb{R}^{15 \times 768}$.
+
+* **Vector nhúng từ (Word Encoding):** Tra cứu từ ma trận trọng số $W_{te} \in \mathbb{R}^{50257 \times 768}$.
+  * Ví dụ: Token $t_1 = \text{"Exp"}$ (chỉ số ID: $11598$) tra cứu được vector $\mathbf{w}_1 \in \mathbb{R}^{768}$.
+
+* **Vector nhúng vị trí (Positional Encoding):** Tra cứu từ ma trận trọng số $W_{pe} \in \mathbb{R}^{1024 \times 768}$.
+  * Vị trí đầu tiên $i = 1$ tra cứu được vector vị trí $\mathbf{p}_1 \in \mathbb{R}^{768}$.
+
+* **Tổng hợp vector đầu vào:**  
+  Vector biểu diễn đầu vào $\mathbf{e}_1$ cho token đầu tiên là phép cộng vector trực tiếp:
+
+$$\mathbf{e}_1 = \mathbf{w}_1 + \mathbf{p}_1 \in \mathbb{R}^{768}$$
+
+  Thực hiện tương tự cho toàn bộ $15$ tokens trong chuỗi ($i = 1, 2, \dots, 15$), ta thu được ma trận đầu vào $E$:
+
+$$E = \begin{bmatrix} \mathbf{e}_1 \\ \mathbf{e}_2 \\ \vdots \\ \mathbf{e}_{15} \end{bmatrix} \in \mathbb{R}^{15 \times 768}$$
 
 ---
 
@@ -143,11 +152,16 @@ $$x^{(l)} = \text{LayerNorm}\left(x^{(l-1)} + \text{SubLayer}\left(x^{(l-1)}\rig
                                                         Điểm dự đoán y_hat = 2.85
 ```
 
-1. **Last Token Pooling:** Trích xuất vector trạng thái ẩn tại token cuối cùng $\mathbf{h}_{15} \in \mathbb{R}^{768}$. Do cơ chế Masked Attention, token cuối cùng đã "tích lũy" trọn vẹn ngữ cảnh của toàn bộ câu văn trước nó.
-2. **Tính toán qua đầu hồi quy MLP 3 tầng:**
-   $$\hat{y}(X) = b + \sum_{i=1}^{M} w_i \cdot h_i$$
-   Mô hình xuất ra giá trị dự đoán điểm nỗ lực liên tục:
-   $$\hat{y} = 2.85$$
+* **Last Token Pooling:** Trích xuất vector trạng thái ẩn tại token cuối cùng $\mathbf{h}_{15} \in \mathbb{R}^{768}$. Do cơ chế Masked Attention, token cuối cùng đã "tích lũy" trọn vẹn ngữ cảnh của toàn bộ câu văn trước nó.
+
+* **Tính toán qua đầu hồi quy MLP 3 tầng:**  
+  Vector $\mathbf{h}_{15}$ được nạp qua mạng MLP để tính điểm Story Point:
+
+$$\hat{y}(X) = b + \sum_{i=1}^{M} w_i \cdot h_i$$
+
+  Mô hình xuất ra giá trị dự đoán điểm nỗ lực liên tục:
+
+$$\hat{y} = 2.85$$
 
 ---
 
