@@ -28,6 +28,10 @@ Các thuật ngữ dưới đây được biên soạn chi tiết theo **quy chu
 | **LSTM** | Recurrent Neural Networks | Mạng bộ nhớ dài-ngắn với 3 cổng kiểm soát và cell state, giải quyết triệt tiêu đạo hàm trong Deep-SE. | [lstm.md](lstm.md) |
 | **RHWN** | Deep Recurrent Networks | Mạng đường cao tốc hồi quy với Carry Gate & Transform Gate, tăng độ sâu biểu diễn trừu tượng. | [rhwn.md](rhwn.md) |
 | **Regressor** | Predictive Modeling | Khối nơ-ron hồi quy đầu ra (MLP Regressor Head) kết hợp L1 Loss để dự đoán số thực Story Point kháng ngoại lai. | [regressor.md](regressor.md) |
+| **Random Forest** | Traditional ML & Ensemble | Rừng cây quyết định ngẫu nhiên, lấy trung bình dự đoán của 100 cây, làm bộ hồi quy baseline (LSTM+RF, BoW+RF). | [random_forest.md](random_forest.md) |
+| **TF-IDF** | Traditional NLP & Mining | Tần suất từ kết hợp nghịch đảo tần suất văn bản, chấm điểm từ khóa đặc thù cho baseline TF-IDF + SVM [36]. | [tf_idf.md](tf_idf.md) |
+| **Support Vector Machine (SVM)** | Traditional ML & Convex Opt | Máy vector hỗ trợ với dải hành lang an toàn biên cực đại và hàm mất mát $\epsilon$-insensitive loss trong SVR. | [support_vector_machine.md](support_vector_machine.md) |
+| **Bag-of-Words (BoW)** | Traditional NLP | Mô hình túi từ đếm tần suất thô, ném bỏ hoàn toàn ngữ pháp và thứ tự câu cú trong baseline BoW + RF. | [bag_of_words.md](bag_of_words.md) |
 
 ---
 
@@ -37,6 +41,7 @@ Các thuật ngữ dưới đây được biên soạn chi tiết theo **quy chu
 2. **Khái niệm cơ bản về Agile & Story Point:** Xem Mục 1 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
 3. **Kiến trúc GPT-2 & Quy trình Tối ưu:** Xem Mục 2 & Mục 3 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
 4. **Kiến trúc Deep-SE cổ điển (Word2Vec + LSTM + RHWN):** Xem các file chuyên đề [`word2vec.md`](word2vec.md), [`lstm.md`](lstm.md), [`rhwn.md`](rhwn.md).
-5. **Thang đo sai số & Kiểm định phi tham số:** Xem Mục 5 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
-6. **Trí tuệ nhân tạo có thể giải thích (XAI):** Xem Mục 6 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
-7. **Ràng buộc chống rò rỉ dữ liệu (NCKH Nhóm 3):** Xem Mục 7 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
+5. **Các mô hình máy học đối chứng (Baselines):** Xem [`random_forest.md`](random_forest.md), [`tf_idf.md`](tf_idf.md), [`support_vector_machine.md`](support_vector_machine.md), [`bag_of_words.md`](bag_of_words.md).
+6. **Thang đo sai số & Kiểm định phi tham số:** Xem Mục 5 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
+7. **Trí tuệ nhân tạo có thể giải thích (XAI):** Xem Mục 6 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
+8. **Ràng buộc chống rò rỉ dữ liệu (NCKH Nhóm 3):** Xem Mục 7 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
