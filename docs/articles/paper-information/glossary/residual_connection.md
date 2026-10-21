@@ -51,7 +51,7 @@ Trong đó:
 
 ```mermaid
 flowchart TD
-    Input["Tín hiệu đầu vào x"] --> Sublayer["Tầng Xử Lý Phức Tạp F(x)\n(Multi-Head Attention hoặc FFN)"]
+    Input["Tín hiệu đầu vào x"] --> Sublayer["Tầng Xử Lý Phức Tạp F(x)<br/>(Multi-Head Attention hoặc FFN)"]
     
     Input -->|"Đường Tắt Phần Dư Identity Shortcut"| Add["Phép Cộng Tuyến Tính (+)<br/>y = x + F(x)"]
     
@@ -70,12 +70,14 @@ Giả sử tại một tầng nơ-ron, tín hiệu đầu vào hiện tại là 
 | **Mạng Cổ Điển (Không có Shortcut)** | Phải tự tìm ma trận trọng số $W$ sao cho $W \cdot x = \mathbf{5.1}$. | Rất khó, phải tự dựng lại toàn bộ giá trị $5.1$ từ con số 0. | Đầu ra bị lệch lạc nghiêm trọng, phá hỏng toàn bộ kết quả của các tầng trước. |
 | **Mạng Phần Dư (Có Residual Connection)** | Đường tắt đã mang sẵn $x = \mathbf{5.0}$ sang đầu ra. Mạng $\mathcal{F}(x)$ chỉ cần học phần chênh lệch nhỏ: $\mathbf{+0.1}$! | Siêu dễ, chỉ cần học một chỉnh sửa vi mô li ti! | Nếu tầng này vô dụng, nó chỉ việc gán $\mathcal{F}(x) = 0$. Khi đó $y = x + 0 = \mathbf{5.0}$ (bảo toàn nguyên vẹn $100\%$ kết quả tốt của tầng trước)! |
 
-> 🎉 **Khoảnh khắc "Aha!":**  
-> Phép toán đạo hàm khi lan truyền ngược:
-> $$
-> \frac{\partial \mathbf{y}}{\partial \mathbf{x}} = \frac{\partial \mathbf{x}}{\partial \mathbf{x}} + \frac{\partial \mathcal{F}(\mathbf{x})}{\partial \mathbf{x}} = \mathbf{1} + \frac{\partial \mathcal{F}(\mathbf{x})}{\partial \mathbf{x}}
-> $$
-> Số **$1$** kỳ diệu xuất hiện! Nhờ số $1$ này, gradient đạo hàm **không bao giờ bị nhân với các số nhỏ hơn 1 để teo tóp về 0**. Nó có một "đường ống siêu dẫn" để chảy ngược không ma sát từ tầng 12 về tận tầng 1!
+### 🎉 Khoảnh khắc "Aha!" — Bản chất toán học chống triệt tiêu Gradient:
+
+Khi lan truyền ngược qua kết nối tắt, đạo hàm của đầu ra $\mathbf{y}$ theo đầu vào $\mathbf{x}$ được tính toán:
+
+$$\frac{\partial \mathbf{y}}{\partial \mathbf{x}} = \frac{\partial \mathbf{x}}{\partial \mathbf{x}} + \frac{\partial \mathcal{F}(\mathbf{x})}{\partial \mathbf{x}} = \mathbf{1} + \frac{\partial \mathcal{F}(\mathbf{x})}{\partial \mathbf{x}}$$
+
+> **Số 1 kỳ diệu xuất hiện!**  
+> Nhờ số $\mathbf{1}$ này, gradient đạo hàm **không bao giờ bị nhân dồn với các số nhỏ hơn 1 để teo tóp về 0**. Nó tạo ra một "đường ống siêu dẫn" giúp gradient chảy ngược không ma sát từ tầng 12 về tận tầng 1!
 
 ---
 
@@ -92,12 +94,19 @@ Trước khi có Residual Connection:
 
 Trong mỗi khối Transformer Decoder của mô hình **GPT2SP (Fu & Tantithamthavorn, 2023)**, có **2 đường kết nối phần dư** hoạt động song hành:
 
-1. **Đường tắt số 1 (Bọc quanh tầng Masked Multi-Head Attention):**
-   $$\mathbf{x}_{\text{mid}} = \text{LayerNorm}(\mathbf{x} + \text{Attention}(\mathbf{x}))$$
-   Giúp bảo toàn nhận diện từ vựng ban đầu của issue Jira trong khi vẫn tiếp nhận thông tin ngữ cảnh từ các từ xung quanh.
-2. **Đường tắt số 2 (Bọc quanh tầng Feed-Forward Network):**
-   $$\mathbf{x}_{\text{out}} = \text{LayerNorm}(\mathbf{x}_{\text{mid}} + \text{FFN}(\mathbf{x}_{\text{mid}}))$$
-   Giúp bảo toàn các liên kết ngữ cảnh vừa học được trong khi FFN mở rộng và cô đọng tri thức.
+### 1. Đường tắt số 1: Bọc quanh tầng Masked Multi-Head Attention
+
+$$\mathbf{x}_{\text{mid}} = \text{LayerNorm}(\mathbf{x} + \text{Attention}(\mathbf{x}))$$
+
+* **Vai trò:** Giúp bảo toàn nhận diện từ vựng ban đầu của Jira issue trong khi vẫn tiếp nhận thông tin ngữ cảnh từ các từ xung quanh.
+
+---
+
+### 2. Đường tắt số 2: Bọc quanh tầng Feed-Forward Network
+
+$$\mathbf{x}_{\text{out}} = \text{LayerNorm}(\mathbf{x}_{\text{mid}} + \text{FFN}(\mathbf{x}_{\text{mid}}))$$
+
+* **Vai trò:** Giúp bảo toàn các liên kết ngữ cảnh vừa học được trong khi FFN mở rộng và cô đọng tri thức.
 
 Nhờ 2 đường tắt này nhân với 12 khối (tổng cộng **24 đường tắt phần dư** xuyên suốt mô hình), GPT-2 Small với 117 triệu tham số có thể huấn luyện cực kỳ ổn định, hội tụ mượt mà và chuyển giao tri thức hoàn hảo cho bài toán Story Point.
 
