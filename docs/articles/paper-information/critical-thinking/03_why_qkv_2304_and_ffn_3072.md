@@ -59,7 +59,9 @@ Nếu chỉ ghép nối đơn thuần, thông tin của 12 đầu vẫn nằm t�
 Mô hình cần một **Ma trận Chiếu Đầu Ra (Output Projection Matrix $W^O \in \mathbb{R}^{768 \times 768}$, trong Hugging Face là `c_proj`)** để:
 1. **Hòa trộn đặc trưng liên đầu (Inter-head Feature Mixing):** Cho phép các tri thức học được từ Head 1 (ngữ pháp) tương tác và kết hợp với Head 5 (ngữ nghĩa kỹ thuật).
 2. **Khớp nối kết nối tắt (Residual Connection):** Đảm bảo không gian biểu diễn tương thích để thực hiện phép cộng tắt:
-   $$x_{\text{out}} = \text{LayerNorm}(x + \text{Attention}(x) \cdot W^O)$$
+   
+$$x_{\text{out}} = \text{LayerNorm}(x + \text{Attention}(x) \cdot W^O)$$
+
 
 ---
 
@@ -136,7 +138,10 @@ Giả sử kỹ sư nhập một User Story lỗi nghiêm trọng trên Jira:
 > **Tiêu đề Issue:** `"Fix memory leak in Kafka cluster"`
 
 Qua bộ tách từ Byte-level BPE, câu văn được chia thành chuỗi $L = 6$ subword tokens:
-$$X_{\text{tokens}} = [\text{"Fix"}, \text{"Ġmemory"}, \text{"Ġleak"}, \text{"Ġin"}, \text{"ĠKafka"}, \text{"Ġcluster"}]$$
+```python
+# Ký tự Ġ đại diện cho khoảng trắng đầu từ trong GPT-2 BPE:
+tokens = ["Fix", "Ġmemory", "Ġleak", "Ġin", "ĠKafka", "Ġcluster"]
+```
 
 Khi nạp vào khối Transformer thứ $l$, dữ liệu là một ma trận tensor có kích thước:
 $$X \in \mathbb{R}^{6 \times 768} \quad (\text{gồm 6 dòng, mỗi dòng là một vector 768 chiều})$$
@@ -158,7 +163,7 @@ $$
 $$
 
 Ngay sau đó, bộ nhớ GPU thực hiện phép cắt mảng (slice) siêu tốc không tốn chi phí:
-$$Q, K, V = \text{split}(Z, \text{split\_size}=768, \text{dim}=-1)$$
+$$Q, K, V = \mathrm{split}(Z, \text{size}=768, \text{dim}=-1)$$
 * Ma trận Truy vấn: $Q \in \mathbb{R}^{6 \times 768}$
 * Ma trận Chìa khóa: $K \in \mathbb{R}^{6 \times 768}$
 * Ma trận Giá trị: $V \in \mathbb{R}^{6 \times 768}$
@@ -173,13 +178,15 @@ Mỗi đầu chú ý $h$ tự động đóng vai trò là một "chuyên gia" ph
 
 ```mermaid
 flowchart TD
-    subgraph MultiHeads["12 Đầu Chú Ý Song Song (Kích thước mỗi đầu: 6 x 64)"]
-        H1["Đầu #1: Chuyên Gia Cú Pháp & Hành Động\n(Soi liên kết giữa 'Fix' và 'leak')"]
-        H5["Đầu #5: Chuyên Gia Kiến Trúc & Hạ Tầng\n(Soi liên kết giữa 'Kafka' và 'cluster')"]
-        H12["Đầu #12: Chuyên Gia Mức Độ Khẩn Cấp\n(Soi cụm từ 'memory leak')"]
+    subgraph MultiHeads["12 Đầu Chú Ý Song Song (Mỗi đầu kích thước: 6 x 64)"]
+        H1["Đầu #1: Chuyên Gia Cú Pháp & Hành Động<br/>(Soi liên kết giữa 'Fix' và 'leak')"]
+        H5["Đầu #5: Chuyên Gia Kiến Trúc & Hạ Tầng<br/>(Soi liên kết giữa 'Kafka' và 'cluster')"]
+        H12["Đầu #12: Chuyên Gia Mức Độ Khẩn Cấp<br/>(Soi cụm từ 'memory leak')"]
     end
 
-    H1 & H5 & H12 --> ConcatAll["Ghép 12 Đầu (Concat):\n12 x 64 = 768 chiều"]
+    H1 --> ConcatAll["Ghép 12 Đầu (Concat):<br/>12 x 64 = 768 chiều"]
+    H5 --> ConcatAll
+    H12 --> ConcatAll
 ```
 
 #### Hành vi thực tế tại Đầu số 1 (Chuyên gia Cú pháp & Hành động):
@@ -197,15 +204,15 @@ flowchart TD
 
 ### 🔄 BƯỚC 4: HÒA TRỘN ĐA ĐẦU QUA $W^O \in \mathbb{R}^{768 \times 768}$ (`c_proj`) VÀ RESIDUAL 1
 Sau khi tính xong tại 12 đầu, ta ghép nối lại:
-$$\text{MultiHead\_Out} = \text{Concat}(\text{head}_1, \dots, \text{head}_{12}) \in \mathbb{R}^{6 \times 768}$$
+$$\mathbf{H}_{\text{multi}} = \text{Concat}(\text{head}_1, \dots, \text{head}_{12}) \in \mathbb{R}^{6 \times 768}$$
 
 Lúc này, thông tin về "hành động sửa lỗi" (từ Đầu 1) và thông tin về "cụm phân tán Kafka" (từ Đầu 5) vẫn nằm cách biệt trên các trục tọa độ riêng lẻ ($0-63$ và $256-319$).  
 **Ma trận Chiếu Đầu Ra $W^O \in \mathbb{R}^{768 \times 768}$ thực hiện phép hòa trộn toàn diện:**
 
-$$\text{Attention\_Mixed} = \text{MultiHead\_Out} \cdot W^O + b^O \in \mathbb{R}^{6 \times 768}$$
+$$\mathbf{A}_{\text{mixed}} = \mathbf{H}_{\text{multi}} \cdot W^O + b^O \in \mathbb{R}^{6 \times 768}$$
 
 Tiếp theo, tín hiệu được cộng dồn với dữ liệu gốc qua **Đường tắt Residual Connection 1**:
-$$X_{\text{mid}} = X + \text{Attention\_Mixed} \in \mathbb{R}^{6 \times 768}$$
+$$X_{\text{mid}} = X + \mathbf{A}_{\text{mixed}} \in \mathbb{R}^{6 \times 768}$$
 > 💡 *Nhờ phép cộng này, bản sắc gốc của từng từ không bị mất đi, nhưng mỗi từ đã được làm giàu thêm bằng ngữ cảnh của toàn bộ các từ đứng trước nó.*
 
 ---
@@ -214,14 +221,14 @@ $$X_{\text{mid}} = X + \text{Attention\_Mixed} \in \mathbb{R}^{6 \times 768}$$
 Sau khi chuẩn hóa qua `LayerNorm 2`, ma trận $X_{\text{mid}}$ bước vào mạng truyền thẳng hai tầng:
 
 ```mermaid
-flowchart LR
-    X_mid["Vector Token cuối 'cluster'\n(Kích thước: 768 chiều)"] --> Up["1. Chiếu Mở Rộng W_1:\n768 -> 3072 chiều\n(Bày thông tin lên chiếc bàn lớn)"]
+flowchart TD
+    X_mid["Vector Token cuối 'cluster'<br/>(Kích thước: 768 chiều)"] --> Up["1. Chiếu Mở Rộng W_1:<br/>768 -> 3072 chiều<br/>(Bày thông tin lên chiếc bàn lớn)"]
     
-    Up --> GeLU_Act["2. Kích Hoạt Phi Tuyến GELU:\n- Nơ-ron #412 (Memory Leak): Kích hoạt mạnh (+3.4)\n- Nơ-ron #1845 (Kafka Distributed): Kích hoạt mạnh (+4.1)\n- Hàng ngàn nơ-ron không liên quan (CSS, typo): Ghìm về ~0"]
+    Up --> GeLU_Act["2. Kích Hoạt Phi Tuyến GELU:<br/>• Nơ-ron #412 (Memory Leak): Kích hoạt mạnh (+3.4)<br/>• Nơ-ron #1845 (Kafka Distributed): Kích hoạt mạnh (+4.1)<br/>• Nơ-ron không liên quan (CSS, typo): Ghìm về gần 0"]
     
-    GeLU_Act --> Down["3. Chiếu Thu Hẹp W_2:\n3072 -> 768 chiều\n(Nén tri thức đắt giá nhất về vector chuẩn)"]
+    GeLU_Act --> Down["3. Chiếu Thu Hẹp W_2:<br/>3072 -> 768 chiều<br/>(Nén tri thức đắt giá nhất về vector chuẩn)"]
     
-    Down --> Res2["4. Cộng Đường Tắt Residual 2:\nX_final = X_mid + FFN_Out"]
+    Down --> Res2["4. Cộng Đường Tắt Residual 2:<br/>X_final = X_mid + FFN_Out"]
 ```
 
 1. **Phép chiếu mở rộng $W_1 \in \mathbb{R}^{768 \times 3072}$:**  
