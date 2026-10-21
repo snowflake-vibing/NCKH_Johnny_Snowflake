@@ -53,9 +53,9 @@ Trong đó:
 flowchart TD
     Input["Tín hiệu đầu vào x"] --> Sublayer["Tầng Xử Lý Phức Tạp F(x)\n(Multi-Head Attention hoặc FFN)"]
     
-    Input -->|"Con Đường Tắt Phần Dư (Identity Shortcut):\nChạy thẳng không tốn chi phí tính toán"| Add["Phép Cộng Tuyến Tính (+)\ny = x + F(x)"]
+    Input -->|"Đường Tắt Phần Dư Identity Shortcut"| Add["Phép Cộng Tuyến Tính (+)<br/>y = x + F(x)"]
     
-    Sublayer -->|"Phần Dư Học Được F(x)"| Add
+    Sublayer -->|Phần Dư Học Được F| Add
     
     Add --> LN["Chuẩn Hóa Lớp (LayerNorm)"]
     LN --> Out["Đầu ra hoàn chỉnh"]

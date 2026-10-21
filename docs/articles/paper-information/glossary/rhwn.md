@@ -61,11 +61,11 @@ Mạng **RHWN (Zilly et al., 2017)** cho phép tăng độ sâu này lên $L = 2
 flowchart TD
     X_input["Đầu vào x từ tầng trước"] --> Split{"Tách 2 nhánh"}
     
-    Split -->|"Nhánh 1: Đường Phố Thường\n(Tư duy phi tuyến)"| TransBlock["Tính toán biến đổi: h = tanh(W_H * x)"]
-    Split -->|"Nhánh 2: Làn Cao Tốc Thông Suốt\n(Dữ liệu nguyên bản)"| CarryPath["Chạy thẳng: x"]
+    Split -->|"Nhánh 1: Tư duy phi tuyến"| TransBlock["Tính toán biến đổi:<br/>h = tanh(W_H * x)"]
+    Split -->|"Nhánh 2: Làn cao tốc nguyên bản"| CarryPath["Chạy thẳng: x"]
     
-    TransBlock --> GateT["Nhân Cổng Chuyển Đổi (* t)\n[Quyết định tiếp thu bao nhiêu phần mới]"]
-    CarryPath --> GateC["Nhân Cổng Cao Tốc (* c = 1 - t)\n[Quyết định giữ lại bao nhiêu phần cũ]"]
+    TransBlock --> GateT["Nhân Cổng Chuyển Đổi (* t)<br/>[Quyết định tiếp thu bao nhiêu phần mới]"]
+    CarryPath --> GateC["Nhân Cổng Cao Tốc (* c = 1 - t)<br/>[Quyết định giữ lại bao nhiêu phần cũ]"]
     
     GateT & GateC --> Merge["Cộng Tuyến Tính (+)\ny = h * t + x * (1 - t)"]
     Merge --> Out["Đầu ra tầng cao tốc y\n(Sẵn sàng cho tầng sâu kế tiếp)"]
