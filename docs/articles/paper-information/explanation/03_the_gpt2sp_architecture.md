@@ -187,4 +187,4 @@ Trong đó:
 
 > [!NOTE]
 > **Chuyển tiếp sang Chương 4 (Thiết lập Thực nghiệm):**  
-> Quy trình tối ưu hóa các tham số mô hình $\theta$ thông qua hàm mất mát **$L_1$ Loss** ($\mathcal{L}_{L1} = \sum |y_{\text{true}} - \hat{y}|$), thuật toán **AdamW** ($\text{LR} = 5 \times 10^{-4}$) và chi tiết cấu hình siêu tham số của biến thể **GPT-2 Small** (117M parameters) được tác giả trình bày tại **Mục 4.3 & 4.4 (Trang 6)** và được phân tích chi tiết tại [04_experimental_setup.md](file:///d:/NCKH_3/docs/articles/paper-information/explanation/04_experimental_setup.md).
+> Quy trình tối ưu hóa các tham số mô hình $\theta$ thông qua hàm mất mát **$L_1$ Loss** ($\mathcal{L} = \sum |y - \hat{y}|$), thuật toán tối ưu **AdamW** ($\text{LR} = 5 \times 10^{-4}$), và chi tiết cấu hình siêu tham số của biến thể **GPT-2 Small** (117M parameters) được tác giả trình bày tại **Mục 4.3 & 4.4 (Trang 6)** và được phân tích chi tiết tại [04_experimental_setup.md](file:///d:/NCKH_3/docs/articles/paper-information/explanation/04_experimental_setup.md).
