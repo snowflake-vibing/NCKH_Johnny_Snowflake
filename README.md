@@ -126,7 +126,6 @@ flowchart LR
 
 ```text
 .
-├── .agents/                  # Kỹ năng và công cụ mở rộng dành cho AI Agent
 ├── data/                     # Dữ liệu nghiên cứu theo các tầng xử lý
 │   ├── raw/                  # Dữ liệu thô (CSDL TAWOS gốc, bản trích xuất Jira thô)
 │   └── clean/                # Dữ liệu sau tiền xử lý & kiểm soát rò rỉ (Reconstructed Snapshot)
@@ -172,7 +171,7 @@ flowchart LR
 - **`data/`**: Phân chia rõ ràng giữa dữ liệu nguyên bản (`raw/`) và dữ liệu đã kiểm soát rò rỉ thời gian (`clean/`) nhằm đảm bảo tính tái lập (reproducibility).
 - **`docs/`**: Kho lưu trữ tri thức toàn diện của đề tài, bao gồm các bài báo gốc, ghi chú học thuật chuyên sâu, các ứng viên tái lập, bản thảo hội nghị và báo cáo tiến độ.
 - **`notebooks/`**: Nơi lưu trữ các kịch bản tương tác phục vụ EDA, kiểm định giả thuyết thống kê và trực quan hóa phân phối dữ liệu.
-- **`.agents/` & `AGENTS.md`**: Bộ quy tắc và các kỹ năng chuyên biệt giúp trợ lý AI làm việc chính xác, an toàn và tuân thủ chặt chẽ các giả định nghiên cứu khoa học.
+- **`AGENTS.md`**: Bộ quy tắc giúp trợ lý AI làm việc chính xác, an toàn và tuân thủ chặt chẽ các giả định nghiên cứu khoa học.
 
 ---
 
