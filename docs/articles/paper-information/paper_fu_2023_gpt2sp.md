@@ -4,6 +4,7 @@
 > **Nguồn công bố:** IEEE Transactions on Software Engineering (TSE), Vol. 49, No. 5, 2023  
 > 🔗 **Tài liệu đào sâu chuyên biệt:**  
 > • 📖 [Phân tích chi tiết từng chương (Chương 1 - 10 & Phụ lục)](explanation/README.md)  
+> • 🔬 [Nghiên cứu tình huống thực tế (Case Study Jira Issue XD-3751)](case-study/case_study_gpt2sp_architecture.md)
 > • 📚 [Bảng tra cứu thuật ngữ chuyên ngành (Glossary)](glossary/glossary_gpt2sp.md)
 
 ---

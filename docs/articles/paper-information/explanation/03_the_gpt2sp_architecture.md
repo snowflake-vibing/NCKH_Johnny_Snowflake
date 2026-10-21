@@ -169,6 +169,13 @@ Trong đó:
 
 ---
 
+> [!TIP]
+> **Nghiên cứu tình huống thực tế (Case Study):**  
+> Để xem phân tích tường tận từng bước xử lý dữ liệu của một Jira Issue cụ thể (`XD-3751` trong dự án Spring XD) qua toàn bộ sơ đồ kiến trúc Hình 2, vui lòng xem tài liệu chuyên sâu:  
+> 🔬 **[Case Study: Áp dụng sơ đồ kiến trúc GPT2SP trên Jira Issue thực tế (Spring XD)](file:///d:/NCKH_3/docs/articles/paper-information/case-study/case_study_gpt2sp_architecture.md)**.
+
+---
+
 > [!NOTE]
 > **Chuyển tiếp sang Chương 4 (Thiết lập Thực nghiệm):**  
 > Quy trình tối ưu hóa các tham số mô hình $\theta$ thông qua hàm mất mát **$L_1$ Loss** ($\mathcal{L}_{L1} = \sum |y_{\text{true}} - \hat{y}|$), thuật toán **AdamW** ($\text{LR} = 5 \times 10^{-4}$) và chi tiết cấu hình siêu tham số của biến thể **GPT-2 Small** (117M parameters) được tác giả trình bày tại **Mục 4.3 & 4.4 (Trang 6)** và được phân tích chi tiết tại [04_experimental_setup.md](file:///d:/NCKH_3/docs/articles/paper-information/explanation/04_experimental_setup.md).
