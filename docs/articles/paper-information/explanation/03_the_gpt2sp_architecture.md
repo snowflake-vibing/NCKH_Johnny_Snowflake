@@ -181,7 +181,8 @@ Trong đó:
 > Bạn thắc mắc vì sao các hằng số siêu tham số trong kiến trúc lại có những giá trị đặc biệt? Mời bạn tham khảo bộ tài liệu giải phẫu bản chất toán học và phần cứng:  
 > • 🧠 **[Tại sao từ điển BPE dừng ở 50.257 tokens?](../critical-thinking/01_subword_vocabularies_50257.md)**  
 > • 🧠 **[Con số 768 chiều ẩn từ đâu sinh ra? (Warp GPU & 12 heads x 64)](../critical-thinking/02_why_hidden_dimension_768.md)**  
-> • 🧠 **[Giải mã kích thước ma trận QKV (2304), Chiếu (768), và FFN mở rộng (3072)](../critical-thinking/03_why_qkv_2304_and_ffn_3072.md)**
+> • 🧠 **[Giải mã kích thước ma trận QKV (2304), Chiếu (768), và FFN mở rộng (3072)](../critical-thinking/03_why_qkv_2304_and_ffn_3072.md)**  
+> • 🧠 **[Cội nguồn học thuật: Số tầng (12), số đầu (12) và kích thước đầu (64) từ bài báo nào?](../critical-thinking/04_origin_of_layers_heads_and_head_dimension.md)**
 
 ---
 

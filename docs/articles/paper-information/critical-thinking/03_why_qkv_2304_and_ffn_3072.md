@@ -127,6 +127,127 @@ Dưới đây là bảng tổng kết toàn bộ các ma trận trọng số c�
 
 ---
 
+## 🔬 4.1. CASE STUDY THỰC TẾ: HÀNH TRÌNH MỘT JIRA ISSUE ĐI QUA 1 KHỐI TRANSFORMER
+
+Để hiểu rõ tại sao các kích thước ma trận $768 \times 2304$, $768 \times 768$, và $768 \times 3072$ lại phối hợp nhịp nhàng để giải quyết bài toán ước lượng Story Point, chúng ta hãy cùng theo dõi một **Case Study thực tế** mô phỏng từng bước biến đổi dữ liệu bên trong một khối Transformer Decoder của GPT2SP.
+
+### 📝 ĐẦU VÀO CỦA TÁC VỤ JIRA (INPUT CONTEXT)
+Giả sử kỹ sư nhập một User Story lỗi nghiêm trọng trên Jira:
+> **Tiêu đề Issue:** `"Fix memory leak in Kafka cluster"`
+
+Qua bộ tách từ Byte-level BPE, câu văn được chia thành chuỗi $L = 6$ subword tokens:
+$$X_{\text{tokens}} = [\text{"Fix"}, \text{"Ġmemory"}, \text{"Ġleak"}, \text{"Ġin"}, \text{"ĠKafka"}, \text{"Ġcluster"}]$$
+
+Khi nạp vào khối Transformer thứ $l$, dữ liệu là một ma trận tensor có kích thước:
+$$X \in \mathbb{R}^{6 \times 768} \quad (\text{gồm 6 dòng, mỗi dòng là một vector 768 chiều})$$
+
+---
+
+### ⚙️ BƯỚC 1: TIỀN CHUẨN HÓA QUA LAYERNORM 1 (`ln_1`)
+Trước khi nạp vào tầng Attention, ma trận $X$ được chuẩn hóa độc lập trên từng dòng:
+$$\tilde{X} = \text{LayerNorm}_1(X) \in \mathbb{R}^{6 \times 768}$$
+* **Nhiệm vụ:** Đưa giá trị trung bình về $0$ ($\mu = 0$) và độ lệch chuẩn về $1$ ($\sigma = 1$) trên trục 768 chiều, giúp tín hiệu ổn định và ngăn ngừa nổ gradient.
+
+---
+
+### ⚡ BƯỚC 2: PHÉP NHÂN MA TRẬN GHÉP $W_{QKV} \in \mathbb{R}^{768 \times 2304}$ (`c_attn`)
+GPU chỉ thực thi **đúng một lệnh nhân ma trận duy nhất**:
+
+$$
+\text{Tín hiệu gộp } Z = \tilde{X} \cdot W_{QKV} + b_{QKV} \in \mathbb{R}^{6 \times 2304}
+$$
+
+Ngay sau đó, bộ nhớ GPU thực hiện phép cắt mảng (slice) siêu tốc không tốn chi phí:
+$$Q, K, V = \text{split}(Z, \text{split\_size}=768, \text{dim}=-1)$$
+* Ma trận Truy vấn: $Q \in \mathbb{R}^{6 \times 768}$
+* Ma trận Chìa khóa: $K \in \mathbb{R}^{6 \times 768}$
+* Ma trận Giá trị: $V \in \mathbb{R}^{6 \times 768}$
+
+Tiếp tục tách thành $H = 12$ đầu chú ý song song, mỗi đầu nhận một ma trận con $6 \times 64$ ($64 = 768 / 12$):
+$$Q_h, K_h, V_h \in \mathbb{R}^{6 \times 64} \quad (h = 1, 2, \dots, 12)$$
+
+---
+
+### 🎯 BƯỚC 3: MASKED ATTENTION TẠI CÁC ĐẦU CHÚ Ý SONG SONG
+Mỗi đầu chú ý $h$ tự động đóng vai trò là một "chuyên gia" phân tích một khía cạnh riêng biệt của tác vụ Jira:
+
+```mermaid
+flowchart TD
+    subgraph MultiHeads["12 Đầu Chú Ý Song Song (Kích thước mỗi đầu: 6 x 64)"]
+        H1["Đầu #1: Chuyên Gia Cú Pháp & Hành Động\n(Soi liên kết giữa 'Fix' và 'leak')"]
+        H5["Đầu #5: Chuyên Gia Kiến Trúc & Hạ Tầng\n(Soi liên kết giữa 'Kafka' và 'cluster')"]
+        H12["Đầu #12: Chuyên Gia Mức Độ Khẩn Cấp\n(Soi cụm từ 'memory leak')"]
+    end
+
+    H1 & H5 & H12 --> ConcatAll["Ghép 12 Đầu (Concat):\n12 x 64 = 768 chiều"]
+```
+
+#### Hành vi thực tế tại Đầu số 1 (Chuyên gia Cú pháp & Hành động):
+* Token `"Ġleak"` (vị trí 3) phát ra vector truy vấn $Q_{\text{leak}}^{(1)}$ hỏi: *"Hành động nào đang tác động lên tôi?"*.
+* Vector chìa khóa $K_{\text{Fix}}^{(1)}$ của token `"Fix"` (vị trí 1) bắt trúng truy vấn này với tích vô hướng cực lớn:
+  $$\frac{Q_{\text{leak}}^{(1)} \cdot (K_{\text{Fix}}^{(1)})^T}{\sqrt{64}} = +4.8$$
+* Sau khi qua mặt nạ nhân quả $M$ và hàm Softmax, trọng số chú ý giữa `"Ġleak"` và `"Fix"` đạt tới **$52\%$**.
+* Kết quả là vector giá trị $V_{\text{Fix}}$ được truyền mạnh mẽ sang biểu diễn của `"Ġleak"`, định hình thông điệp: *"Lỗi rò rỉ này đang là đối tượng của một hành động sửa chữa khẩn cấp!"*.
+
+#### Hành vi thực tế tại Đầu số 5 (Chuyên gia Hạ tầng Hệ thống):
+* Token cuối cùng `"Ġcluster"` (vị trí 6) phát ra vector truy vấn $Q_{\text{cluster}}^{(5)}$ tìm kiếm xem cụm này thuộc công nghệ gì.
+* Nó bắt gặp Key của `"ĠKafka"` (vị trí 5) với điểm chú ý **$68\%$**, lập tức nhận dạng: *"Đây không phải cụm máy chủ web thông thường, mà là cụm xử lý dữ liệu phân tán Apache Kafka!"*.
+
+---
+
+### 🔄 BƯỚC 4: HÒA TRỘN ĐA ĐẦU QUA $W^O \in \mathbb{R}^{768 \times 768}$ (`c_proj`) VÀ RESIDUAL 1
+Sau khi tính xong tại 12 đầu, ta ghép nối lại:
+$$\text{MultiHead\_Out} = \text{Concat}(\text{head}_1, \dots, \text{head}_{12}) \in \mathbb{R}^{6 \times 768}$$
+
+Lúc này, thông tin về "hành động sửa lỗi" (từ Đầu 1) và thông tin về "cụm phân tán Kafka" (từ Đầu 5) vẫn nằm cách biệt trên các trục tọa độ riêng lẻ ($0-63$ và $256-319$).  
+**Ma trận Chiếu Đầu Ra $W^O \in \mathbb{R}^{768 \times 768}$ thực hiện phép hòa trộn toàn diện:**
+
+$$\text{Attention\_Mixed} = \text{MultiHead\_Out} \cdot W^O + b^O \in \mathbb{R}^{6 \times 768}$$
+
+Tiếp theo, tín hiệu được cộng dồn với dữ liệu gốc qua **Đường tắt Residual Connection 1**:
+$$X_{\text{mid}} = X + \text{Attention\_Mixed} \in \mathbb{R}^{6 \times 768}$$
+> 💡 *Nhờ phép cộng này, bản sắc gốc của từng từ không bị mất đi, nhưng mỗi từ đã được làm giàu thêm bằng ngữ cảnh của toàn bộ các từ đứng trước nó.*
+
+---
+
+### 🧠 BƯỚC 5: TẦNG BỘ NHỚ TRI THỨC FFN ($768 \rightarrow 3072 \rightarrow 768$)
+Sau khi chuẩn hóa qua `LayerNorm 2`, ma trận $X_{\text{mid}}$ bước vào mạng truyền thẳng hai tầng:
+
+```mermaid
+flowchart LR
+    X_mid["Vector Token cuối 'cluster'\n(Kích thước: 768 chiều)"] --> Up["1. Chiếu Mở Rộng W_1:\n768 -> 3072 chiều\n(Bày thông tin lên chiếc bàn lớn)"]
+    
+    Up --> GeLU_Act["2. Kích Hoạt Phi Tuyến GELU:\n- Nơ-ron #412 (Memory Leak): Kích hoạt mạnh (+3.4)\n- Nơ-ron #1845 (Kafka Distributed): Kích hoạt mạnh (+4.1)\n- Hàng ngàn nơ-ron không liên quan (CSS, typo): Ghìm về ~0"]
+    
+    GeLU_Act --> Down["3. Chiếu Thu Hẹp W_2:\n3072 -> 768 chiều\n(Nén tri thức đắt giá nhất về vector chuẩn)"]
+    
+    Down --> Res2["4. Cộng Đường Tắt Residual 2:\nX_final = X_mid + FFN_Out"]
+```
+
+1. **Phép chiếu mở rộng $W_1 \in \mathbb{R}^{768 \times 3072}$:**  
+   Vector 768 chiều được phóng đại lên $3072$ chiều. Không gian mở rộng này đủ chỗ để đối chiếu với hàng ngàn mẫu hình tri thức phần mềm đã học được trong quá trình tiền huấn luyện WebText.
+2. **Bộ lọc kích hoạt phi tuyến GELU:**  
+   * Nơ-ron số `#412` (chuyên nhận diện các mẫu sự cố rò rỉ tài nguyên bộ nhớ) phát hiện tín hiệu từ `memory` + `leak`, bị kích hoạt cực mạnh.
+   * Nơ-ron số `#1845` (chuyên nhận diện độ phức tạp của các hệ thống hàng đợi phân tán Kafka) được kích hoạt cực mạnh.
+   * Các nơ-ron không liên quan (như nơ-ron giao diện người dùng, nơ-ron tài liệu hướng dẫn) nhận giá trị âm và bị hàm GELU triệt tiêu êm ái về gần $0$.
+3. **Phép chiếu nén $W_2 \in \mathbb{R}^{3072 \times 768}$:**  
+   Tổng hợp kết quả kích hoạt của 3072 nơ-ron lại thành một vector tri thức cô đọng 768 chiều, mang thông điệp: *"Đây là tác vụ có độ phức tạp thuật toán và rủi ro kiến trúc ở mức rất cao!"*.
+
+---
+
+### 🏁 BƯỚC 6: ĐẦU RA HOÀN CHỈNH CỦA KHỐI TRANSFORMER
+Cộng đường tắt phần dư thứ hai:
+$$X_{\text{out}} = X_{\text{mid}} + \text{FFN}(X_{\text{mid}}) \in \mathbb{R}^{6 \times 768}$$
+
+#### 🔍 SO SÁNH SỰ THAY ĐỔI CỦA TOKEN CUỐI CÙNG (`Ġcluster`):
+
+| Thời điểm | Bản chất vector của token `Ġcluster` | Khả năng định giá Story Point |
+| :--- | :--- | :--- |
+| **Trước khi vào Khối** | Chỉ là vector từ vựng tĩnh mang nghĩa chung chung: *"cluster = một cụm/nhóm máy móc"*. | Hoàn toàn mù tịt, không biết task này dễ hay khó. |
+| **Sau khi đi qua Khối Transformer** | Vector đã được **hòa trộn ngữ cảnh hoàn chỉnh**: <br>1. Qua Self-Attention: Biết cụm này thuộc về **Apache Kafka**, đang bị dính lỗi **memory leak**, và cần hành động **Fix**.<br>2. Qua FFN: Bộ nhớ tri thức kích hoạt nhận định đây là **sự cố hạ tầng phân tán có rủi ro nghiêm trọng**. | Đã tích lũy đủ thông tin chất lượng cao để sẵn sàng nạp vào các khối tiếp theo và đẩy sang **MLP Regressor Head** dự đoán chính xác mức Story Point cao (**8 hoặc 13 SP**)! |
+
+---
+
 ## 📌 5. TỔNG KẾT
 
 * **Con số 2304** = $768 \times 3$ (Query + Key + Value), sinh ra từ kỹ thuật **ghép ma trận (Matrix Fusion)** giúp tối ưu hóa phần cứng GPU (giảm từ 3 lần chạy kernel xuống còn 1 lần duy nhất).
