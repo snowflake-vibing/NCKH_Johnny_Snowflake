@@ -11,38 +11,43 @@
 
 Kiến trúc GPT2SP được thiết kế nhằm chuyển dịch mô hình ngôn ngữ sinh tự hồi quy (Autoregressive Generative Language Model - GPT-2) sang một mô hình **hồi quy dự đoán giá trị thực (Scalar Regression Model)** để ước lượng Story Point cho các hạng mục công việc (Jira issues).
 
-Quy trình hoạt động tổng thể của GPT2SP gồm **hai bước chính** xuyên suốt hai pha: **Pha Huấn luyện (Training Phase)** và **Pha Suy luận (Inference Phase)**:
+<div align="center">
+  <img src="images/fig2_gpt2sp_architecture.png" alt="Fig. 2: An overview architecture of our GPT2SP" width="100%"/>
+  <p><em>Hình 2: Sơ đồ kiến trúc tổng thể của mô hình GPT2SP (Nguồn: Trích xuất trực tiếp từ bài báo gốc IEEE TSE 2023 [Fu & Tantithamthavorn]).</em></p>
+</div>
 
-```mermaid
-flowchart TD
-    subgraph P1["Bước 1: Phân tách từ con Subword Tokenization (BPE)"]
-        Raw["Văn bản Jira Issue<br/>(Title + Description)"] --> BPE["Bộ Tokenizer BPE<br/>(Khởi tạo từ GPT-2 Corpus)"]
-        BPE --> Subwords["Chuỗi Subword Tokens<br/>(Chiều dài tối đa context c = 1024)"]
-    end
+### 🔍 Giải thích chi tiết quy trình vận hành trong Hình 2:
 
-    subgraph P2["Bước 2: Xây dựng mô hình Model Building (GPT-2 + MLP)"]
-        Subwords --> WE["Step 2a: Word Encoding<br/>W_te (V x 768)"]
-        Subwords --> PE["Step 2a: Positional Encoding<br/>W_pe (c x 768)"]
-        WE --> Add["Cộng Vector Đầu Vào:<br/>e_i = w_i + p_i"]
-        PE --> Add
-        Add --> Block1["Step 2b: Khối Decoder 1"]
-        Block1 --> Attn["Masked Multi-Head Self-Attention<br/>(12 Heads, d_kv = 64)"]
-        Attn --> LN1["LayerNorm & Residual Connection"]
-        LN1 --> FFN["Feed-Forward Neural Network<br/>(2 Tầng tuyến tính + GELU)"]
-        FFN --> LN2["LayerNorm & Residual Connection"]
-        LN2 --> Stack["... Xếp chồng liên tiếp 12 khối Decoder ..."]
-        Stack --> LastToken["Trích xuất trạng thái ẩn token cuối:<br/>h_last thuộc R^768"]
-        LastToken --> MLP["Step 2c: MLP Regressor<br/>(3-layer Perceptron Head)"]
-        MLP --> Output["Điểm Story Point Dự Đoán:<br/>y_hat (Giá trị thực vô hướng)"]
-    end
-```
+Sơ đồ Hình 2 được cấu trúc thành **hai pha hoạt động khép kín** gắn kết mật thiết với nhau: **Pha Huấn luyện (Training Phase - nửa trên)** và **Pha Suy luận & Ứng dụng (Inference Phase - nửa dưới)**:
 
-### Tóm lược hai bước xử lý cốt lõi:
-1. **Bước 1 (Step 1 — Subword Tokenization):** Nhận báo cáo issue đầu vào, thực hiện phân tách thành chuỗi từ con (subword tokens) bằng thuật toán Byte-Pair Encoding (BPE) dựa trên bộ từ vựng tiền huấn luyện của GPT-2.
-2. **Bước 2 (Step 2 — Model Building):** Xây dựng mạng học sâu GPT2SP gồm 3 công đoạn tuần tự:
-   * **Step 2a (Word & Positional Encoding):** Mã hóa ngữ nghĩa từ và vị trí tương đối trong chuỗi, sinh ra vector nhúng đầu vào $\mathbf{e}_i$.
-   * **Step 2b (Stack of 12 Transformer Decoders):** Đưa vector vào 12 khối giải mã Transformer xếp chồng với cơ chế Masked Multi-Head Self-Attention và Feed-Forward Neural Network.
-   * **Step 2c (Multi-Layer Perceptron Regressor):** Đưa vector biểu diễn cuối cùng qua đầu hồi quy MLP 3 tầng để xuất ra điểm Story Point dự đoán $\hat{y}$.
+#### 1. Pha Huấn luyện (Training Phase — Nửa trên sơ đồ)
+* **Dữ liệu đầu vào (Training Data):** Là tập hợp các báo cáo Jira issue trong lịch sử đã có sẵn nhãn điểm Story Point thực tế (`Issues + SPs`). Ví dụ trong hình minh họa một issue có tiêu đề bắt đầu bằng thuật ngữ kỹ thuật dài `ExpressionExecution..`.
+* **Khung 1: Phân tách từ con Subword Tokenization (BPE):**
+  * Tận dụng vốn tri thức ngôn ngữ của mô hình nền tảng **GPT-2**.
+  * **1a — Merge Operations:** Các quy tắc sáp nhập cặp ký tự/byte xuất hiện với tần suất cao nhất trong kho ngữ liệu.
+  * **1b — Subword Vocabularies:** Bộ từ điển từ con chuẩn hóa gồm $50.257$ tokens.
+  * Bộ **Subword Tokenizer** phân tách văn bản issue thành chuỗi các từ con có nghĩa (`Subword Tokenized Issues`), ví dụ: `[Exp, ression, ...]`.
+* **Khung 2: Xây dựng mô hình học sâu (Model Building — GPT2SP Model):**
+  * **2a — Word & Positional Encoding:**
+    * Với mỗi subword token (ví dụ: `Exp`), tra cứu vector nhúng từ tương ứng.
+    * Với vị trí thứ tự xuất hiện của token trong câu (ví dụ: `Pos#1`), tra cứu vector nhúng vị trí tương ứng.
+    * Thực hiện phép cộng vector trực tiếp (`+`) để tạo thành chuỗi các vector nhúng đầu vào (`Embedding vectors`, minh họa bằng các khối màu vàng).
+  * **2b — 12 x Stacking Transformer Decoders:**
+    * Chuỗi embedding vectors được nạp qua **12 khối giải mã Transformer (Decoders)** xếp chồng liên tiếp (từ khối 1 đến khối 12).
+    * *Cơ chế Masked Multi-Head Self-Attention:* Ma trận biến đổi Query/Key/Value có kích thước $768 \times 2304$ và ma trận chiếu $768 \times 768$, cho phép từng từ trong câu liên kết ngữ nghĩa hai chiều với mọi từ xung quanh mà không nhìn trước tương lai.
+    * *Mạng nơ-ron truyền thẳng (Feed-Forward Neural Network - FFN):* Chiếu mở rộng không gian đặc trưng lên $768 \times 3072$ kết hợp hàm kích hoạt phi tuyến GELU.
+  * **2c — MLP Regressor:**
+    * Trích xuất vector trạng thái ẩn tại token cuối cùng ($\mathbf{h}_{\text{last}}$, minh họa bằng các khối màu xanh dương) đại diện cho toàn bộ ngữ cảnh của issue.
+    * Đưa qua đầu hồi quy đa tầng **MLP Regressor** để dự đoán giá trị điểm Story Point vô hướng ($\hat{y}$), đối chiếu với điểm thực tế (`SPs`) qua hàm mất mát $L_1$ Loss để cập nhật trọng số mô hình.
+
+#### 2. Pha Suy luận & Hỗ trợ Chuyên gia (Inference Phase — Nửa dưới sơ đồ)
+* **Dữ liệu đầu vào (Testing Data):** Là các issue mới cần được lập kế hoạch trong Sprint tới, hoàn toàn chưa có điểm Story Point.
+* **Tiền xử lý:** Issue mới được đưa qua bộ **Subword Tokenizer** (đã đóng băng từ Pha 1) để phân rã thành chuỗi `Subword Tokenized Issues`.
+* **Xử lý qua mạng nơ-ron (GPT2SP Model):** Chuỗi tokens được đưa vào mạng **GPT2SP Model** đã được huấn luyện hội tụ trọng số.
+* **Đột phá Hai luồng đầu ra song song (Dual-Output Stream):**
+  1. **Luồng Dự đoán Điểm số (Storypoint Estimation):** Mô hình xuất ra con số điểm nỗ lực ước lượng khách quan (`Story Point`, minh họa bằng biểu tượng đồng hồ đo tốc độ).
+  2. **Luồng Kiểm tra & Giải thích Mô hình (Model Inspection — XAI):** Tận dụng trọng số chú ý để phát hiện và tô sáng từ ngữ quan trọng nhất chi phối quyết định, đồng thời tự động truy vấn trong tập huấn luyện của dự án để tìm ra các **Ví dụ Hỗ trợ Lịch sử (Supporting Examples)** có cùng từ khóa và cùng mức điểm Story Point.
+* **Đích đến — Chuyên gia Thực hành Agile (Agile Practitioners):** Thay vì cung cấp một con số "hộp đen" gây nghi ngờ, GPT2SP bàn giao cho đội ngũ phát triển, Scrum Master và Product Owner cả con số dự đoán lẫn bằng chứng đối chứng lịch sử xác thực, hỗ trợ nhóm nhanh chóng đạt được sự đồng thuận trong buổi Sprint Planning.
 
 ---
 
