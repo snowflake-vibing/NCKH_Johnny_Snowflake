@@ -1,11 +1,12 @@
-# 📖 CHƯƠNG 5: THIẾT KẾ THỰC NGHIỆM VÀ PHÂN TÍCH KẾT QUẢ (EXPERIMENTAL DESIGN AND RESULTS)
+# 📖 CHƯƠNG 5: THIẾT KẾ THỰC NGHIỆM VÀ PHÂN TÍCH KẾT QUẢ (5 EXPERIMENTAL DESIGN AND RESULTS)
 
-> **Tài liệu gốc:** Trang 7 – 10 và Trang 19 (Table 2, Table 3), bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
+> **Vị trí trong bài báo gốc:** **Section 5 (Trang 7 – 10)**, bảng kết quả mở rộng tại **Trang 19 (Table 2 & Table 3)**, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
 > **Tác giả:** Michael Fu, Chakkrit Tantithamthavorn (Đại học Monash, Úc).
 
 ---
 
-## 📌 1. RQ1: ĐÁNH GIÁ TRONG NỘI BỘ DỰ ÁN (WITHIN-PROJECT ESTIMATION)
+## 📌 5.1 (RQ1) DOES OUR GPT2SP OUTPERFORM DEEP-SE FOR WITHIN-PROJECT STORY POINT ESTIMATIONS?
+*(GPT2SP có vượt trội hơn Deep-SE trong bài toán ước lượng nội bộ dự án hay không? - Trang 7 – 8)*
 
 ### 1.1. Thiết lập kịch bản & 9 Mô hình đối chứng (Baselines)
 Trong kịch bản này, mô hình được huấn luyện và đánh giá trên từng dự án riêng lẻ ($60\%$ Train, $20\%$ Val, $20\%$ Test). Nhóm tác giả so sánh GPT2SP với **9 mô hình đối chứng chuẩn mực**:
@@ -58,7 +59,8 @@ Dưới đây là bảng số liệu nguyên bản đầy đủ sai số MAE c�
 
 ---
 
-## 🌐 2. RQ2: ĐÁNH GIÁ CHUYỂN GIAO LIÊN DỰ ÁN (CROSS-PROJECT ESTIMATION)
+## 🌐 5.2 (RQ2) DOES OUR GPT2SP OUTPERFORM DEEP-SE FOR CROSS-PROJECT STORY POINT ESTIMATIONS?
+*(GPT2SP có vượt trội hơn Deep-SE trong bài toán ước lượng liên dự án hay không? - Trang 8 – 9)*
 
 Trong thực tế Agile, một dự án phần mềm mới bắt đầu hoàn toàn không có dữ liệu lịch sử để huấn luyện mô hình. RQ2 kiểm tra xem mô hình được huấn luyện từ một dự án nguồn (Source) có thể dự đoán chính xác trên dự án đích (Target) hay không.
 
@@ -101,7 +103,8 @@ Trong thực tế Agile, một dự án phần mềm mới bắt đầu hoàn to
 
 ---
 
-## 🔬 3. RQ3: PHÂN TÍCH TRIỆT TIÊU THÀNH PHẦN (ABLATION STUDY)
+## 🔬 5.3 (RQ3) WHAT ARE THE CONTRIBUTIONS OF THE COMPONENTS OF OUR GPT2SP ARCHITECTURE TO THE OVERALL PERFORMANCE?
+*(Đâu là đóng góp của các thành phần trong kiến trúc GPT2SP đối với hiệu năng tổng thể? - Trang 9 – 10)*
 
 Để chứng minh luận điểm khoa học: *Đâu là cấu phần quyết định sự thành công của GPT2SP?*, các tác giả tiến hành thực nghiệm bóc tách chéo giữa các giải thuật Tokenization và kiến trúc mạng:
 

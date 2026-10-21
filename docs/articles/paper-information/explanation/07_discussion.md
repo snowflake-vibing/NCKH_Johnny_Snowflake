@@ -1,16 +1,17 @@
-# 📖 CHƯƠNG 7: THẢO LUẬN VÀ HÀM Ý THỰC TIỄN (DISCUSSION)
+# 📖 CHƯƠNG 7: THẢO LUẬN VÀ HÀM Ý THỰC TIỄN (7 DISCUSSION)
 
-> **Tài liệu gốc:** Trang 13, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
+> **Vị trí trong bài báo gốc:** **Section 7 (Trang 13, Cột 1 và 2)**, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
 > **Tác giả:** Michael Fu, Chakkrit Tantithamthavorn (Đại học Monash, Úc).
 
 ---
 
-## 👥 1. HÀM Ý CHO CÁC CHUYÊN GIA THỰC HÀNH AGILE (BENEFITS TO PRACTITIONERS)
+## 👥 7.1 BENEFITS TO PRACTITIONERS
+*(Hàm ý và Lợi ích Thực tiễn cho các Chuyên gia Thực hành Agile - Trang 13, Cột 1)*
 
 ### AI đóng vai trò hỗ trợ ra quyết định (Decision-Support), không thay thế con người
 Một thông điệp then chốt mà nhóm tác giả nhấn mạnh:
 * **Mục tiêu của GPT2SP KHÔNG PHẢI là tự động hóa hoàn toàn quy trình Agile** (fully-automated Agile process). Việc loại bỏ con người khỏi quy trình lập kế hoạch là bất khả thi và phi thực tế đối với một hệ thống mang tính xã hội - kỹ thuật (socio-technical system).
-* Thay vào đó, GPT2SP đóng vai trò là một **hệ thống hỗ trợ ra quyết định (Decision-Support System)**, đồng hành cùng các kỹ sư và Scrum Master trước và trong các buổi họp Backlog Refinement và Sprint Planning.
+* Thay vào đó, GPT2SP đóng vai trò là một **hệ thống hỗ trợ ra quyết định (Decision-Support System)**, đồng hành cùng các kỹ sư và Scrum Master trước và trong các buổi họp Backlog Refinement và Sprint Planning nhằm đảm bảo tính nhất quán giữa các thành viên dựa trên dữ liệu quá khứ.
 
 ```mermaid
 flowchart TD
@@ -30,18 +31,20 @@ flowchart TD
 
 ---
 
-## 🔬 2. HÀM Ý CHO CÁC NHÀ NGHIÊN CỨU KỸ NGHỆ PHẦN MỀM (BENEFITS TO RESEARCHERS)
+## 🔬 7.2 BENEFITS TO RESEARCHERS
+*(Hàm ý và Đóng góp Phương pháp luận cho các Nhà Nghiên cứu Kỹ nghệ Phần mềm - Trang 13, Cột 1 & 2)*
 
 Công trình GPT2SP mở ra nhiều định hướng phương pháp luận quan trọng cho cộng đồng nghiên cứu SE:
-* **Tính khả thi của Transformer cho các bài toán hồi quy (Regression Tasks):** Trước đây, các mô hình Transformer như BERT hay GPT chủ yếu được áp dụng cho các bài toán phân loại nhị phân (Binary Classification) hoặc sinh mã nguồn (Code Generation). GPT2SP chứng minh rằng việc kết hợp Transformer Decoder với một đầu MLP Regressor và hàm mất mát $L_1$ là một kiến trúc chuẩn mực, có thể nhân rộng sang nhiều tác vụ hồi quy khác trong kỹ nghệ phần mềm:
+* **Tính khả thi của Transformer cho các bài toán hồi quy (Regression Tasks trong SE):** Trước đây, các mô hình Transformer như BERT hay GPT chủ yếu được áp dụng cho các bài toán phân loại nhị phân (Binary Classification) hoặc sinh mã nguồn (Code Generation). GPT2SP chứng minh rằng việc kết hợp Transformer Decoder với một đầu MLP Regressor và hàm mất mát $L_1$ là một kiến trúc chuẩn mực, có thể nhân rộng sang nhiều tác vụ hồi quy khác trong kỹ nghệ phần mềm:
   * Ước lượng thời gian sửa lỗi (Bug Fix Time Estimation).
   * Dự đoán nỗ lực đánh giá mã nguồn (Code Review Effort Prediction).
   * Dự báo nỗ lực bảo trì nợ kỹ thuật (Technical Debt Effort).
 * **Sức mạnh của Học chuyển giao (Transfer Learning):** Nghiên cứu chứng minh rằng việc tận dụng các mô hình nền tảng ngôn ngữ (Foundation Models) đã được tiền huấn luyện trên quy mô lớn mang lại hiệu quả vượt trội hơn hẳn việc cố gắng tiền huấn luyện các mô hình cục bộ từ đầu trên tập dữ liệu nhỏ hẹp của phần mềm.
+* **Mở đường cho Trí tuệ Nhân tạo Có Thể Giải Thích trong SE (XAI4SE):** Việc tận dụng cơ chế Multi-Head Attention và Integrated Gradients để giải thích quyết định của mô hình học sâu, kết hợp truy hồi các ví dụ minh chứng lịch sử (Supporting Examples), đặt nền móng quan trọng cho hướng nghiên cứu XAI trong kỹ nghệ phần mềm — một lĩnh vực đầy hứa hẹn nhưng còn rất ít được khai phá.
 
 ---
 
-## 💡 3. VÌ SAO GPT2SP HOẠT ĐỘNG VƯỢT TRỘI SO VỚI CÁC PHƯƠNG PHÁP CŨ?
+## 💡 7.3 TỔNG KẾT VÌ SAO GPT2SP HOẠT ĐỘNG VƯỢT TRỘI SO VỚI CÁC PHƯƠNG PHÁP CŨ?
 
 Nhóm tác giả đúc kết 3 nguyên nhân công nghệ cốt lõi giúp GPT2SP đánh bại hoàn toàn Deep-SE và các mô hình học máy truyền thống:
 

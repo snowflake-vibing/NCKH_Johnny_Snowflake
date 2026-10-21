@@ -1,11 +1,12 @@
-# 📖 CHƯƠNG 6: CÔNG CỤ MINH CHỨNG XAI VÀ KHẢO SÁT CHUYÊN GIA AGILE (EXPLAINABLE AI TOOL & PRACTITIONER SURVEY)
+# 📖 CHƯƠNG 6: CÔNG CỤ MINH CHỨNG XAI VÀ KHẢO SÁT CHUYÊN GIA (6 A PROOF-OF-CONCEPT EXPLAINABLE AI-ASSISTED STORY POINT ESTIMATION TOOL AND PRACTITIONER SURVEY)
 
-> **Tài liệu gốc:** Trang 10 – 13, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
+> **Vị trí trong bài báo gốc:** **Section 6 (Trang 10 – 13)**, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
 > **Tác giả:** Michael Fu, Chakkrit Tantithamthavorn (Đại học Monash, Úc).
 
 ---
 
-## 🛠️ 1. CÔNG CỤ GPT2SP WEB VÀ CƠ CHẾ GIẢI THÍCH (6.1 A GPT2SP TOOL)
+## 🛠️ 6.1 A GPT2SP TOOL
+*(Công cụ GPT2SP Web và Cơ chế Giải thích Minh chứng - Trang 10 – 11)*
 
 Để đưa mô hình từ phòng thí nghiệm ra ứng dụng thực tiễn và giúp các lập trình viên tin tưởng vào kết quả dự đoán của AI, nhóm tác giả phát triển một công cụ thử nghiệm (Proof-of-Concept) chạy trên nền tảng **Streamlit**:
 * **Địa chỉ triển khai thử nghiệm:** `https://share.streamlit.io/awsm-research/gpt2sp_webapp/main/app.py`
@@ -42,7 +43,8 @@ Công cụ tự động quét kho dữ liệu huấn luyện lịch sử của d
 
 ---
 
-## 📋 2. THIẾT KẾ KHẢO SÁT CHUYÊN GIA AGILE (6.2 SURVEY STUDY)
+## 📋 6.2 A SURVEY STUDY WITH AGILE PRACTITIONERS
+*(Thiết kế Nghiên cứu Khảo sát Chuyên gia Agile - Trang 11 – 12)*
 
 Nghiên cứu tiến hành khảo sát thực nghiệm để trả lời câu hỏi: *Các chuyên gia Agile đánh giá như thế nào về độ khó của việc chấm Story Point, và liệu việc AI cung cấp lời giải thích có thực sự làm tăng tính hữu ích và độ tin cậy hay không?*
 
@@ -58,17 +60,20 @@ Nghiên cứu tiến hành khảo sát thực nghiệm để trả lời câu h�
 
 ---
 
-## 📊 3. KẾT QUẢ KHẢO SÁT THỰC NGHIỆM (6.3 SURVEY RESULTS)
+## 📊 6.3 SURVEY RESULTS
+*(Kết quả Khảo sát Chuyên gia Thực nghiệm qua 4 Câu hỏi Q1 - Q4 - Trang 12 – 13)*
 
-Dưới đây là tổng hợp định lượng kết quả khảo sát từ 16 chuyên gia (minh họa theo Figure 8 trong bài báo):
+Dưới đây là tổng hợp định lượng kết quả khảo sát từ 16 chuyên gia Agile thực thụ (minh họa theo Figure 8 trong bài báo):
 
-### 3.1. Nhận thức về độ khó của bài toán Story Point (Q1)
+### (Q1) How do practitioners perceive the challenge of the story point estimation task?
+*(Các chuyên gia nhận thức như thế nào về mức độ thách thức của bài toán ước lượng Story Point?)*
 * **$57\%$** chuyên gia đánh giá việc ước lượng Story Point là công việc **"Thách thức" (Challenging - $19\%$)** hoặc **"Cực kỳ thách thức" (Extremely Challenging - $38\%$)**.
 * **$44\%$** giữ quan điểm trung lập. Không có bất kỳ chuyên gia nào cho rằng công việc này là dễ dàng.
 
 ---
 
-### 3.2. Bước nhảy vọt về Tính Hữu Ích (Usefulness) và Độ Tin Cậy (Trust) nhờ XAI (Q2)
+### (Q2 & Q3) Would AI-based story point estimation with explanations be more useful and trustworthy than without explanations?
+*(Liệu việc AI cung cấp thêm lời giải thích và ví dụ lịch sử có thực sự hữu ích và đáng tin cậy hơn so với AI không có giải thích?)*
 
 | Khía cạnh đánh giá | Khi AI chỉ đưa ra điểm số (Không có giải thích) | Khi AI có kèm giải thích XAI & Ví dụ lịch sử | Mức độ gia tăng |
 | :--- | :---: | :---: | :---: |
@@ -100,5 +105,7 @@ Các câu trả lời mở lý giải vì sao việc có giải thích lại là
 * *Một Project Manager chia sẻ:*  
   > *"Các ví dụ trong quá khứ là 'vũ khí' tuyệt vời nhất trong buổi Planning Poker. Thay vì cãi nhau dựa trên cảm tính cá nhân, tôi có thể chỉ ra cho cả nhóm thấy một issue tương tự năm ngoái đã mất đúng 5 Story Point."*
 
-### 3.4. Sẵn sàng đón nhận trong thực tế (Q2.7)
+### (Q4) Would practitioners adopt our explainable AI-assisted story point estimation tool in practice?
+*(Mức độ sẵn sàng áp dụng công cụ AI hỗ trợ giải thích trong thực tế doanh nghiệp?)*
 * **$69\%$** chuyên gia khẳng định họ **sẵn sàng áp dụng ngay lập tức** giải pháp AI ước lượng Story Point nếu nó được tích hợp sẵn dưới dạng tiện ích mở rộng (add-on) miễn phí trên hệ sinh thái Atlassian Jira!
+* **Tóm tắt (Summary trang 13):** Khảo sát với 16 chuyên gia Agile chứng minh rằng một công cụ ước lượng Story Point có kèm giải thích minh chứng được đánh giá **hữu ích hơn ($88\%$)** và **đáng tin cậy hơn ($75\%$)** gấp nhiều lần so với mô hình AI hộp đen không có giải thích.
