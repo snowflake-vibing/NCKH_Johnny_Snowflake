@@ -4,12 +4,26 @@ Thư mục này chứa hệ thống từ điển thuật ngữ chuyên sâu, đ�
 
 ---
 
-## 🗂️ CÁC TÀI LIỆU TRONG THƯ MỤC
+## 🗂️ CÁC TÀI LIỆU CHÍNH TRONG THƯ MỤC
 
 | Tên tài liệu | Chủ đề & Phạm vi | Liên kết |
 | :--- | :--- | :--- |
 | **`RULE.md`** | **Quy chuẩn xây dựng từ điển thuật ngữ**: Triết lý kỹ thuật Feynman (giải thích cho đứa trẻ 10 tuổi), cấu trúc khung chuẩn 6 phần, quy tắc sơ đồ Mermaid và tiếng Việt có dấu. | [Xem chi tiết](RULE.md) |
-| **`glossary_gpt2sp.md`** | Toàn bộ thuật ngữ trong bài báo **GPT2SP (Fu & Tantithamthavorn, IEEE TSE 2023)**: Tokenization BPE, Transformer, Attention, Integrated Gradients, Thang đo MAE/SA, Kiểm định Scott-Knott ESD & Cliff's Delta, và Lỗ hổng Temporal Leakage. | [Xem chi tiết](glossary_gpt2sp.md) |
+| **`glossary_gpt2sp.md`** | Tổng hợp nhanh toàn bộ thuật ngữ trong bài báo **GPT2SP (Fu & Tantithamthavorn, IEEE TSE 2023)**: Phân loại theo 7 nhóm chuyên sâu. | [Xem chi tiết](glossary_gpt2sp.md) |
+
+---
+
+## 🔬 TỪ ĐIỂN THUẬT NGỮ CHUYÊN SÂU (CHUẨN FEYNMAN 6 PHẦN)
+
+Các thuật ngữ dưới đây được biên soạn chi tiết theo **quy chuẩn `RULE.md`** (Giải thích cho đứa trẻ 10 tuổi, Bóc tách chiết tự, Trực quan hóa bảng dữ liệu, Thách thức kỹ thuật, Giải pháp trong GPT2SP/GPT-2, và Bản đúc kết 30 giây):
+
+| Thuật ngữ chuyên sâu | Nhóm kỹ thuật | Khái niệm trọng tâm giải quyết | Liên kết tài liệu |
+| :--- | :--- | :--- | :--- |
+| **Byte-Pair Encoding (BPE)** | NLP & Tokenization | Thuật toán ghép cặp byte/ký tự theo tần suất, xóa bỏ 100% lỗi Out-Of-Vocabulary (`OOV = 0%`). | [byte_pair_encoding.md](byte_pair_encoding.md) |
+| **Subword Tokens** | NLP & Tokenization | Đơn vị từ con trung gian, giải quyết hoàn hảo tên hàm mã nguồn và biệt ngữ ghép trong Jira. | [subword_tokens.md](subword_tokens.md) |
+| **Word Encoding** | Representation Learning | Ánh xạ chỉ số token vào không gian vector ngữ nghĩa $d=768$, thừa hưởng tri thức khổng lồ của GPT-2. | [word_encoding.md](word_encoding.md) |
+| **Positional Encoding** | Transformers Architecture | Vector mã hóa thứ tự vị trí, giúp cơ chế Self-Attention song song không bị "mù thứ tự cú pháp". | [positional_encoding.md](positional_encoding.md) |
+| **Transformer Decoder** | Deep Learning Models | Khối giải mã nhân quả một chiều (Masked Causal Attention), chắt lọc ngữ cảnh toàn bài vào token cuối để hồi quy Story Point. | [transformer_decoder.md](transformer_decoder.md) |
 
 ---
 

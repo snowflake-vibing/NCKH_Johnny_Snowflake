@@ -103,7 +103,10 @@ hf_cache/
 *.pem
 credentials.json
 *secret*
-*token*
+*token*.json
+*token*.txt
+*token*.key
+.token*
 
 # ==============================================================================
 # 6. HỆ ĐIỀU HÀNH (OS SPECIFIC)
