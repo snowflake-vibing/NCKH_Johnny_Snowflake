@@ -5,6 +5,7 @@
 > 🔗 **Tài liệu đào sâu chuyên biệt:**  
 > • 📖 [Phân tích chi tiết từng chương (Chương 1 - 10 & Phụ lục)](explanation/README.md)  
 > • 🔬 [Nghiên cứu tình huống thực tế (Case Study Jira Issue XD-3751)](case-study/case_study_gpt2sp_architecture.md)
+> • 🧠 [Phân tích phản biện chuyên sâu (Scientific Critical Thinking)](critical-thinking/README.md)
 > • 📚 [Bảng tra cứu thuật ngữ chuyên ngành (Glossary)](glossary/glossary_gpt2sp.md)
 
 ---

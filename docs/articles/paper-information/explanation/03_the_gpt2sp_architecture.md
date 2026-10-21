@@ -176,6 +176,15 @@ Trong đó:
 
 ---
 
+> [!IMPORTANT]
+> **Góc nhìn phản biện chuyên sâu (Scientific Critical Thinking):**  
+> Bạn thắc mắc vì sao các hằng số siêu tham số trong kiến trúc lại có những giá trị đặc biệt? Mời bạn tham khảo bộ tài liệu giải phẫu bản chất toán học và phần cứng:  
+> • 🧠 **[Tại sao từ điển BPE dừng ở 50.257 tokens?](../critical-thinking/01_subword_vocabularies_50257.md)**  
+> • 🧠 **[Con số 768 chiều ẩn từ đâu sinh ra? (Warp GPU & 12 heads x 64)](../critical-thinking/02_why_hidden_dimension_768.md)**  
+> • 🧠 **[Giải mã kích thước ma trận QKV (2304), Chiếu (768), và FFN mở rộng (3072)](../critical-thinking/03_why_qkv_2304_and_ffn_3072.md)**
+
+---
+
 > [!NOTE]
 > **Chuyển tiếp sang Chương 4 (Thiết lập Thực nghiệm):**  
 > Quy trình tối ưu hóa các tham số mô hình $\theta$ thông qua hàm mất mát **$L_1$ Loss** ($\mathcal{L}_{L1} = \sum |y_{\text{true}} - \hat{y}|$), thuật toán **AdamW** ($\text{LR} = 5 \times 10^{-4}$) và chi tiết cấu hình siêu tham số của biến thể **GPT-2 Small** (117M parameters) được tác giả trình bày tại **Mục 4.3 & 4.4 (Trang 6)** và được phân tích chi tiết tại [04_experimental_setup.md](file:///d:/NCKH_3/docs/articles/paper-information/explanation/04_experimental_setup.md).
