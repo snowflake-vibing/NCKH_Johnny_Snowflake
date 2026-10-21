@@ -126,30 +126,6 @@ Deep-SE đạt mức **MAE trung bình = 2.08**, vượt trội so với tất c
 ### 3.4 Hạn chế còn tồn tại
 > 📍 **Vị trí bài báo gốc:** Mục 1 (INTRODUCTION, Trang 1 – 2, Cột 1 – 2) & Mục 3.1 (SUBWORD TOKENIZATION, Trang 4, Cột 2).
 
-* **Chi phí Word2Vec (Trang 1 – 2, Mục 1):** Mô hình Word2Vec của Deep-SE phụ thuộc hoàn toàn vào từ vựng của dự án hiện tại, tốn 2–7 giờ huấn luyện và **không thể tái sử dụng** sang dự án khác (Not Transferable).
-* **Quên ngữ cảnh xa (Trang 2, Mục 1):** Mạng LSTM xử lý tuần tự từng từ một, khiến cho thông tin ở đầu câu dễ bị pha loãng (vanishing gradient / short-term memory refresh) khi chuỗi văn bản dài.
-* **Không tận dụng tri thức ngoài & Bùng nổ từ vựng (Trang 2 & Trang 4, Mục 3.1):** Deep-SE chỉ học từ dữ liệu nội bộ với tập từ vựng lên đến $185.625$ từ, gặp vấn đề từ ngoài từ điển (OOV) trầm trọng — điều mà các Foundation Model như GPT-2 với BPE Tokenization đã giải quyết triệt để.
-
----
-
-## 🚀 4. MÔ HÌNH NGÔN NGỮ NỀN TẢNG (FOUNDATION MODELS) & KIẾN TRÚC TRANSFORMER
-
-> 📍 **Vị trí bài báo gốc:** Mục 1 (INTRODUCTION, Trang 2, Cột 1 – 2) & Mục 3 (THE GPT2SP ARCHITECTURE, Trang 3, Cột 2 – Trang 4).
-
-Nhằm khắc phục triệt để các nhược điểm của mạng nơ-ron hồi quy tuần tự (RNN/LSTM), sự ra đời của **Transformer** (Vaswani et al., 2017) đã tạo ra cuộc cách mạng trong xử lý ngôn ngữ tự nhiên:
-
-### Sự khác biệt cốt lõi giữa LSTM và Transformer
-> 📍 **Vị trí bài báo gốc:** Mục 1 (Trang 2, Cột 1 – 2) & Mục 3 (Trang 3, Cột 2 – Trang 4, Hình 2).
-
-| Đặc tính kỹ thuật | Mạng hồi quy tuần tự (LSTM - Deep-SE) | Kiến trúc Transformer (GPT-2 - GPT2SP) |
-| :--- | :--- | :--- |
-| **Cơ chế xử lý** | Xử lý tuần tự từng từ một theo thời gian ($t_1 \rightarrow t_2 \rightarrow t_3$). | Xử lý **song song toàn bộ chuỗi** cùng một thời điểm, loại bỏ độ trễ tuần tự. |
-| **Bộ nhớ ngữ cảnh** | Trạng thái ẩn ngắn hạn phải làm mới qua mỗi cổng (gate), thông tin xa dễ bị lãng quên. | Cơ chế **Self-Attention** kết nối trực tiếp mọi cặp từ trong câu, độ dài ngữ cảnh không làm mất thông tin. |
-| **Vị trí của từ** | Phụ thuộc vào thứ tự đưa vào mạng. | Được mã hóa tường minh qua vector vị trí (**Positional Encoding**). |
-| **Khả năng tổng quát** | Huấn luyện cục bộ trên dữ liệu hẹp của từng dự án riêng lẻ. | Được tiền huấn luyện (**Pre-trained**) trên kho tri thức khổng lồ đa lĩnh vực, có vốn hiểu biết ngôn ngữ sâu sắc. |
-
-### Mô hình nền tảng GPT-2 (Radford et al., 2019)
-> 📍 **Vị trí bài báo gốc:** Mục 1 (Trang 2, Cột 2) & Mục 3 (Trang 3, Cột 2 – Trang 4).
-
-* **Quy mô tiền huấn luyện:** GPT-2 là mô hình ngôn ngữ dựa trên các khối giải mã Transformer (Decoder-only Transformer), được OpenAI huấn luyện không giám sát trên tập dữ liệu **WebText** (40GB văn bản trích xuất từ hơn 8 triệu liên kết trang web chất lượng cao trên Reddit).
-* **Năng lực chuyển giao (Transfer Learning):** Nhờ vốn từ vựng phong phú và khả năng nắm bắt cấu trúc ngữ pháp, ngữ nghĩa tinh vi, GPT-2 đóng vai trò là một "bộ não nền tảng" vững chắc. Khi chuyển sang bài toán ước lượng Story Point, mô hình chỉ cần tinh chỉnh nhẹ (**Fine-tuning**) trên tập dữ liệu Jira của dự án mục tiêu là có thể hội tụ nhanh chóng, đạt độ chính xác cao và có khả năng suy luận vượt trội.
+* **Chi phí Word2Vec:** Mô hình Word2Vec của Deep-SE phụ thuộc hoàn toàn vào từ vựng của dự án hiện tại, tốn 2–7 giờ huấn luyện và **không thể tái sử dụng** sang dự án khác (Not Transferable).
+* **Quên ngữ cảnh xa:** Mạng LSTM xử lý tuần tự từng từ một, khiến cho thông tin ở đầu câu dễ bị pha loãng (vanishing gradient / short-term memory refresh) khi chuỗi văn bản dài.
+* **Không tận dụng tri thức ngoài & Bùng nổ từ vựng:** Deep-SE chỉ học từ dữ liệu nội bộ với tập từ vựng lên đến $185.625$ từ, gặp vấn đề từ ngoài từ điển (OOV) trầm trọng — điều mà các Foundation Model như GPT-2 với BPE Tokenization trong Chương 3 sẽ giải quyết triệt để.
