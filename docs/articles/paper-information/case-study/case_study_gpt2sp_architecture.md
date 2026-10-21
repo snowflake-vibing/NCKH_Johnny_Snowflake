@@ -239,6 +239,14 @@ Hệ thống tự động truy vấn cơ sở dữ liệu của dự án Spring 
 
 ---
 
+## 🔬 CÁC CASE STUDY CHUYÊN SÂU ĐÀO SÂU TỪNG PHÂN HỆ
+
+* 🔬 **[Case Study 01: Hành trình dữ liệu qua 12 khối Transformer Decoders](01_case_study_12_transformer_decoders.md)** — Mổ xẻ chi tiết sự phân tầng trừu tượng từ Khối 1 đến Khối 12.
+* 🔬 **[Case Study 02: Cơ chế Last Token Pooling & Đầu hồi quy MLP Regressor 3 tầng](02_case_study_mlp_regressor_head.md)** — Giải mã cách biến đổi vector 768 chiều thành con số Story Point.
+* 🔬 **[Case Study 03: Đối chứng toàn diện Pha Huấn luyện (Training) và Pha Suy luận (Inference)](03_case_study_training_vs_inference_phases.md)** — Chi tiết hàm mất mát L1 Loss, AdamW và cơ chế Dual-Output Stream tại Sprint Planning.
+
+---
+
 ## 🔗 TÀI LIỆU LIÊN KẾT
 
 * 📖 [Chương 3: Kiến trúc mô hình GPT2SP](file:///d:/NCKH_3/docs/articles/paper-information/explanation/03_the_gpt2sp_architecture.md) — Phân tích chi tiết công thức toán học và cấu tạo 12 khối Transformer Decoders.
