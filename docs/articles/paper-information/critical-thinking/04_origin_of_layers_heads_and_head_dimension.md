@@ -36,12 +36,12 @@ flowchart TD
 
 ### 📍 Vị trí chính xác trong bài báo:
 1. **Mục 3.2.1: Scaled Dot-Product Attention (Trang 4, Cột 1, Dòng 10 – 35):**
-   * *Lý do toán học của hệ số chia $\frac{1}{\sqrt{d_k}}$:*  
+   * **Lý do toán học của hệ số chia** $\frac{1}{\sqrt{d_k}}$:  
      Tác giả giải thích rằng khi tích vô hướng $q \cdot k = \sum_{i=1}^{d_k} q_i k_i$ được tính giữa hai vector ngẫu nhiên độc lập có kỳ vọng $0$ và phương sai $1$, giá trị tích vô hướng sẽ có phương sai bằng đúng $d_k$.  
    * **Hiểm họa triệt tiêu gradient:** Nếu $d_k$ quá lớn, giá trị tích vô hướng sẽ vọt lên cực đại, đẩy hàm Softmax vào vùng bão hòa có đạo hàm cực kỳ nhỏ (Vanishing Gradients). Chia cho $\sqrt{d_k}$ đưa phương sai trở về $1$, giúp gradient ổn định.
 2. **Mục 3.2.2: Multi-Head Attention (Trang 5, Cột 1, Dòng 1 – 10):**
    * *Nguyên văn tác giả tuyên bố:*
-     > *"In this work we employ $h = 8$ parallel attention layers, or heads. For each of these we use $d_k = d_v = d_{\text{model}} / h = 64$. Due to the reduced dimension of each head, the total computational cost is similar to that of single-head attention with full dimensionality."*
+     > "In this work we employ $h = 8$ parallel attention layers, or heads. For each of these we use $d_k = d_v = d_{\mathrm{model}} / h = 64$. Due to the reduced dimension of each head, the total computational cost is similar to that of single-head attention with full dimensionality."
 3. **Bảng 3: Variations on the Transformer architecture (Trang 9, Table 3, Khối A):**
    * Các tác giả làm thực nghiệm khảo sát khi thay đổi kích thước $d_k$ và số đầu $h$ trên bài toán dịch máy (WMT 2014 English-to-German):
      * Khi $h = 1, d_k = 512$ (chỉ có 1 đầu đơn lẻ): Điểm BLEU tụt xuống **$26.8$**.
@@ -64,7 +64,7 @@ Vậy **ai là người nâng lên $12$ tầng và $12$ đầu chú ý?**
 ### 📍 Vị trí chính xác trong bài báo GPT-1:
 * **Mục 4.1: Setup — Model specifications (Trang 5, Cột 1, Dòng 10 – 18):**
   * *Nguyên văn tác giả công bố cấu hình chuẩn:*
-    > *"Our model largely follows the original transformer work. We trained a 12-layer decoder-only transformer with masked self-attention heads (768 dimensional states and 12 attention heads). For the position-wise feed-forward networks, we used 3072 dimensional inner states."*
+    > "Our model largely follows the original transformer work. We trained a 12-layer decoder-only transformer with masked self-attention heads (768 dimensional states and 12 attention heads). For the position-wise feed-forward networks, we used 3072 dimensional inner states."
 
 ### 📄 Bài báo chuẩn hóa thành thước đo học thuật toàn cầu:
 * **Tên bài báo:** *BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding* (NAACL-HLT 2019).
@@ -75,7 +75,7 @@ Vậy **ai là người nâng lên $12$ tầng và $12$ đầu chú ý?**
     * $\text{BERT}_{\text{BASE}}$: $L = 12, H = 768, A = 12$, Tổng tham số = 110M.
     * $\text{BERT}_{\text{LARGE}}$: $L = 24, H = 1024, A = 16$, Tổng tham số = 340M.
   * *Lời giải thích của Google vì sao chọn đúng $L=12, H=12, d=768$:*
-    > *"We chose the same model size as OpenAI GPT for fair comparison."*  
+    > "We chose the same model size as OpenAI GPT for fair comparison."  
     *(Chúng tôi chọn cùng kích thước mô hình với OpenAI GPT để đảm bảo việc so sánh hiệu năng là hoàn toàn công bằng).*
 
 ---
@@ -118,9 +118,9 @@ Với $d_{\text{model}} = 768 \implies 12 \times 768^2 \approx 7.08\text{M tham 
 * **DOI:** [10.1109/TSE.2023.3241517](https://doi.org/10.1109/TSE.2023.3241517)
 * **Vị trí cụ thể trong bài báo gốc GPT2SP:**
   1. **Mục 3.2: Model Building — Step 2b: Stacking 12 Decoders (Trang 5, Cột 1, Dòng 35 – 45):**
-     > *"GPT-2 is a stack of 12 decoders. The input embedding vectors are fed to each decoder layer..."*
+     > "GPT-2 is a stack of 12 decoders. The input embedding vectors are fed to each decoder layer..."
   2. **Mục 4.3: Model Implementation (Trang 6, Cột 1, Dòng 10 – 25):**
-     > *"We implement our GPT2SP based on Hugging Face’s Transformers library... we fine-tune the pre-trained GPT-2 model (i.e., GPT-2 small with 117M parameters, 12 layers, 12 attention heads, and 768 hidden dimension)..."*
+     > "We implement our GPT2SP based on Hugging Face’s Transformers library... we fine-tune the pre-trained GPT-2 model (i.e., GPT-2 small with 117M parameters, 12 layers, 12 attention heads, and 768 hidden dimension)..."
 
 ---
 
