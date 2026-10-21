@@ -52,11 +52,11 @@ Hãy xem điều gì xảy ra với các lựa chọn chiều ẩn khác nhau kh
 
 ```mermaid
 flowchart TD
-    Choice{"Lựa Chọn Chiều Ẩn (d_model)"}
+    Choice{"Lựa Chọn Chiều Ẩn d_model"}
     
-    Choice -->|d = 512\n(Transformer 2017)| Small["Quy mô ~50M tham số\n- Quá nhỏ\n- Lãng phí dung lượng VRAM 16GB"]
-    Choice -->|d = 768\n(GPT-2 Small / BERT-Base)| Sweet["Quy mô ~117M tham số\n- ĐIỂM NGỌT (SWEET SPOT)\n- Đủ thông minh, nạp vừa vặn batch size lớn vào 16GB VRAM"]
-    Choice -->|d = 1024\n(GPT-2 Medium)| Large["Quy mô ~345M tham số\n- Bị tràn bộ nhớ (Out-Of-Memory)\n- Phải giảm batch size xuống quá nhỏ gây mất ổn định"]
+    Choice --> Small["d = 512 (Transformer 2017)<br/>──────────────────────<br/>• Quy mô ~50M tham số<br/>• Quá nhỏ, lãng phí dung lượng VRAM 16GB"]
+    Choice --> Sweet["d = 768 (GPT-2 Small / GPT2SP)<br/>──────────────────────<br/>• Quy mô ~117M tham số (ĐIỂM NGỌT)<br/>• Đủ thông minh, học ngữ nghĩa sâu<br/>• Vừa vặn batch size lớn trong 16GB VRAM"]
+    Choice --> Large["d = 1024 (GPT-2 Medium)<br/>──────────────────────<br/>• Quy mô ~345M tham số<br/>• Dễ tràn bộ nhớ VRAM khi train"]
 ```
 
 Với $d_{\text{model}} = 768$ và $12$ khối Transformer, tổng số tham số mô hình được tính như sau:

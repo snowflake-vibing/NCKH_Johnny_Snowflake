@@ -45,10 +45,12 @@ $50.000$ là một **siêu tham số (hyperparameter)** được lựa chọn d�
 Về mặt lý thuyết, người ta hoàn toàn có thể tiếp tục cho thuật toán chạy thêm $100.000$ hay $200.000$ phép merge nữa. Tuy nhiên, nếu làm vậy, mô hình sẽ phải đối mặt với **bài toán đánh đổi hai chiều (Dual Trade-off)**:
 
 ```mermaid
-flowchart LR
-    A["Số Phép Merge BPE (K)"] -->|K Quá Nhỏ\n(ví dụ: 10.000)| B["TỪ ĐIỂN NHỎ\n- Chuỗi token bị xé rất dài\n- Bùng nổ chi phí Attention O(L^2)\n- Tràn giới hạn ngữ cảnh 1024"]
-    A -->|K Quá Lớn\n(ví dụ: 200.000)| C["TỪ ĐIỂN PHÌNH TO\n- Ma trận nhúng W_te ngốn VRAM\n- Nhiều token hiếm không học đủ dữ liệu\n- Tham số bị phân mảnh"]
-    A -->|K = 50.000\n(Điểm Cân Bằng)| D["ĐIỂM NGỌT (SWEET SPOT)\n- Cân bằng tối ưu giữa độ dài câu và kích thước ma trận nhúng"]
+flowchart TD
+    A["Số lượng phép Merge BPE (K)"]
+    
+    A --> B["K Quá Nhỏ (khoảng 10.000)<br/>────────────────────────<br/>• Chuỗi token bị xé rất dài<br/>• Bùng nổ chi phí Attention O(L^2)<br/>• Dễ tràn giới hạn ngữ cảnh 1024"]
+    A --> C["K = 50.000 (Điểm Ngọt GPT-2)<br/>────────────────────────<br/>• Cân bằng tối ưu độ dài chuỗi<br/>• Ma trận nhúng W_te vừa vặn GPU<br/>• Khắc phục hoàn toàn lỗi OOV"]
+    A --> D["K Quá Lớn (trên 150.000)<br/>────────────────────────<br/>• Ma trận nhúng W_te phình to ngốn VRAM<br/>• Nhiều token hiếm không học đủ dữ liệu<br/>• Tham số bị phân mảnh"]
 ```
 
 ### Bảng phân tích đánh đổi thực nghiệm:
