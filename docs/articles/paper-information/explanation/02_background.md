@@ -61,14 +61,56 @@ flowchart LR
 
 ## 🤖 3. MÔ HÌNH HỌC SÂU DEEP-SE (CHOETKIERTIKUL ET AL., 2019)
 
-Để tự động hóa bài toán ước lượng Story Point, Choetkiertikul et al. [7] đã đề xuất mô hình **Deep-SE**:
-* **Quy trình hoạt động của Deep-SE:**
-  1. **Bước 1 (Pre-training Word Embeddings):** Thu thập toàn bộ văn bản issue trong một dự án Jira, huấn luyện mô hình **Word2Vec** hoặc n-gram để biến đổi mỗi từ thành một vector biểu diễn phân tán (dense vector).
-  2. **Bước 2 (Mô hình chuỗi LSTM):** Nạp chuỗi các vector từ vào mạng bộ nhớ dài-ngắn (Long Short-Term Memory - LSTM) để học ngữ cảnh tuần tự của câu mô tả.
-  3. **Bước 3 (Đường cao tốc hồi quy RHWN):** Đưa đầu ra của LSTM qua mạng đường cao tốc hồi quy (Recurrent Highway Network - RHWN) để học các đặc trưng phi tuyến tính sâu hơn và đưa ra điểm số Story Point.
-* **Khuyết điểm cốt lõi:**
-  * Mô hình Word2Vec của Deep-SE phụ thuộc hoàn toàn vào từ vựng của dự án hiện tại, mất 2-7 giờ huấn luyện và không thể mang sang dự án khác.
-  * Mạng LSTM xử lý tuần tự từng từ một, khiến cho thông tin ở đầu câu dễ bị pha loãng khi chuỗi văn bản dài.
+Để tự động hóa bài toán ước lượng Story Point, Choetkiertikul et al. [7] đã đề xuất **Deep-SE** — mô hình học sâu đầu-cuối (end-to-end deep learning) đầu tiên cho bài toán này, được đánh giá trên cả hai kịch bản **within-project** (trong dự án) và **cross-project** (qua dự án).
+
+### 3.1 Bộ dữ liệu đánh giá
+
+Deep-SE được thực nghiệm trên tập dữ liệu lớn gồm **23.313 issues** thu thập từ **16 dự án mã nguồn mở** trên hệ thống theo dõi lỗi **JIRA**. Mỗi issue bao gồm ba trường thông tin chính được sử dụng làm đầu vào:
+
+| Trường thông tin | Ý nghĩa |
+| :--- | :--- |
+| **Title (Tiêu đề)** | Tóm tắt ngắn về tính năng hoặc lỗi cần xử lý. |
+| **Description (Mô tả)** | Nội dung chi tiết kỹ thuật và yêu cầu nghiệp vụ. |
+| **Story Point (Nhãn đầu ra)** | Điểm nỗ lực đã được đội ngũ gán trong quá khứ. |
+
+> [!NOTE]
+> **Hình 1** trong bài báo gốc minh họa rõ ràng kiến trúc tổng thể của Deep-SE: từ giai đoạn tiền xử lý văn bản, qua lớp LSTM, tiếp nối bởi RHWN, cho đến lớp hồi quy đầu ra dự đoán Story Point.
+
+### 3.2 Quy trình hoạt động của Deep-SE
+
+```mermaid
+flowchart LR
+    A["Văn bản Issue\n(Title + Description)"] --> B["Word2Vec Embeddings\n(tiền huấn luyện)"]
+    B --> C["LSTM\n(Long Short-Term Memory)"]
+    C --> D["RHWN\n(Recurrent Highway Network)"]
+    D --> E["Dự đoán\nStory Point"]
+```
+
+1. **Bước 1 — Pre-training Word Embeddings:** Thu thập toàn bộ văn bản issue trong một dự án Jira, huấn luyện mô hình **Word2Vec** hoặc n-gram để biến đổi mỗi từ thành một vector biểu diễn phân tán (dense vector).
+2. **Bước 2 — Mô hình chuỗi LSTM:** Nạp chuỗi các vector từ vào mạng bộ nhớ dài-ngắn (**LSTM**) để học ngữ cảnh tuần tự của câu mô tả.
+3. **Bước 3 — Đường cao tốc hồi quy RHWN:** Đưa đầu ra của LSTM qua mạng đường cao tốc hồi quy (**Recurrent Highway Network — RHWN**) để học các đặc trưng phi tuyến tính sâu hơn và đưa ra điểm số Story Point.
+
+### 3.3 Kết quả thực nghiệm và so sánh baseline
+
+Deep-SE đạt mức **MAE trung bình = 2.08**, vượt trội so với tất cả các baseline học máy truyền thống được so sánh trong bài báo:
+
+| Mô hình baseline | Phương pháp | Ghi chú |
+| :--- | :--- | :--- |
+| **LSTM + RF** | LSTM để rút trích đặc trưng, Random Forest để hồi quy. | Thiếu khả năng học biểu diễn phi tuyến sâu. |
+| **BoW + RF** | Bag-of-Words (đặc trưng từ tần suất), Random Forest. | Mất hoàn toàn thứ tự và ngữ cảnh của từ. |
+| **Doc2Vec + RF** | Nhúng tài liệu Doc2Vec, Random Forest. | Phụ thuộc chất lượng của Doc2Vec embeddings. |
+| **TF-IDF + SVM** | TF-IDF weighting, Support Vector Machine [36]. | Mô hình tuyến tính, không học được quan hệ phi tuyến. |
+| **Median Baseline** | Dự đoán bằng giá trị trung vị Story Point của lịch sử. | Baseline đơn giản nhất, không dùng văn bản. |
+
+> [!IMPORTANT]
+> **Ý nghĩa khoa học của Deep-SE:**  
+> Deep-SE là mô hình đầu tiên chứng minh rằng học sâu có thể học được biểu diễn ngữ nghĩa có ích từ mô tả issue để ước lượng Story Point — đặt nền tảng khái niệm cho GPT2SP kế thừa và phát triển.
+
+### 3.4 Hạn chế còn tồn tại
+
+* **Chi phí Word2Vec:** Mô hình Word2Vec của Deep-SE phụ thuộc hoàn toàn vào từ vựng của dự án hiện tại, tốn 2–7 giờ huấn luyện và **không thể tái sử dụng** sang dự án khác.
+* **Quên ngữ cảnh xa:** Mạng LSTM xử lý tuần tự từng từ một, khiến cho thông tin ở đầu câu dễ bị pha loãng (vanishing gradient) khi chuỗi văn bản dài.
+* **Không tận dụng tri thức ngoài:** Deep-SE chỉ học từ dữ liệu nội bộ của dự án, bỏ lỡ kiến thức ngôn ngữ học phổ quát — điều mà các Foundation Model như GPT-2 đã giải quyết triệt để.
 
 ---
 
