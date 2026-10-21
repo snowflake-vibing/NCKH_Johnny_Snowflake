@@ -1,57 +1,106 @@
-# 📚 THƯ MỤC THUẬT NGỮ CHUYÊN NGÀNH (GLOSSARY)
+# 📚 TỪ ĐIỂN THUẬT NGỮ CHUYÊN SÂU (GLOSSARY DIRECTORY)
 
-Thư mục này chứa hệ thống từ điển thuật ngữ chuyên sâu, đối chiếu Anh - Việt và giải thích toán học/khoa học phục vụ các nghiên cứu về Ước lượng Nỗ lực trong Agile (Agile Effort Estimation), Mô hình Ngôn ngữ Lớn (LLMs), và Kiểm định Chống Rò rỉ Dữ liệu.
+Thư mục này lưu trữ hệ thống từ điển thuật ngữ chuyên ngành phục vụ nghiên cứu **Ước lượng Nỗ lực trong Agile (Agile Story Point Estimation)**, **Mô hình Ngôn ngữ Lớn (LLMs)**, và **Kiến trúc Học sâu (Deep-SE vs GPT2SP)** theo công trình công bố trên *IEEE Transactions on Software Engineering (TSE 2023)*.
 
 ---
 
-## 🗂️ CÁC TÀI LIỆU CHÍNH TRONG THƯ MỤC
+## 🗂️ TÀI LIỆU QUY CHUẨN & TRA CỨU TỔNG QUAN
 
-| Tên tài liệu | Chủ đề & Phạm vi | Liên kết |
+| Tài liệu | Nội dung & Phạm vi | Liên kết |
 | :--- | :--- | :--- |
-| **`RULE.md`** | **Quy chuẩn xây dựng từ điển thuật ngữ**: Triết lý kỹ thuật Feynman (giải thích cho đứa trẻ 10 tuổi), cấu trúc khung chuẩn 6 phần, quy tắc sơ đồ Mermaid và tiếng Việt có dấu. | [Xem chi tiết](RULE.md) |
-| **`glossary_gpt2sp.md`** | Tổng hợp nhanh toàn bộ thuật ngữ trong bài báo **GPT2SP (Fu & Tantithamthavorn, IEEE TSE 2023)**: Phân loại theo 7 nhóm chuyên sâu. | [Xem chi tiết](glossary_gpt2sp.md) |
+| **`RULE.md`** | **Quy chuẩn bắt buộc biên soạn thuật ngữ**: Triết lý kỹ thuật Feynman (giải thích cho đứa trẻ 10 tuổi), cấu trúc khung 6 phần bắt buộc, quy tắc sơ đồ Mermaid và tiếng Việt có dấu. | [Xem chi tiết](RULE.md) |
+| **`glossary_gpt2sp.md`** | Tổng hợp nhanh toàn bộ thuật ngữ của bài báo **GPT2SP (Fu & Tantithamthavorn, 2023)** phân theo 7 cụm chủ đề từ Agile, Transformer, Metrics đến XAI và Data Leakage. | [Xem chi tiết](glossary_gpt2sp.md) |
 
 ---
 
-## 🔬 TỪ ĐIỂN THUẬT NGỮ CHUYÊN SÂU (CHUẨN FEYNMAN 6 PHẦN)
+## 🔤 DANH MỤC THUẬT NGỮ CHUYÊN SÂU (SẮP XẾP THEO ALPHABET A – Z)
 
-Các thuật ngữ dưới đây được biên soạn chi tiết theo **quy chuẩn `RULE.md`** (Giải thích cho đứa trẻ 10 tuổi, Bóc tách chiết tự, Trực quan hóa bảng dữ liệu, Thách thức kỹ thuật, Giải pháp đối sánh giữa Deep-SE và GPT2SP, và Bản đúc kết 30 giây):
+Toàn bộ **21 thuật ngữ** dưới đây đều được biên soạn riêng biệt theo chuẩn mực 6 phần của [`RULE.md`](RULE.md), bao gồm ẩn dụ trực giác, bóc tách chiết tự, ma trận dữ liệu "Aha!", phân tích thách thức kỹ thuật và đúc kết 30 giây:
 
-| Thuật ngữ chuyên sâu | Nhóm kỹ thuật | Khái niệm trọng tâm giải quyết | Liên kết tài liệu |
-| :--- | :--- | :--- | :--- |
-| **Byte-Pair Encoding (BPE)** | NLP & Tokenization | Thuật toán ghép cặp byte/ký tự theo tần suất, xóa bỏ 100% lỗi Out-Of-Vocabulary (`OOV = 0%`). | [byte_pair_encoding.md](byte_pair_encoding.md) |
-| **Subword Tokens** | NLP & Tokenization | Đơn vị từ con trung gian, giải quyết hoàn hảo tên hàm mã nguồn và biệt ngữ ghép trong Jira. | [subword_tokens.md](subword_tokens.md) |
-| **OOV (Out-Of-Vocabulary)** | NLP & Tokenization | Tử huyệt "từ ngoài từ điển" khiến Deep-SE thất bại và cách BPE của GPT-2 xóa sổ triệt để lỗi này. | [oov.md](oov.md) |
-| **Word Encoding** | Representation Learning | Ánh xạ chỉ số token vào không gian vector ngữ nghĩa $d=768$, thừa hưởng tri thức khổng lồ của GPT-2. | [word_encoding.md](word_encoding.md) |
-| **Positional Encoding** | Transformers Architecture | Vector mã hóa thứ tự vị trí, giúp cơ chế Self-Attention song song không bị "mù thứ tự cú pháp". | [positional_encoding.md](positional_encoding.md) |
-| **Transformer Decoder** | Deep Learning Models | Khối giải mã nhân quả một chiều (Masked Causal Attention), chắt lọc ngữ cảnh toàn bài vào token cuối để hồi quy Story Point. | [transformer_decoder.md](transformer_decoder.md) |
-| **Feed-Forward Network (FFN)** | Deep Learning Models | Mạng truyền thẳng mở rộng $768 \rightarrow 3072 \rightarrow 768$ chiều, chiếm 66% tham số đóng vai trò bộ nhớ tri thức của GPT-2. | [feed_forward_neural_network.md](feed_forward_neural_network.md) |
-| **GELU Activation** | Deep Learning Math | Hàm kích hoạt phân phối chuẩn Gauss trơn mượt, loại bỏ triệt để hiện tượng chết nơ-ron của ReLU. | [gelu.md](gelu.md) |
-| **Linear Layers** | Deep Learning Core | Lớp biến đổi tuyến tính $y = Wx + b$, nền móng kết nối đầy đủ của các khối chiếu Attention và MLP. | [linear_layers.md](linear_layers.md) |
-| **Residual Connection** | Deep Learning Architecture | Con đường tắt phần dư $y = x + F(x)$, siêu dẫn đạo hàm không ma sát giúp huấn luyện ổn định 12 tầng Transformer. | [residual_connection.md](residual_connection.md) |
-| **MLP Regressor Head** | Specialized Prediction Heads | Đầu hồi quy đa tầng ($768 \rightarrow 256 \rightarrow 1$) gắn trên đỉnh GPT-2 thay thế đầu sinh từ vựng để dự đoán Story Point. | [mlp_regressor_head.md](mlp_regressor_head.md) |
-| **Regressor** | Predictive Modeling | Bản chất toán học của bài toán hồi quy liên tục so với phân loại rời rạc trong ước lượng nỗ lực phần mềm. | [regressor.md](regressor.md) |
-| **Weight Decay** | Optimization & Regularization | Cơ chế bào mòn trọng số tách rời trong AdamW ($\text{LR} = 5 \times 10^{-4}$), chống quá khớp khi fine-tuning trên dữ liệu Jira nhỏ. | [weight_decay.md](weight_decay.md) |
-| **Back-propagation** | Optimization Calculus | Thuật toán lan truyền ngược đạo hàm theo quy tắc chuỗi (Chain Rule) dẫn dắt bởi L1 Loss trong huấn luyện đầu-cuối. | [backpropagation.md](backpropagation.md) |
-| **Word2Vec** | Representation Learning | Mô hình nhúng từ tĩnh dựa trên ngữ cảnh lân cận (CBOW / Skip-gram) trong Deep-SE và các hạn chế OOV. | [word2vec.md](word2vec.md) |
-| **LSTM** | Recurrent Neural Networks | Mạng bộ nhớ dài-ngắn với 3 cổng kiểm soát và cell state, giải quyết triệt tiêu đạo hàm trong Deep-SE. | [lstm.md](lstm.md) |
-| **RHWN** | Deep Recurrent Networks | Mạng đường cao tốc hồi quy với Carry Gate & Transform Gate, tăng độ sâu biểu diễn trừu tượng. | [rhwn.md](rhwn.md) |
-| **Random Forest** | Traditional ML & Ensemble | Rừng cây quyết định ngẫu nhiên, lấy trung bình dự đoán của 100 cây, làm bộ hồi quy baseline (LSTM+RF, BoW+RF). | [random_forest.md](random_forest.md) |
-| **TF-IDF** | Traditional NLP & Mining | Tần suất từ kết hợp nghịch đảo tần suất văn bản, chấm điểm từ khóa đặc thù cho baseline TF-IDF + SVM [36]. | [tf_idf.md](tf_idf.md) |
-| **Support Vector Machine (SVM)** | Traditional ML & Convex Opt | Máy vector hỗ trợ với dải hành lang an toàn biên cực đại và hàm mất mát $\epsilon$-insensitive loss trong SVR. | [support_vector_machine.md](support_vector_machine.md) |
-| **Bag-of-Words (BoW)** | Traditional NLP | Mô hình túi từ đếm tần suất thô, ném bỏ hoàn toàn ngữ pháp và thứ tự câu cú trong baseline BoW + RF. | [bag_of_words.md](bag_of_words.md) |
+| STT | Thuật ngữ (Alphabet A - Z) | Chủ đề chuyên môn (Topic) | Giải thích ngắn gọn bản chất | Liên kết tài liệu |
+| :---: | :--- | :--- | :--- | :--- |
+| 1 | **Back-propagation** | Optimization & Calculus | Thuật toán "chuyến đi lùi rút kinh nghiệm" dùng quy tắc chuỗi (Chain Rule) để truyền ngược đạo hàm sai số từ L1 Loss về tinh chỉnh đồng bộ 117 triệu tham số. | [backpropagation.md](backpropagation.md) |
+| 2 | **Bag-of-Words (BoW)** | Traditional NLP | Kỹ thuật "ném từ vào bao tải rồi lắc đều", chỉ đếm tần suất xuất hiện và xóa bỏ hoàn toàn trật tự ngữ pháp cùng ngữ cảnh câu. Baseline BoW + RF bị GPT2SP vượt trội toàn diện. | [bag_of_words.md](bag_of_words.md) |
+| 3 | **Byte-Pair Encoding (BPE)** | NLP & Tokenization | Thuật toán ghép cặp byte/ký tự thông minh theo tần suất, khống chế từ điển ở mức cố định 50.257 tokens và xóa bỏ hoàn toàn hiện tượng từ lạ ngoài từ điển (`OOV = 0%`). | [byte_pair_encoding.md](byte_pair_encoding.md) |
+| 4 | **Feed-Forward Network (FFN)** | Deep Learning Architecture | Khoảng thời gian "tự suy ngẫm độc lập" của từng token: phóng to vector từ 768 lên 3072 chiều để nghiền ngẫm tri thức, chiếm 66% tổng số tham số của GPT-2 Small. | [feed_forward_neural_network.md](feed_forward_neural_network.md) |
+| 5 | **GELU (Gaussian Error Linear Unit)** | Deep Learning Math | Người gác cổng phân phối chuẩn Gauss trơn mượt: cho phép các giá trị âm nhẹ lọt qua khe cửa thay vì bị chặt cụt thành 0, loại bỏ hoàn toàn hiện tượng chết nơ-ron của ReLU. | [gelu.md](gelu.md) |
+| 6 | **Linear Layers** | Deep Learning Core | "Chiếc máy trộn sinh tố" thực hiện phép biến đổi đại số affine $y = Wx + b$, thay đổi số chiều không gian và hòa trộn thông tin qua các kết nối đầy đủ (Fully Connected). | [linear_layers.md](linear_layers.md) |
+| 7 | **Long Short-Term Memory (LSTM)** | Recurrent Neural Networks | Mạng nơ-ron có "cuốn sổ tay thần kỳ" và 3 cánh cổng kiểm soát (quên, ghi, báo cáo), khắc phục triệt tiêu đạo hàm trong Deep-SE nhưng bị nghẽn tuần tự thời gian (không chạy song song GPU được). | [lstm.md](lstm.md) |
+| 8 | **MLP Regressor Head** | Specialized Prediction Heads | Đầu hồi quy chuyên biệt gồm 2 tầng tuyến tính ($768 \rightarrow 256 \rightarrow 1$) kết hợp GeLU và Dropout, gắn vào đỉnh token cuối cùng ($\mathbf{h}_N$) của GPT-2 để xuất ra điểm Story Point duy nhất. | [mlp_regressor_head.md](mlp_regressor_head.md) |
+| 9 | **Out-Of-Vocabulary (OOV)** | NLP & Tokenization | Căn bệnh "người lạ ngoài từ điển": tử huyệt khiến Deep-SE bị mù tịt trước các từ ghép mã nguồn và bị bộ phân tách Byte-level BPE của GPT-2 xóa sổ hoàn toàn (`OOV = 0%`). | [oov.md](oov.md) |
+| 10 | **Positional Encoding** | Transformers Architecture | "Thẻ đánh số thứ tự" được cộng trực tiếp vào vector từ ($\mathbf{e}_i = \mathbf{w}_i + \mathbf{p}_i$), giúp cơ chế Self-Attention song song phân biệt rõ vị trí Title và Description trong Jira. | [positional_encoding.md](positional_encoding.md) |
+| 11 | **Random Forest (RF)** | Traditional ML & Ensemble | Rừng cây quyết định ngẫu nhiên (hội đồng 100 bác sĩ độc lập), lấy trung bình cộng dự đoán để triệt tiêu phương sai; dùng làm bộ hồi quy baseline (LSTM+RF, BoW+RF). | [random_forest.md](random_forest.md) |
+| 12 | **Regressor / Regression Modeling** | Predictive Modeling | Bản chất toán học của bài toán dự đoán số thực liên tục (Story Point) thay vì phân loại rời rạc; kết hợp L1 Loss để kháng lại các điểm ngoại lai dị biệt trong Jira. | [regressor.md](regressor.md) |
+| 13 | **Residual Connection** | Deep Learning Architecture | "Con đường tắt bưu điện" $y = x + F(x)$ giúp dòng thông tin gốc và đạo hàm lan truyền ngược chảy thông suốt 12 tầng Transformer mà không bị méo mó hay suy thoái mạng. | [residual_connection.md](residual_connection.md) |
+| 14 | **Recurrent Highway Network (RHWN)** | Deep Recurrent Networks | Mạng nơ-ron có "làn đường cao tốc trên cao" (Carry Gate & Transform Gate), giúp Deep-SE tăng độ sâu biểu diễn trừu tượng sau lớp LSTM mà không làm biến mất đạo hàm. | [rhwn.md](rhwn.md) |
+| 15 | **Subword Tokens** | NLP & Tokenization | Đơn vị từ con trung gian (như các khối Lego vừa vặn), giải quyết hoàn hảo các tên hàm mã nguồn (`camelCase`) và lỗi kỹ thuật ghép (`NullPointerException`) trong Jira. | [subword_tokens.md](subword_tokens.md) |
+| 16 | **Support Vector Machine (SVM / SVR)** | Traditional ML & Convex Opt | Cỗ máy tìm kiếm dải hành lang an toàn biên cực đại; dạng hồi quy (SVR) dùng ống dung sai $\epsilon$-không nhạy cảm để chấp nhận sai số nhỏ; dùng trong baseline TF-IDF + SVM [36]. | [support_vector_machine.md](support_vector_machine.md) |
+| 17 | **TF-IDF** | Traditional NLP & Mining | Công thức thám tử nhân tần suất từ ($\text{TF}$) với nghịch đảo độ phổ biến trong kho ($\text{IDF}$), giúp phạt từ dừng vô ích và nâng cao trọng số cho các từ khóa lỗi hiếm gặp. | [tf_idf.md](tf_idf.md) |
+| 18 | **Transformer Decoder** | Deep Learning Models | Khối xử lý cốt lõi của GPT-2 gồm Masked Self-Attention (chỉ nhìn về quá khứ) và FFN; chắt lọc toàn bộ ngữ cảnh Jira vào token cuối cùng để dự đoán Story Point. | [transformer_decoder.md](transformer_decoder.md) |
+| 19 | **Weight Decay** | Optimization & Regularization | Kỷ luật "gọt bớt trọng lượng thừa" của trọng số sau mỗi bước tối ưu; cơ chế Decoupled Weight Decay trong AdamW giúp mô hình 117M tham số không bị học vẹt trên dữ liệu Jira nhỏ. | [weight_decay.md](weight_decay.md) |
+| 20 | **Word Encoding** | Representation Learning | Tọa độ không gian ngữ nghĩa $d=768$ của từng token, kế thừa tri thức tiền huấn luyện khổng lồ từ 40GB WebText của GPT-2 thay vì phải học lại từ đầu như Word2Vec. | [word_encoding.md](word_encoding.md) |
+| 21 | **Word2Vec** | Representation Learning | Mô hình nhúng từ tĩnh nổi tiếng (CBOW / Skip-gram) dựa trên nguyên tắc "chọn bạn láng giềng mà chơi"; là lớp đầu vào của Deep-SE nhưng bị hạn chế bởi từ đa nghĩa và OOV. | [word2vec.md](word2vec.md) |
 
 ---
 
-## 🧭 HƯỚNG DẪN TRA CỨU
+## 📂 PHÂN LOẠI THUẬT NGỮ THEO CHỦ ĐỀ CHUYÊN MÔN (TOPIC BREAKDOWN)
 
-1. **Quy chuẩn biên soạn thuật ngữ:** Xem file [`RULE.md`](RULE.md).
-2. **Khái niệm cơ bản về Agile & Story Point:** Xem Mục 1 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
-3. **Kiến trúc Transformer & GPT-2:** Xem các chuyên đề [`transformer_decoder.md`](transformer_decoder.md), [`feed_forward_neural_network.md`](feed_forward_neural_network.md), [`residual_connection.md`](residual_connection.md), [`linear_layers.md`](linear_layers.md), [`gelu.md`](gelu.md).
-4. **Cơ chế Tokenization & Biểu diễn:** Xem [`byte_pair_encoding.md`](byte_pair_encoding.md), [`subword_tokens.md`](subword_tokens.md), [`oov.md`](oov.md), [`word_encoding.md`](word_encoding.md), [`positional_encoding.md`](positional_encoding.md).
-5. **Cơ chế Tối ưu hóa & Đầu hồi quy GPT2SP:** Xem [`mlp_regressor_head.md`](mlp_regressor_head.md), [`regressor.md`](regressor.md), [`weight_decay.md`](weight_decay.md), [`backpropagation.md`](backpropagation.md).
-6. **Kiến trúc Deep-SE cổ điển (Word2Vec + LSTM + RHWN):** Xem các file chuyên đề [`word2vec.md`](word2vec.md), [`lstm.md`](lstm.md), [`rhwn.md`](rhwn.md).
-7. **Các mô hình máy học đối chứng (Baselines):** Xem [`random_forest.md`](random_forest.md), [`tf_idf.md`](tf_idf.md), [`support_vector_machine.md`](support_vector_machine.md), [`bag_of_words.md`](bag_of_words.md).
-8. **Thang đo sai số & Kiểm định phi tham số:** Xem Mục 5 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
-9. **Trí tuệ nhân tạo có thể giải thích (XAI):** Xem Mục 6 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
-10. **Ràng buộc chống rò rỉ dữ liệu (NCKH Nhóm 3):** Xem Mục 7 trong [`glossary_gpt2sp.md`](glossary_gpt2sp.md).
+Nhằm phục vụ tra cứu nhanh theo từng giai đoạn nghiên cứu, 21 thuật ngữ được hệ thống hóa thành 6 nhóm chuyên đề logic:
+
+```mermaid
+flowchart TD
+    Glossary["Hệ Thống 21 Thuật Ngữ Nghiên Cứu Story Point"] --> T1["1. Xử Lý Ngôn Ngữ & Tokenization"]
+    Glossary --> T2["2. Biểu Diễn Đặc Trưng (Embeddings)"]
+    Glossary --> T3["3. Kiến Trúc Transformer & GPT-2"]
+    Glossary --> T4["4. Tối Ưu Hóa & Đầu Hồi Quy"]
+    Glossary --> T5["5. Kiến Trúc Deep-SE Cổ Điển"]
+    Glossary --> T6["6. Các Mô Hình Baseline Đối Chứng"]
+
+    T1 --> T1_Items["BPE, Subword Tokens, OOV"]
+    T2 --> T2_Items["Word Encoding, Positional Encoding, Word2Vec"]
+    T3 --> T3_Items["Transformer Decoder, FFN, GELU, Linear Layers, Residual Connection"]
+    T4 --> T4_Items["MLP Regressor Head, Regressor, Weight Decay, Back-propagation"]
+    T5 --> T5_Items["Word2Vec, LSTM, RHWN"]
+    T6 --> T6_Items["Random Forest, TF-IDF, SVM/SVR, Bag-of-Words"]
+```
+
+### 1. Nhóm Xử Lý Ngôn Ngữ & Tokenization (NLP & Tokenization)
+* [`byte_pair_encoding.md`](byte_pair_encoding.md): Thuật toán ghép cặp byte/ký tự theo tần suất.
+* [`subword_tokens.md`](subword_tokens.md): Đơn vị từ con trung gian giải quyết tên hàm mã nguồn.
+* [`oov.md`](oov.md): Tử huyệt "từ ngoài từ điển" và giải pháp đưa OOV về 0%.
+
+### 2. Nhóm Biểu Diễn Đặc Trưng (Representation Learning)
+* [`word_encoding.md`](word_encoding.md): Ánh xạ token vào không gian vector ngữ nghĩa $d=768$.
+* [`positional_encoding.md`](positional_encoding.md): Mã hóa vị trí thứ tự trước sau cho cơ chế chú ý song song.
+* [`word2vec.md`](word2vec.md): Mô hình nhúng từ tĩnh cục bộ (CBOW / Skip-gram).
+
+### 3. Nhóm Kiến Trúc Transformer & GPT-2 (Transformers & Deep Learning)
+* [`transformer_decoder.md`](transformer_decoder.md): Khối giải mã nhân quả một chiều với Masked Self-Attention.
+* [`feed_forward_neural_network.md`](feed_forward_neural_network.md): Tầng truyền thẳng mở rộng $768 \rightarrow 3072 \rightarrow 768$ chiều.
+* [`residual_connection.md`](residual_connection.md): Con đường tắt phần dư $y = x + F(x)$ chống triệt tiêu đạo hàm.
+* [`linear_layers.md`](linear_layers.md): Lớp biến đổi tuyến tính kết nối đầy đủ affine $y = Wx + b$.
+* [`gelu.md`](gelu.md): Hàm kích hoạt phân phối chuẩn Gauss trơn mượt thay thế ReLU.
+
+### 4. Nhóm Tối Ưu Hóa & Đầu Hồi Quy (Optimization & Regression)
+* [`mlp_regressor_head.md`](mlp_regressor_head.md): Đầu hồi quy đa tầng gắn trên đỉnh GPT-2 để dự đoán Story Point.
+* [`regressor.md`](regressor.md): Bản chất bài toán hồi quy liên tục và hàm mất mát L1 Loss chống ngoại lai.
+* [`weight_decay.md`](weight_decay.md): Suy giảm trọng số tách rời (Decoupled Weight Decay) trong AdamW.
+* [`backpropagation.md`](backpropagation.md): Lan truyền ngược đạo hàm theo quy tắc chuỗi (Chain Rule) đầu-cuối.
+
+### 5. Nhóm Kiến Trúc Deep-SE Cổ Điển (Classic Deep-SE Stack)
+* [`word2vec.md`](word2vec.md): Lớp trích xuất đặc trưng từ vựng tĩnh ban đầu.
+* [`lstm.md`](lstm.md): Mạng nơ-ron bộ nhớ dài-ngắn tuần tự qua các bước thời gian.
+* [`rhwn.md`](rhwn.md): Mạng đường cao tốc hồi quy với Carry Gate và Transform Gate.
+
+### 6. Nhóm Mô Hình Học Máy Đối Chứng (Traditional ML Baselines)
+* [`random_forest.md`](random_forest.md): Rừng cây quyết định ngẫu nhiên trong các baseline BoW+RF, LSTM+RF.
+* [`tf_idf.md`](tf_idf.md): Tần suất từ kết hợp nghịch đảo tần suất văn bản.
+* [`support_vector_machine.md`](support_vector_machine.md): Máy vector hỗ trợ và SVR trong baseline TF-IDF + SVM [36].
+* [`bag_of_words.md`](bag_of_words.md): Mô hình túi từ đếm tần suất thô không ngữ pháp.
+
+---
+
+## 🧭 HƯỚNG DẪN ĐỌC & ĐỐI CHIẾU
+
+* **Quy chuẩn xây dựng tài liệu:** Đọc kỹ [`RULE.md`](RULE.md) trước khi bổ sung bất kỳ thuật ngữ mới nào.
+* **Tài liệu giải thích 11 chương bài báo GPT2SP:** Xem tại thư mục [`docs/articles/paper-information/explanation/`](../explanation/).
