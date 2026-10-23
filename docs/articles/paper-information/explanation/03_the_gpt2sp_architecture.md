@@ -40,6 +40,9 @@ Sơ đồ Hình 2 được cấu trúc thành **hai pha hoạt động khép kí
     * Trích xuất vector trạng thái ẩn tại token cuối cùng ($\mathbf{h}_{\text{last}}$, minh họa bằng các khối màu xanh dương) đại diện cho toàn bộ ngữ cảnh của issue.
     * Đưa qua đầu hồi quy đa tầng **MLP Regressor** để dự đoán giá trị điểm Story Point vô hướng ($\hat{y}$), đối chiếu với điểm thực tế (`SPs`) qua hàm mất mát $L_1$ Loss để cập nhật trọng số mô hình.
 
+> 📖 **Xem Case Study chuyên sâu riêng về Pha Huấn luyện:**  
+> Xem tài liệu phân tích chi tiết từng bước số học, hàm $L_1$ Loss và Backpropagation tại: [`../case-study/04_case_study_training_phase.md`](../case-study/04_case_study_training_phase.md).
+
 #### 2. Pha Suy luận & Hỗ trợ Chuyên gia (Inference Phase — Nửa dưới sơ đồ)
 * **Dữ liệu đầu vào (Testing Data):** Là các issue mới cần được lập kế hoạch trong Sprint tới, hoàn toàn chưa có điểm Story Point.
 * **Tiền xử lý:** Issue mới được đưa qua bộ **Subword Tokenizer** (đã đóng băng từ Pha 1) để phân rã thành chuỗi `Subword Tokenized Issues`.
@@ -48,6 +51,9 @@ Sơ đồ Hình 2 được cấu trúc thành **hai pha hoạt động khép kí
   1. **Luồng Dự đoán Điểm số (Storypoint Estimation):** Mô hình xuất ra con số điểm nỗ lực ước lượng khách quan (`Story Point`, minh họa bằng biểu tượng đồng hồ đo tốc độ).
   2. **Luồng Kiểm tra & Giải thích Mô hình (Model Inspection — XAI):** Tận dụng trọng số chú ý để phát hiện và tô sáng từ ngữ quan trọng nhất chi phối quyết định, đồng thời tự động truy vấn trong tập huấn luyện của dự án để tìm ra các **Ví dụ Hỗ trợ Lịch sử (Supporting Examples)** có cùng từ khóa và cùng mức điểm Story Point.
 * **Đích đến — Chuyên gia Thực hành Agile (Agile Practitioners):** Thay vì cung cấp một con số "hộp đen" gây nghi ngờ, GPT2SP bàn giao cho đội ngũ phát triển, Scrum Master và Product Owner cả con số dự đoán lẫn bằng chứng đối chứng lịch sử xác thực, hỗ trợ nhóm nhanh chóng đạt được sự đồng thuận trong buổi Sprint Planning.
+
+> 📖 **Xem Case Study chuyên sâu riêng về Pha Suy luận:**  
+> Xem tài liệu phân tích chi tiết cơ chế Hai luồng song song, mô phỏng buổi họp Planning Poker và minh chứng XAI tại: [`../case-study/05_case_study_inference_phase.md`](../case-study/05_case_study_inference_phase.md).
 
 ---
 
