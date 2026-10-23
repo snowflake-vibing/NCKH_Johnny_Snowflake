@@ -72,6 +72,31 @@ Tập hồ sơ 15 tờ phiếu này được chuyển qua **12 phòng ban làm v
 * Tờ phiếu `"starts with"` sẽ kết nối với `"space"` để biết lỗi này xảy ra khi có khoảng trắng.
 * **Quy tắc bịt mắt nghiêm ngặt (Masked):** Khi tờ phiếu số 5 đang suy ngẫm, nó chỉ được phép nghe ngóng các tờ phiếu từ 1 đến 5. Nó tuyệt đối không được nhìn lén các tờ phiếu từ 6 đến 15 ở phía sau. Nhờ vậy, dòng suy nghĩ luôn chảy xuôi tự nhiên theo câu chữ.
 
+#### 🎯 Kết quả thu được sau khi các tờ phiếu trao đổi thông tin xong:
+
+Sau cuộc thảo luận đa chiều (Self-Attention), điều kỳ diệu xảy ra trên bàn làm việc: **15 tờ phiếu ban đầu đã hoàn toàn "lột xác"**:
+
+1. **Từ các con số tĩnh biến thành "Tri thức ngữ cảnh sống động" (Contextualized Representation):**  
+   Trước khi vào phòng, mỗi tờ phiếu chỉ mang ý nghĩa từ điển cô độc. Sau khi trao đổi xong, mỗi tờ phiếu đều được ghi chép bổ sung thêm thông tin ngữ cảnh đắt giá từ các tờ phiếu khác:
+
+| Tờ phiếu (Token) | Trước khi trao đổi (Nghĩa từ điển tĩnh) | Sau khi trao đổi Self-Attention (Đã làm giàu ngữ cảnh) |
+| :--- | :--- | :--- |
+| **`"Exception"`** (vị trí 5) | Chỉ biết chung chung: *"Tôi là một lỗi ngoại lệ nào đó"*. | Biết chính xác: *"Tôi là lỗi runtime nghiêm trọng của bộ thông dịch biểu thức SpEL (liên kết với `ExpressionExecution`), không phải lỗi mạng hay database"*. |
+| **`"expects"`** (vị trí 9) | Chỉ biết: *"Tôi là hành động kỳ vọng / đòi hỏi"*. | Biết chính xác: *"Tôi đang kiểm tra ràng buộc cấu hình luồng dữ liệu DataWeave (`DW`)"*. |
+| **`"space"`** (vị trí 15, cuối câu) | Chỉ biết: *"Tôi là một ký tự khoảng trắng vô tri"*. | **Trở thành tờ phiếu quyền lực nhất:** Nhờ quy tắc bịt mắt cho phép nhìn hết 14 từ trước, nó thấu suốt toàn bộ câu chuyện: *"Tôi là ký tự khoảng trắng đứng ở đầu chuỗi (starts with), và chính tôi là thủ phạm kích hoạt lỗi ExpressionExecutionException trong module DW!"*. |
+
+2. **Bản chất toán học của kết quả trao đổi:**  
+   Toàn bộ sự trao đổi này biến ma trận 15 tờ phiếu ban đầu thành một ma trận biểu diễn mới:
+
+$$\mathbf{z} = \text{Attention}(Q, K, V) \in \mathbb{R}^{15 \times 768}$$
+
+3. **Cộng bù tờ phiếu cũ (Residual Connection) & Chuẩn hóa (LayerNorm):**  
+   Để các từ ngữ không bị "say sưa" thông tin mới mà quên mất ý nghĩa nguyên bản của chính mình, máy tính lấy tờ phiếu mới cộng trực tiếp với tờ phiếu ban đầu:
+
+$$\mathbf{x}_{\text{mid}} = \text{LayerNorm}(\mathbf{x} + \mathbf{z}) \in \mathbb{R}^{15 \times 768}$$
+
+👉 **Đầu ra hoàn tất của khâu 1:** Ta thu được một tập hồ sơ gồm **15 tờ phiếu mới toanh**, vừa giữ trọn vẹn bản sắc từ gốc, vừa thấm nhuần ngữ cảnh của cả User Story, sẵn sàng bước sang căn phòng tiếp theo để kiểm tra kho tri thức chuyên sâu!
+
 ### 2. Phòng lưu trữ tri thức chuyên sâu (Mạng truyền thẳng FFN)
 Sau khi các từ trao đổi với nhau, từng tờ phiếu được đưa vào một căn phòng phóng đại đặc trưng rộng gấp 4 lần (**từ 768 chiều phóng to lên 3072 chiều**).  
 Tại đây, các nơ-ron nhận diện mẫu sẽ sáng bừng lên:
