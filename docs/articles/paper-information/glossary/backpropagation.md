@@ -41,20 +41,25 @@ Thuật ngữ **Back-propagation** là cách viết tắt của cụm từ *"Bac
 ## 📊 PHẦN 3: TRỰC QUAN HÓA BẰNG BẢNG DỮ LIỆU & SƠ ĐỒ (THE "AHA!" MOMENT)
 
 ```mermaid
-flowchart LR
-    subgraph ForwardPass["1. CHIỀU TIẾN (FORWARD PASS): TÍNH TOÁN DỰ ĐOÁN"]
-        direction LR
-        In["Văn bản Issue"] --> Emb["Lớp Nhúng"] --> Trans["12 Tầng Transformer"] --> MLP["MLP Regressor"] --> Pred["Dự đoán: y^ = 7.5 SP"]
+flowchart TD
+    subgraph S1["1. CHIỀU TIẾN (FORWARD PASS): TÍNH TOÁN DỰ ĐOÁN"]
+        In["Văn bản Issue"] --> Emb["Lớp Nhúng (Embedding)"]
+        Emb --> Trans["12 Khối Transformer Decoders"]
+        Trans --> MLP["MLP Regressor Head"]
+        MLP --> Pred["Dự đoán: y_hat = 7.5 SP"]
     end
 
-    subgraph LossCalc["2. TÍNH SAI SỐ"]
-        direction TB
-        Pred & TrueSP["Thực tế: y = 5.0 SP"] --> Loss["L1 Loss = |5.0 - 7.5| = 2.5 SP"]
+    subgraph S2["2. TÍNH SAI SỐ (LOSS CALCULATION)"]
+        Pred --> LossCalc["So sánh Sai số L1 Loss<br/>Loss = abs(5.0 - 7.5) = 2.5 SP"]
+        TrueSP["Nhãn thực tế: y = 5.0 SP"] --> LossCalc
     end
 
-    subgraph BackwardPass["3. CHIỀU LÙI (BACK-PROPAGATION): LAN TRUYỀN ĐẠO HÀM"]
-        direction RL
-        GradMLP["Chỉnh Đầu Hồi Quy"] <-- Grad12["Chỉnh Tầng 12"] <-- Grad1["Chỉnh Tầng 1"] <-- GradEmb["Chỉnh Vector Từ"] <-- Loss
+    subgraph S3["3. CHIỀU LÙI (BACK-PROPAGATION): CẬP NHẬT TRỌNG SỐ"]
+        LossCalc --> GradMLP["Cập nhật Trọng số MLP Regressor"]
+        GradMLP --> Grad12["Cập nhật Khối Transformer 12"]
+        Grad12 --> GradMid["Lan truyền ngược qua Khối 11 đến 2"]
+        GradMid --> Grad1["Cập nhật Khối Transformer 1"]
+        Grad1 --> GradEmb["Cập nhật Ma trận Nhúng Từ W_te"]
     end
 ```
 
@@ -103,7 +108,7 @@ $$
 Trong bài báo **GPT2SP (Fu & Tantithamthavorn, TSE 2023)**:
 * Mô hình áp dụng phương thức **End-to-End Fine-Tuning** (Tinh chỉnh toàn diện đầu-cuối).
 * Khi một User Story trên Jira được nạp vào mô hình và đưa ra dự đoán điểm Story Point $\hat{y}$, sai số được đo bằng hàm **L1 Loss**:
-  $$\mathcal{L}_{L1} = |y_{\text{thực tế}} - \hat{y}|$$
+  $$\mathcal{L}_{L1} = |y_{\mathrm{true}} - \hat{y}|$$
 * **Hành trình lan truyền ngược toàn cảnh:**
   1. Đạo hàm của L1 Loss ($\pm 1$) xuất phát từ đầu ra.
   2. Truyền ngược qua 2 tầng tuyến tính và hàm GeLU của **MLP Regressor Head**.
