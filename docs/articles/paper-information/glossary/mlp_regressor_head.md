@@ -1,103 +1,155 @@
-# 🧩 THUẬT NGỮ: MLP REGRESSOR HEAD (ĐẦU HỒI QUY ĐA TẦNG CỦA GPT2SP)
+# 🧩 THUẬT NGỮ: MLP REGRESSOR HEAD (ĐẦU HỒI QUY ĐA TẦNG DỰ ĐOÁN STORY POINT)
 
 > **Đầu hồi quy Perceptron đa tầng (MLP Regressor Head)**  
-> *Thuộc nhóm:* Kiến Trúc Học Sâu & Đầu Dự Đoán Chuyên Biệt (Specialized Neural Prediction Heads)  
-> *Áp dụng trong:* Thành phần cốt lõi được gắn vào đỉnh mô hình GPT-2 để tạo nên **GPT2SP** (IEEE TSE 2023).
+> *Thuộc nhóm:* Kiến Trúc Học Sâu & Đầu Dự Đoán Chuyên Biệt (Specialized Prediction Heads)  
+> *Áp dụng trong:* Thành phần cốt lõi được gắn vào đỉnh mô hình ngôn ngữ GPT-2 để tạo nên **GPT2SP** (IEEE TSE 2023).
 
 ---
 
-## 🧒 PHẦN 1: GIẢI THÍCH CHO ĐỨA TRẺ 10 TUỔI (THE 10-YEAR-OLD EXPLANATION)
+## 🧒 PHẦN 1: GIẢI THÍCH TRỰC QUAN — BẢN CHẤT NÓ LÀ GÌ VÀ DÙNG ĐỂ LÀM GÌ?
 
-Hãy tưởng tượng một chú robot thám tử tên là **GPT-2**:
-* Nguyên bản của chú robot này được chế tạo để làm một việc: **"Kể chuyện nối tiếp"** (Language Modeling). Mỗi khi đọc được một câu chuyện, chú robot nhìn vào một danh bạ khổng lồ chứa 50.257 từ vựng, rồi đoán xem từ tiếp theo nên được viết là từ gì.
+Để hiểu tại sao cần **MLP Regressor Head**, hãy nhìn vào mâu thuẫn lớn nhất giữa **Mô hình GPT-2** và **Đội ngũ lập trình viên Agile**:
 
-Nhưng trong cuộc thi ước lượng độ khó phần mềm (**Agile Story Point**), chúng ta không cần chú robot viết thêm truyện cổ tích! Chúng ta cần chú trả lời một câu hỏi duy nhất:  
-*"Bản báo cáo lỗi này khó đến mức nào? Cần bao nhiêu điểm nỗ lực Story Point?"*
+```text
+[Báo cáo Jira] ───> [12 Khối GPT-2 đọc hiểu] ───> Cho ra 1 dãy 768 con số thực (Vector h_N)
+                                                                 │
+                                                                 ▼
+                                                  Đội Scrum nhìn vào và hỏi:
+                                      "768 con số này nghĩa là gì? Cuối cùng là task này
+                                          tốn bao nhiêu Story Point? 3 SP hay 8 SP?"
+```
 
-Để làm được điều đó, các kỹ sư đã làm một cuộc "phẫu thuật lắp ghép" tài tình:
-1. Họ tháo bỏ cái "đầu loa phát thanh 50.257 từ" (Language Modeling Head qua Softmax) ra khỏi người chú robot.
-2. Họ gắn vào đó một cái đầu mới tinh xảo tên là **MLP Regressor Head**:
-   * Cái đầu này nhận toàn bộ suy nghĩ sâu sắc nhất đọng lại trong mắt chú robot sau khi đọc xong chữ cuối cùng của bản báo cáo.
-   * Nó suy nghĩ qua hai tầng lọc nơ-ron (chuyển từ 768 ý niệm sâu xa xuống 256 đặc trưng cô đọng).
-   * Và cuối cùng, nó xuất ra đúng **một con số thực duy nhất trên màn hình hiển thị**: *"Độ khó là 5.2 điểm Story Point!"*
+### 1. Vấn đề: GPT-2 chỉ biết "hiểu chữ", không biết "chấm điểm dự án"
+* Sau khi đọc xong câu mô tả lỗi trên Jira (ví dụ: *"Fix memory leak in Kafka cluster"*), bộ não GPT-2 chỉ có thể gom toàn bộ ngữ nghĩa của câu thành một dãy gồm **768 con số tọa độ** (gọi là vector $\mathbf{h}_N \in \mathbb{R}^{768}$, ví dụ: `[+0.82, -1.15, +0.04, ..., +2.11]`).
+* Dãy 768 con số này chỉ mô tả: từ nào đi với từ nào, câu này nói về chủ đề gì. Bản thân GPT-2 **hoàn toàn không biết 768 con số đó tương ứng với bao nhiêu ngày công hay bao nhiêu Story Point!**
 
-> 💡 **Định nghĩa bình dân:**  
-> **MLP Regressor Head (Đầu hồi quy đa tầng)** là bộ phận nơ-ron chuyên biệt gồm 2 tầng tuyến tính và hàm kích hoạt phi tuyến, được gắn vào đỉnh mô hình ngôn ngữ GPT-2 để thay thế nhiệm vụ sinh chữ bằng nhiệm vụ tính toán điểm số Story Point liên tục.
+### 2. Giải pháp: MLP Regressor Head là "Hội đồng thẩm định quy đổi điểm"
+Hãy tưởng tượng **MLP Regressor Head** như một **Bác Tech Lead kỳ cựu** cầm trên tay một bảng tiêu chuẩn quy đổi:
+1. **Bước 1 — Gom nhóm thành các tiêu chí đánh giá (Tầng Tuyến Tính 1: $768 \rightarrow 256$):**  
+   Bác Tech Lead không xem xét rời rạc 768 con số kỹ thuật vụn vặt. Bác gom chúng lại thành **256 tiêu chí nghiệp vụ thực tế**:
+   * Tiêu chí 1: Mức độ rủi ro sập hệ thống (cao hay thấp?).
+   * Tiêu chí 2: Khối lượng mã nguồn dự kiến phải sửa (nhiều hay ít?).
+   * Tiêu chí 3: Độ bất định của công nghệ (đã quen thuộc hay mới toanh?).
+   * ... cho đến tiêu chí thứ 256.
+2. **Bước 2 — Phán đoán điều kiện phi tuyến (Hàm GeLU):**  
+   Bác xem xét các điều kiện kết hợp:  
+   *Nếu* gặp lỗi nghiêm trọng (`Exception`) *nhưng* chỉ là sửa lỗi chính tả trong câu thông báo (`typo in message`), thì không được tính điểm cao!  
+   Chỉ khi nào lỗi nghiêm trọng *kết hợp với* hệ thống phức tạp (`Kafka cluster`) thì mới kích hoạt mức điểm tối đa.
+3. **Bước 3 — Xuất ra con số chốt hạ duy nhất (Tầng Tuyến Tính 2: $256 \rightarrow 1$):**  
+   Bác cộng gộp tất cả 256 tiêu chí đó lại thành **đúng 1 con số thực duy nhất trên màn hình**:  
+   👉 **`8.0 Story Points`**.
+
+> 💡 **Định nghĩa ngắn gọn & bản chất nhất:**  
+> **MLP Regressor Head** là một mạng nơ-ron nhỏ gồm 2 tầng được "gắn thêm" vào trên đỉnh của GPT-2, có nhiệm vụ duy nhất: **biến đổi vector 768 con số ngữ nghĩa trừu tượng thành đúng 1 con số thực đại diện cho điểm Story Point**.
 
 ---
 
-## 🔍 PHẦN 2: BÓC TÁCH TỪNG TỪ NGỮ CHUYÊN NGÀNH (DECONSTRUCTING THE JARGON)
+## 🔍 PHẦN 2: BÓC TÁCH CHI TIẾT TỪNG TỪ NGỮ (DECONSTRUCTING THE JARGON)
 
-Thuật ngữ **MLP Regressor Head** được cấu thành từ 3 cụm từ kỹ thuật:
+Tên gọi **MLP Regressor Head** mô tả chính xác cấu trúc và chức năng:
 
-| Thành tố | Gốc từ tiếng Anh | Ý nghĩa đời thường | Ý nghĩa trong Kiến trúc Học Sâu | Khái niệm đối lập (Antonym) |
-| :--- | :--- | :--- | :--- | :--- |
-| **MLP** | *Multi-Layer Perceptron* | Mạng nơ-ron nhiều tầng. | Kiến trúc mạng nơ-ron truyền thẳng gồm ít nhất một tầng ẩn (Hidden Layer) nằm giữa tầng đầu vào và tầng đầu ra. | *Single-layer Perceptron / Linear model* (mô hình 1 tầng không có lớp ẩn). |
-| **Regressor** | *Regression* (hồi quy) | Dự đoán số đo liên tục. | Bộ phận dự đoán một giá trị số thực trên trục số vô hạn ($\hat{y} \in \mathbb{R}$) thay vì chọn một nhãn lớp rời rạc. | *Classifier* (bộ phân loại xác suất nhãn lớp). |
-| **Head** | *Head* (cái đầu, phần đỉnh) | Phần chóp đỉnh của cơ thể. | Khối nơ-ron chuyên biệt phục vụ tác vụ hạ nguồn (Downstream Task), được gắn vào tầng trên cùng của mô hình nền tảng (Backbone). | *Backbone / Body* (phần thân nền tảng 12 khối Transformer). |
+| Thành tố | Ý nghĩa kỹ thuật chính xác | Vì sao lại dùng trong bài toán này? | Khái niệm đối lập |
+| :--- | :--- | :--- | :--- |
+| **Head (Đầu)** | Khối nơ-ron độc lập được gắn vào đỉnh của một mô hình nền tảng (Backbone). | GPT-2 đóng vai trò là "thân hình" (Backbone) chuyên trích xuất đặc trưng ngôn ngữ. Muốn giải quyết bài toán nào thì chỉ cần "lắp cái đầu" phù hợp cho bài toán đó. | **Backbone (Thân mô hình nền tảng gồm 12 khối Transformer).** |
+| **Regressor (Bộ hồi quy)** | Bộ phận dự đoán một **giá trị số thực liên tục** ($y \in \mathbb{R}$, ví dụ: $1.5, 3.2, 8.0$ SP). | Story Point trong bài toán này được mô hình hóa dưới dạng số thực liên tục phản ánh mức độ nỗ lực. | **Classifier (Bộ phân loại nhãn rời rạc: ví dụ đoán Bug hay Feature).** |
+| **MLP (Multi-Layer Perceptron)** | Mạng nơ-ron nhiều tầng (gồm ít nhất 1 tầng ẩn trung gian và hàm kích hoạt phi tuyến). | Giúp mô hình học được các tương tác điều kiện phức tạp giữa các từ, thay vì chỉ làm phép cộng tuyến tính đơn giản. | **Linear Head / Single-layer (chỉ có 1 phép nhân ma trận đơn giản không có tầng ẩn).** |
 
 ---
 
-## 📊 PHẦN 3: TRỰC QUAN HÓA BẰNG BẢNG DỮ LIỆU & SƠ ĐỒ (THE "AHA!" MOMENT)
+## 📊 PHẦN 3: BẢN CHẤT CƠ CHẾ HOẠT ĐỘNG — ĐI QUA TỪNG CON SỐ CỤ THỂ
 
-Kiến trúc chi tiết của **MLP Regressor Head** được tích hợp vào khối Decoder thứ 12 của GPT-2:
+Hãy theo dõi đường đi của dữ liệu từ khi kết thúc khối Transformer thứ 12 cho đến khi ra con số Story Point cuối cùng:
 
 ```mermaid
 flowchart TD
-    LastToken["Vector Trạng Thái Ẩn Của Token Cuối Cùng:\nh_N ∈ ℝ^768\n(Tụ hội toàn bộ ngữ cảnh Title + Description của Jira)"] --> Linear1["1. Tầng Tuyến Tính Thứ Nhất (Linear 1):\nÁnh xạ: 768 chiều -> 256 chiều"]
-    
-    Linear1 --> Act["2. Hàm Kích Hoạt Phi Tuyến GELU:\nLoại bỏ nhiễu, học các mối quan hệ phi tuyến"]
-    
-    Act --> Drop["3. Tầng Dropout (Tỷ lệ 0.1):\nNgẫu nhiên tắt 10% nơ-ron để chống quá khớp"]
-    
-    Drop --> Linear2["4. Tầng Tuyến Tính Thứ Hai (Linear 2):\nÁnh xạ: 256 chiều -> 1 chiều"]
-    
-    Linear2 --> FinalSP["Điểm Nỗ Lực Dự Đoán Duy Nhất:\ny^ = 5.2 Story Point"]
+    subgraph Backbone["Thân Mô Hình GPT-2 (Backbone)"]
+        JiraText["Báo cáo Jira: 'Fix memory leak in Kafka cluster'"] --> TransBlocks["12 Khối Transformer Decoder\n(Attention + FFN)"]
+        TransBlocks --> LastHidden["Vector ẩn của Token cuối cùng:\nh_N ∈ ℝ^768\n[+0.82, -1.15, +0.04, ..., +2.11]"]
+    end
+
+    subgraph Head["MLP Regressor Head (Đầu Hồi Quy 2 Tầng)"]
+        LastHidden --> Dense1["1. Tầng Tuyến Tính 1 (Linear):\nNhân ma trận W_1 (768 x 256) + b_1\n-> Thu gọn thành 256 tiêu chí nghiệp vụ"]
+        
+        Dense1 --> ActGELU["2. Kích Hoạt Phi Tuyến GELU:\nKích hoạt logic điều kiện (Lọc rủi ro thật sự)"]
+        
+        ActGELU --> Drop["3. Tầng Dropout (Tỷ lệ 0.1):\nNgẫu nhiên tắt 10% nơ-ron để chống học vẹt"]
+        
+        Drop --> Dense2["4. Tầng Tuyến Tính 2 (Linear):\nNhân ma trận W_2 (256 x 1) + b_2\n-> Tổng hợp 256 tiêu chí thành 1 giá trị vô hướng"]
+        
+        Dense2 --> FinalPred["Dự Đoán Story Point Duy Nhất:\ny^ = 8.2 (Story Point)"]
+    end
 ```
 
-### So sánh giữa Đầu Sinh Ngôn Ngữ Gốc (LM Head) và Đầu Hồi Quy GPT2SP (MLP Head):
+### Bảng theo dõi kích thước ma trận (Tensor Dimensions) qua từng bước:
 
-| Tiêu chí kỹ thuật | LM Head (GPT-2 Gốc của OpenAI) | MLP Regressor Head (GPT2SP của Fu et al.) |
+| Bước | Thành phần thực thi | Kích thước dữ liệu vào | Phép toán thực hiện | Kích thước dữ liệu ra | Ý nghĩa ngữ nghĩa đạt được |
+| :---: | :--- | :---: | :--- | :---: | :--- |
+| **Đầu vào** | Token cuối cùng $\mathbf{h}_N$ | $1 \times 768$ | Lấy vector trạng thái ẩn tại token cuối của Khối 12. | $1 \times 768$ | Bản đúc kết ngữ nghĩa của toàn bộ issue Jira. |
+| **Bước 1** | Tầng Tuyến tính 1 (`fc1`) | $1 \times 768$ | $\mathbf{z}_1 = \mathbf{h}_N \cdot W_1 + b_1$ với $W_1 \in \mathbb{R}^{768 \times 256}$ | **$1 \times 256$** | Quy đổi 768 đặc trưng ngôn ngữ thành 256 tiêu chí nghiệp vụ phần mềm. |
+| **Bước 2** | Hàm phi tuyến GELU | $1 \times 256$ | $\mathbf{a}_1 = \text{GELU}(\mathbf{z}_1)$ | $1 \times 256$ | Bật/tắt các nơ-ron theo logic điều kiện thực tế. |
+| **Bước 3** | Lớp Dropout | $1 \times 256$ | Tắt ngẫu nhiên $10\%$ nơ-ron khi huấn luyện. | $1 \times 256$ | Chống quá khớp (overfitting) trên tập dữ liệu nhỏ. |
+| **Bước 4** | Tầng Tuyến tính 2 (`fc2`) | $1 \times 256$ | $\hat{y} = \mathbf{a}_1 \cdot W_2 + b_2$ với $W_2 \in \mathbb{R}^{256 \times 1}$ | **$1 \times 1$ (Số thực)** | Tổng hợp thành đúng **một con số Story Point duy nhất**. |
+
+---
+
+## ⚡ PHẦN 4: VÌ SAO PHẢI LÀ "MLP" (2 TẦNG) MÀ KHÔNG DÙNG 1 TẦNG TUYẾN TÍNH ĐƠN GIẢN?
+
+Nhiều người sẽ hỏi: *Tại sao không chiếu thẳng từ $768 \rightarrow 1$ cho nhanh, việc gì phải qua tầng trung gian $256$ làm cho phức tạp?*
+
+Đây chính là điểm khác biệt sống còn giữa **học máy ngây thơ** và **học sâu thực chiến**:
+
+### 1. Phép chiếu 1 tầng ($768 \rightarrow 1$) chỉ học được phép cộng đơn giản
+Nếu chiếu thẳng $768 \rightarrow 1$, công thức dự đoán chỉ là một hàm tuyến tính:
+$$\text{Story Point} = w_1 h_1 + w_2 h_2 + \dots + w_{768} h_{768} + b$$
+Điều này đồng nghĩa với việc:
+* Mỗi khi từ `"Exception"` xuất hiện, nó luôn luôn **cộng cố định $+3$ điểm**.
+* Mỗi khi từ `"typo"` xuất hiện, nó luôn luôn **trừ cố định $-2$ điểm**.
+
+### 2. Nhưng thực tế phần mềm có tính "Tương tác điều kiện" (Non-linear Interaction)
+Hãy xem hai User Story thực tế trong Jira:
+* **Task A:** `"Fix typo in NullPointerException message"` (Sửa lỗi chính tả trong câu thông báo lỗi).  
+  $\rightarrow$ Công việc này chỉ mất 15 phút, điểm nỗ lực thực tế chỉ là **$1$ Story Point**.
+* **Task B:** `"Fix concurrent NullPointerException in distributed cache"` (Sửa lỗi con trỏ rỗng do xung đột đa luồng trong bộ nhớ đệm phân tán).  
+  $\rightarrow$ Công việc này cực khó, có thể mất 2 tuần điều tra, điểm nỗ lực thực tế là **$13$ Story Points**.
+
+> 💥 **Hạn chế của 1 tầng tuyến tính:**  
+> Ở cả hai task, từ `"NullPointerException"` đều xuất hiện! Mô hình 1 tầng bắt buộc phải cộng một lượng điểm như nhau cho cả Task A và Task B, dẫn đến dự đoán sai lệch hoàn toàn!
+
+>  **Sức mạnh của MLP (2 tầng + GELU):**  
+> Tầng ẩn 256 nơ-ron hoạt động như các **cổng logic điều kiện**:  
+> Nó học được quy luật: *"NẾU có từ NullPointerException NHƯNG đi kèm với từ typo $\rightarrow$ Không kích hoạt nơ-ron phức tạp. NẾU đi kèm với distributed $\rightarrow$ Kích hoạt tối đa!"*.  
+> Điều này chỉ có thể làm được nhờ có tầng trung gian $256$ kết hợp hàm phi tuyến GELU!
+
+---
+
+## 🔄 PHẦN 5: CƠ CHẾ "THÁO ĐẦU CŨ, LẮP ĐẦU MỚI" TRONG GPT2SP
+
+Để biến mô hình GPT-2 của OpenAI thành công cụ ước lượng Story Point, các tác giả (Fu & Tantithamthavorn, TSE 2023) đã thực hiện kỹ thuật **Transfer Learning (Học chuyển giao)**:
+
+```mermaid
+flowchart LR
+    subgraph OpenAI_GPT2["1. Mô Hình GPT-2 Gốc Của OpenAI"]
+        Body1["Thân 12 Khối Transformer\n(Đọc hiểu ngôn ngữ)"] --> LM_Head["ĐẦU CŨ: LM Head\n(50.257 nơ-ron + Softmax)\nNhiệm vụ: Đoán từ tiếp theo để viết văn"]
+    end
+
+    subgraph GPT2SP["2. Mô Hình Đề Xuất GPT2SP"]
+        Body2["Thân 12 Khối Transformer\n(Giữ nguyên tri thức đọc hiểu)"] --> MLP_Head["ĐẦU MỚI: MLP Regressor Head\n(768 -> 256 -> 1 nơ-ron)\nNhiệm vụ: Xuất ra số thực Story Point"]
+    end
+```
+
+### So sánh trực quan giữa Đầu cũ và Đầu mới:
+
+| Đặc tính kỹ thuật | Đầu gốc của GPT-2 (LM Head) | Đầu mới trong GPT2SP (MLP Regressor Head) |
 | :--- | :--- | :--- |
-| **Mục đích sử dụng** | Sinh từ tiếp theo trong văn bản tự nhiên. | **Ước lượng điểm Story Point trong Agile.** |
-| **Số chiều đầu ra** | **$50.257$ chiều** (kích thước từ vựng BPE). | **Đúng $1$ chiều duy nhất (Scalar float).** |
-| **Hàm kích hoạt cuối cùng** | $\text{Softmax}$ (tổng xác suất các từ bằng $1$). | **Tuyến tính không giới hạn** (Linear Activation). |
-| **Hàm mất mát huấn luyện** | Cross-Entropy Loss (Độ hỗn loạn ngôn ngữ). | **L1 Loss (Mean Absolute Error Loss):** $\sum \|y - \hat{y}\|$. |
-
-> 🎉 **Khoảnh khắc "Aha!":**  
-> Tại sao lại lấy vector của **Token Cuối Cùng ($\mathbf{h}_N$)** mà không lấy trung bình cộng tất cả các token?  
-> Vì trong cơ chế Masked Causal Attention của GPT-2, token đầu tiên chỉ nhìn thấy chính nó, token thứ hai nhìn thấy từ số 1 và số 2... Nhưng **chỉ duy nhất token cuối cùng mới được phép nhìn thấu toàn bộ tất cả các từ trong cả tiêu đề lẫn mô tả issue Jira**! Do đó, $\mathbf{h}_N$ chính là "bản đúc kết hoàn mỹ nhất" của toàn bộ bài toán!
-
----
-
-## ⚡ PHẦN 4: THÁCH THỨC KỸ THUẬT & VÌ SAO PHẢI CẦN ĐẦU HỒI QUY ĐA TẦNG (MLP)?
-
-Tại sao không dùng một tầng tuyến tính đơn giản chiếu thẳng $768 \rightarrow 1$?
-
-1. **Khoảng cách ngữ nghĩa quá lớn (Semantic Gap):**  
-   Vector 768 chiều từ khối Transformer chứa đựng các đặc trưng ngữ pháp, từ vựng và cấu trúc ngôn ngữ trừu tượng. Điểm Story Point lại là một khái niệm nghiệp vụ quản lý dự án (phản ánh thời gian, rủi ro, năng lực nhóm). Một tầng tuyến tính đơn lẻ $768 \rightarrow 1$ quá nông, không đủ sức bẻ gãy khoảng cách ngữ nghĩa khổng lồ này.
-2. **Khả năng phi tuyến tính của tầng trung gian $256$ chiều:**  
-   Việc chèn một tầng ẩn $256$ chiều cùng hàm kích hoạt **GELU** tạo ra một "không gian đệm", cho phép mô hình học được các tương tác điều kiện phức tạp (ví dụ: *"Nếu có từ Exception NHƯNG lại có thêm từ typo thì độ khó chỉ là 1 SP"*).
-3. **Tác dụng chống quá khớp của Dropout ($0.1$):**  
-   Dữ liệu Jira trong mỗi dự án chỉ có từ vài trăm đến vài ngàn issue. Một đầu hồi quy không có Dropout rất dễ bị học vẹt (overfitting) các mẫu số liệu cũ.
-
----
-
-## 🚀 PHẦN 5: QUY TRÌNH HUẤN LUYỆN ĐẦU-CUỐI (END-TO-END FINE-TUNING)
-
-Trong phương pháp cũ của **Deep-SE (Choetkiertikul et al., 2019)**:
-* Mô hình phải chia thành 2 giai đoạn tách rời: học vector nhúng Word2Vec trước, sau đó nạp vào LSTM + RHWN, rồi nạp vào bộ hồi quy. Tín hiệu đạo hàm không thể truyền thông suốt từ đầu đến cuối.
-
-Trong **GPT2SP (Fu & Tantithamthavorn, TSE 2023)**:
-* Toàn bộ mô hình — từ các ma trận nhúng $W_{te}, W_{pe}$, qua 12 khối Transformer Decoder, đến tận **MLP Regressor Head** — đều được liên kết thành một khối thống nhất.
-* Khi tính hàm mất mát L1 Loss:
-  $$\mathcal{L} = |y - \hat{y}|$$
-* Đạo hàm sai số chạy ngược một mạch xuyên suốt MLP Regressor Head và lan tỏa vào từng đầu chú ý của Transformer. Điều này giúp toàn bộ 117 triệu tham số cùng chung sức điều chỉnh để phục vụ mục tiêu duy nhất: **dự đoán Story Point chuẩn xác nhất**.
+| **Mục tiêu bài toán** | Sinh văn bản tự nhiên (Text Generation). | **Ước lượng nỗ lực phần mềm (Effort Estimation).** |
+| **Dạng kết quả đầu ra** | Xác suất phân phối trên **$50.257$ từ vựng**. | **Đúng $1$ con số thực vô hướng duy nhất** (ví dụ: $5.2$ SP). |
+| **Hàm kích hoạt cuối cùng** | $\text{Softmax}$ (tổng xác suất bằng 100%). | **Tuyến tính không giới hạn** (Linear). |
+| **Hàm mất mát huấn luyện** | Cross-Entropy Loss (đo độ hỗn loạn từ ngữ). | **L1 Loss (Mean Absolute Error):** $|y_{\text{thực tế}} - \hat{y}|$. |
 
 ---
 
 ## ⏱️ PHẦN 6: TỔNG KẾT 30 GIÂY (THE ELEVATOR PITCH)
 
-* **Bản chất:** MLP Regressor Head là mạng nơ-ron hồi quy hai tầng ($768 \rightarrow 256 \rightarrow 1$) kết hợp GeLU và Dropout, được gắn vào đỉnh mô hình GPT-2 thay thế cho đầu sinh từ vựng gốc.
-* **Vị trí lấy mẫu:** Nhận vector biểu diễn của token cuối cùng ($\mathbf{h}_N$) — nơi tích hợp trọn vẹn toàn bộ ngữ cảnh nhân quả của issue Jira.
-* **Giá trị trong GPT2SP:** Cầu nối hoàn hảo chuyển hóa tri thức ngôn ngữ sâu sắc thành điểm số nỗ lực Story Point thực tế, tối ưu hóa đồng thời với hàm mất mát L1 Loss để đạt độ chính xác thực nghiệm cao nhất.
+* **Nó là gì?** MLP Regressor Head là mạng nơ-ron hồi quy hai tầng ($768 \rightarrow 256 \rightarrow 1$) gắn trên đỉnh mô hình GPT-2.
+* **Bản chất nó dùng để làm gì?** Nó đóng vai trò là "chiếc máy phiên dịch", nhận vector 768 con số ngữ nghĩa trừu tượng từ token cuối cùng của GPT-2 và quy đổi thành đúng **một con số thực duy nhất biểu thị điểm Story Point**.
+* **Tại sao không dùng 1 tầng?** Vì tầng ẩn $256$ kết hợp hàm phi tuyến GELU cho phép mô hình học được các tương tác điều kiện phức tạp của kỹ nghệ phần mềm (phân biệt giữa lỗi nghiêm trọng thật sự và lỗi nhỏ kèm theo), mang lại độ chính xác vượt trội.
