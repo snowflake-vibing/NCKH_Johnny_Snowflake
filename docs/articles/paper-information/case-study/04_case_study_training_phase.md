@@ -2,7 +2,7 @@
 
 > **Mục tiêu tài liệu:**  
 > Giải thích chi tiết, trực quan bằng ngôn ngữ dễ hiểu và số liệu thực tế về cách một mô hình AI học cách ước lượng Story Point từ các issue Jira cũ, **hoàn toàn không dùng sơ đồ khối trừu tượng**.  
-> **Dữ liệu thực tế:** Dự án Spring XD — Khảo sát trực tiếp trên User Story lịch sử `XD-3751` ($y = 3.0$ Story Points).
+> **Dự án thực tế:** Dự án Spring XD — Khảo sát trực tiếp trên User Story lịch sử `XD-3751` ($y = 3.0$ Story Points).
 
 ---
 
@@ -97,12 +97,26 @@ $$\mathbf{x}_{\text{mid}} = \text{LayerNorm}(\mathbf{x} + \mathbf{z}) \in \mathb
 
 👉 **Đầu ra hoàn tất của khâu 1:** Ta thu được một tập hồ sơ gồm **15 tờ phiếu mới toanh**, vừa giữ trọn vẹn bản sắc từ gốc, vừa thấm nhuần ngữ cảnh của cả User Story, sẵn sàng bước sang căn phòng tiếp theo để kiểm tra kho tri thức chuyên sâu!
 
+---
+
 ### 2. Phòng lưu trữ tri thức chuyên sâu (Mạng truyền thẳng FFN)
-Sau khi các từ trao đổi với nhau, từng tờ phiếu được đưa vào một căn phòng phóng đại đặc trưng rộng gấp 4 lần (**từ 768 chiều phóng to lên 3072 chiều**).  
-Tại đây, các nơ-ron nhận diện mẫu sẽ sáng bừng lên:
-* Nơ-ron chuyên phát hiện lỗi cú pháp Java kêu lên: *"Có mẫu lỗi văng ngoại lệ kìa!"*.
-* Nơ-ron chuyên về module DataWeave kêu lên: *"Có công nghệ xử lý dữ liệu phức tạp kìa!"*.
-* Sau đó, thông tin được nén gọn gàng trở lại 768 con số và chuyển sang phòng ban tiếp theo.
+Sau khi các từ trao đổi ngữ cảnh với nhau, từng tờ phiếu được đưa vào căn phòng thứ hai: **Mạng truyền thẳng FFN (Feed-Forward Network)**. Tại đây diễn ra một bước biến đổi kỳ diệu: **phóng to từ 768 con số lên 3072 con số (rộng gấp đúng 4 lần)**.
+
+> ❓ **Tại sao ở 768 con số ban đầu nơ-ron không "bừng sáng", mà cứ phải phóng to gấp 4 lần lên 3072 con số thì mới sáng lên được?**
+
+Hãy hình dung câu chuyện rất thực tế:
+1. **Ở 768 con số ban đầu (Quá chật chội, khái niệm bị nén chùm):**  
+   Ngôn ngữ và lập trình có hàng trăm ngàn khái niệm (lỗi cú pháp Java, luồng dữ liệu bất đồng bộ, tên module, ký tự khoảng trắng...). Trong không gian 768 chiều, tất cả các khái niệm này bị nén dính chặt vào nhau như hành lý nhét chật ních trong một chiếc vali nhỏ. Vì một con số phải gánh vác cùng lúc hàng chục khái niệm khác nhau, máy tính **không thể đặt một công tắc riêng biệt** cho từng lỗi được (nếu bật công tắc thì sẽ bị kích hoạt nhầm cả đống thứ không liên quan). Do đó, ở 768 chiều, không có nơ-ron nào dám "bừng sáng độc lập"!
+2. **Khi phóng to gấp 4 lần lên 3072 con số (Trải rộng sàn triển lãm):**  
+   Khi không gian được mở rộng gấp 4 lần, các khái niệm đang bị nhét chật ních bỗng được "giải nén" và dãn rộng ra (theo **Định lý Cover** trong toán học: đưa lên không gian số chiều càng cao thì dữ liệu càng dễ tách bạch). Lúc này, máy tính có đủ chỗ để cắm **3.072 chiếc công tắc chuyên biệt (3.072 nơ-ron)**:
+   * **"Bừng sáng" thực chất là gì?** Đó là chiếc công tắc kích hoạt phi tuyến tính **GELU**. Khi tờ phiếu khớp trúng mẫu mà nơ-ron đó đang rình rập, công tắc GELU sẽ **BẬT CỰC MẠNH** (giá trị nơ-ron vọt lên số dương lớn). Nếu không khớp, công tắc **TẮT NGÚM** (giá trị bị dập tắt về 0).
+   * Nơ-ron số 412 chuyên rình lỗi Java: Thấy chữ `Exception` liền **bừng sáng lên** và báo: *"Có mẫu lỗi văng ngoại lệ SpEL kìa!"*.
+   * Nơ-ron số 1580 chuyên rình luồng dữ liệu: Thấy `DW` liền **bừng sáng lên** và báo: *"Có công nghệ DataWeave phức tạp kìa!"*.
+   * Trong 3.072 nơ-ron, chỉ có khoảng **$5\% - 10\%$ nơ-ron liên quan là bừng sáng**, hơn $90\%$ nơ-ron còn lại tắt lịm để giữ sự tập trung.
+3. **Nén trở lại 768 con số (Gập cuốn bách khoa toàn thư):**  
+   Sau khi các nơ-ron chuyên biệt sáng lên và phát tín hiệu tri thức, máy tính thu hoạch toàn bộ thông tin quan trọng đó, rồi dùng ma trận thứ hai **nén cô đọng trở lại đúng 768 con số** (như việc ghi chú ngắn gọn những điều cốt lõi vào sổ tay) rồi chuyển sang phòng ban tiếp theo!
+
+---
 
 ### 3. Lấy tờ phiếu của Token cuối cùng làm "Bản đúc kết" (Last Token Pooling)
 Sau khi đi qua hết 12 phòng ban, ta có 15 tờ phiếu đã được làm giàu ngữ nghĩa ở mức cao nhất.  
