@@ -243,7 +243,8 @@ Hệ thống tự động truy vấn cơ sở dữ liệu của dự án Spring 
 
 * 🔬 **[Case Study 01: Hành trình dữ liệu qua 12 khối Transformer Decoders](01_case_study_12_transformer_decoders.md)** — Mổ xẻ chi tiết sự phân tầng trừu tượng từ Khối 1 đến Khối 12.
 * 🔬 **[Case Study 02: Cơ chế Last Token Pooling & Đầu hồi quy MLP Regressor 3 tầng](02_case_study_mlp_regressor_head.md)** — Giải mã cách biến đổi vector 768 chiều thành con số Story Point.
-* 🔬 **[Case Study 03: Đối chứng toàn diện Pha Huấn luyện (Training) và Pha Suy luận (Inference)](03_case_study_training_vs_inference_phases.md)** — Chi tiết hàm mất mát L1 Loss, AdamW và cơ chế Dual-Output Stream tại Sprint Planning.
+* 🔬 **[Case Study 04: Hình dung toàn diện Pha Huấn luyện (Training Phase)](04_case_study_training_phase.md)** — Phân tích chi tiết quy trình giải đề, tính lỗi sai $L_1$ Loss và cập nhật trọng số Backpropagation qua ví dụ `XD-3751` (không dùng sơ đồ khối).
+* 🔬 **[Case Study 05: Hình dung toàn diện Pha Suy luận (Inference Phase)](05_case_study_inference_phase.md)** — Chi tiết cơ chế đóng băng mô hình, quy đổi thang điểm Fibonacci và cơ chế Đột phá Hai luồng song song (Dual-Output Stream) tại Sprint Planning qua ví dụ `XD-4012`.
 
 ---
 
