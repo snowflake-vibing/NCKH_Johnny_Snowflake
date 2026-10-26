@@ -189,7 +189,7 @@ Quy trình phân cụm thứ bậc của NPSK gồm 2 bước:
 ### 6.3. Bảng phân ngưỡng kích thước hiệu ứng Cliff's Delta ($\delta$)
 > 📍 **Vị trí bài báo gốc:** Trang 7, Cột 2, Dòng 30 – 35 (trích dẫn Romano et al. [41]).
 
-$$\delta = \frac{\# (x_i > y_j) - \# (x_i < y_j)}{m \times n}$$
+$$\delta = \frac{\sum_{i=1}^{m} \sum_{j=1}^{n} \left( [x_i > y_j] - [x_i < y_j] \right)}{m \times n} = \frac{\text{count}(x_i > y_j) - \text{count}(x_i < y_j)}{m \times n}$$
 
 | Ngưỡng giá trị Cliff's Delta ($\lvert \delta \rvert$) | Mức độ hiệu ứng (Effect Size) | Kết luận thống kê |
 | :---: | :---: | :--- |
