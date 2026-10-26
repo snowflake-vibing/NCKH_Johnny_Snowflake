@@ -3,6 +3,13 @@
 > **Tài liệu gốc:** Mục 3 (THE GPT2SP ARCHITECTURE), Trang 3 – 5, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
 > **Tác giả:** Michael Fu, Chakkrit Tantithamthavorn (Đại học Monash, Úc).
 
+> [!TIP]
+> **Bộ tài liệu phân rã chuyên sâu theo yêu cầu nghiên cứu (Modular Explanations):**  
+> Để khảo sát tường tận từng khía cạnh kỹ thuật của Chương 3, vui lòng tham khảo 3 tập tin chuyên đề độc lập:  
+> • 🧩 **[Chương 03-1: Cấu trúc Mô hình Học sâu GPT2SP (Model Architecture)](03-1-model_architecture.md)** — Phân tích chi tiết Phân hệ Nhúng, 12 Khối Decoder, Đầu hồi quy MLP Head và bảng bóc tách 117M tham số.  
+> • ➡️ **[Chương 03-2: Quy trình Lan truyền Xuôi (Forward Pass Flow)](03-2-forward_pass.md)** — Hành trình toán học của tensor từ Tokenization, qua 12 khối, Last Token Pooling đến điểm số $\hat{y}$.  
+> • 🔄 **[Chương 03-3: Lan truyền Ngược và Tối ưu hóa Trọng số (Backpropagation & AdamW)](03-3-backpropagation_and_optimization.md)** — Cơ chế tính $ Loss, đường cao tốc gradient qua 24 Residual Connections và thuật toán AdamW.
+
 ---
 
 ## 🏗️ 1. TỔNG QUAN LUỒNG KIẾN TRÚC (3. OVERVIEW)
