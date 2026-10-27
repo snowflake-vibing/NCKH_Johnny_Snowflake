@@ -24,14 +24,20 @@ Tác giả (Michael Fu & Chakkrit Tantithamthavorn - Monash University) đề xu
   👉 *Xem phân tích phần cứng:* [02_why_hidden_dimension_768.md](../critical-thinking/02_why_hidden_dimension_768.md) và [03_why_qkv_2304_and_ffn_3072.md](../critical-thinking/03_why_qkv_2304_and_ffn_3072.md).
 * **Head hồi quy (MLP Regressor):** Trích xuất vector của token cuối cùng (Last Token Pooling, kích thước $1 \times 768$) và chiếu qua mạng MLP để dự đoán ra một con số thực duy nhất đại diện cho Story Point.  
   👉 *Xem giải phẫu kiến trúc:* [03_the_gpt2sp_architecture.md](03_the_gpt2sp_architecture.md).
+* **Đột phá chuyển đổi từ Generative LLM sang Regressor:** Làm thế nào để "phẫu thuật" GPT-2 từ mô hình sinh chữ thành máy đoán điểm số thực?  
+  👉 *Xem phân tích chuyên sâu:* [12_from_generative_llm_to_regression_head.md](../critical-thinking/12_from_generative_llm_to_regression_head.md).
+* **Bản chất toán học của Last Token Pooling:** Vì sao Causal Mask bắt buộc mô hình phải lấy token cuối cùng mà không thể lấy token đầu như BERT hay lấy trung bình cộng?  
+  👉 *Xem giải mã toán học:* [13_why_last_token_pooling_not_first_or_mean.md](../critical-thinking/13_why_last_token_pooling_not_first_or_mean.md).
 
 ### 3. Nghiên cứu tình huống cụ thể trên Jira Issue XD-3751
-Để hình dung dòng chảy tính toán thực tế (từ chữ cái thô $\rightarrow$ ma trận nơ-ron $\rightarrow$ con số Story Point), Partner hãy đọc chuỗi bài Case Study trên issue **Spring XD-3751**:
+Để hình dung dòng chảy tính toán thực tế (từ chữ cái thô $\rightarrow$ ma trận nơ-ron $\rightarrow$ con số Story Point), Partner hãy đọc chuỗi bài Case Study trọn vẹn trên issue **Spring XD-3751**:
+* 🔬 [Case Study 00: Từ Jira ticket thô đến chuỗi Tokens đầu vào](../case-study/00_case_study_jira_raw_to_token_pipeline.md)
 * 🔬 [Giải mã tổng thể Case Study XD-3751](../case-study/case_study_gpt2sp_architecture.md)
-* 🔬 [Dòng chảy qua 12 khối Transformer Decoders](../case-study/01_case_study_12_transformer_decoders.md)
-* 🔬 [Cơ chế trích xuất Last Token và dự đoán qua MLP Regressor](../case-study/02_case_study_mlp_regressor_head.md)
-* 🔬 [Quy trình Training Phase (Lan truyền ngược & AdamW)](../case-study/04_case_study_training_phase.md)
-* 🔬 [Quy trình Inference Phase khi người dùng nhập User Story mới](../case-study/05_case_study_inference_phase.md)
+* 🔬 [Case Study 01: Dòng chảy qua 12 khối Transformer Decoders](../case-study/01_case_study_12_transformer_decoders.md)
+* 🔬 [Case Study 03: Trích xuất đặc trưng và Last Token Pooling trên Issue XD-3751](../case-study/03_case_study_last_token_pooling_xd3751.md)
+* 🔬 [Case Study 02: Cơ chế trích xuất và dự đoán qua MLP Regressor](../case-study/02_case_study_mlp_regressor_head.md)
+* 🔬 [Case Study 04: Quy trình Training Phase (Lan truyền ngược & AdamW)](../case-study/04_case_study_training_phase.md)
+* 🔬 [Case Study 05: Quy trình Inference Phase khi người dùng nhập User Story mới](../case-study/05_case_study_inference_phase.md)
 
 ---
 
@@ -124,4 +130,8 @@ Khi thảo luận kỹ thuật, Partner có thể click trực tiếp vào các 
 | **Bản chất rò rỉ dữ liệu**| [critical-thinking/09_data_leakage_analysis_and_action_plan.md](../critical-thinking/09_data_leakage_analysis_and_action_plan.md) | Mổ xẻ vì sao Final Snapshot gây ra ảo tưởng hiệu năng. |
 | **Đánh giá hướng nghiên cứu**|[critical-thinking/10_research_directions_critical_evaluation.md](../critical-thinking/10_research_directions_critical_evaluation.md) | Ma trận điểm số 9 tiêu chí và chiến lược chọn WSESE. |
 | **Cẩm nang code thực thi**|[critical-thinking/11_implementation_guide_for_research_directions.md](../critical-thinking/11_implementation_guide_for_research_directions.md) | Mã nguồn Python, truy vấn SQL, Waterfall plot & LightGBM. |
+| **Từ Generative LLM -> Regressor** | [critical-thinking/12_from_generative_llm_to_regression_head.md](../critical-thinking/12_from_generative_llm_to_regression_head.md) | Phẫu thuật cắt bỏ LM Head, thay thế MLP Regressor. |
+| **Bản chất Last Token Pooling** | [critical-thinking/13_why_last_token_pooling_not_first_or_mean.md](../critical-thinking/13_why_last_token_pooling_not_first_or_mean.md) | Mặt nạ Causal Mask và nguyên lý lấy token cuối. |
+| **Quy trình tiền xử lý Jira** | [case-study/00_case_study_jira_raw_to_token_pipeline.md](../case-study/00_case_study_jira_raw_to_token_pipeline.md) | Biến ticket XD-3751 thành prompt và input_ids BPE. |
+| **Mắt xích Last Token XD-3751** | [case-study/03_case_study_last_token_pooling_xd3751.md](../case-study/03_case_study_last_token_pooling_xd3751.md) | Cắt lát tensor [1, 48, 768] thành vector [1, 768]. |
 | **Từ điển thuật ngữ** | [glossary/README.md](../glossary/README.md) | Tra cứu nhanh các khái niệm: BPE, Wilcoxon, Cliff's Delta... |

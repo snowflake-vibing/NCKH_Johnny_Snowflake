@@ -34,8 +34,10 @@ docs/articles/paper-information/gpt2sp/
 ---
 
 ## 🔬 2. [case-study/](case-study/README.md) — Nghiên Cứu Tình Huống Thực Tế
+* **[00_case_study_jira_raw_to_token_pipeline.md](case-study/00_case_study_jira_raw_to_token_pipeline.md):** Từ Jira ticket thô đến chuỗi tokens và padding tensor.
 * **[case_study_gpt2sp_architecture.md](case-study/case_study_gpt2sp_architecture.md):** Giải mã dòng chảy dữ liệu trên Jira Issue cụ thể **XD-3751** (Spring XD).
 * **[01_case_study_12_transformer_decoders.md](case-study/01_case_study_12_transformer_decoders.md):** Dòng chảy tính toán qua 12 khối Transformer Decoders.
+* **[03_case_study_last_token_pooling_xd3751.md](case-study/03_case_study_last_token_pooling_xd3751.md):** Cắt lát tensor [1, 48, 768] trích xuất vector token thứ 48.
 * **[02_case_study_mlp_regressor_head.md](case-study/02_case_study_mlp_regressor_head.md):** Trích xuất Last Token Embedding và dự đoán qua đầu hồi quy MLP.
 * **[04_case_study_training_phase.md](case-study/04_case_study_training_phase.md):** Quá trình huấn luyện, tính hàm mất mát MSE và cập nhật trọng số.
 * **[05_case_study_inference_phase.md](case-study/05_case_study_inference_phase.md):** Quy trình suy luận thực tế khi người dùng nhập User Story mới.
@@ -54,6 +56,8 @@ docs/articles/paper-information/gpt2sp/
 * **[09_data_leakage_analysis_and_action_plan.md](critical-thinking/09_data_leakage_analysis_and_action_plan.md):** Phân tích rò rỉ dữ liệu (Intra-issue Temporal Leakage) trong GPT2SP & Kế hoạch Nhóm 3.
 * **[10_research_directions_critical_evaluation.md](critical-thinking/10_research_directions_critical_evaluation.md):** Đánh giá đa tiêu chí 9 trục MCDA & xếp hạng các hướng nghiên cứu nhắm đến **Hội nghị WSESE**.
 * **[11_implementation_guide_for_research_directions.md](critical-thinking/11_implementation_guide_for_research_directions.md):** Sổ tay kỹ thuật thực thi chi tiết từ CSDL TAWOS, bóc tách kênh rò rỉ đến mô hình tiến trình Agile sạch.
+* **[12_from_generative_llm_to_regression_head.md](critical-thinking/12_from_generative_llm_to_regression_head.md):** Giải phẫu cơ chế biến GPT-2 từ mô hình sinh chữ thành đầu hồi quy số thực.
+* **[13_why_last_token_pooling_not_first_or_mean.md](critical-thinking/13_why_last_token_pooling_not_first_or_mean.md):** Bản chất toán học của Causal Masking và lý do bắt buộc lấy Last Token.
 
 ---
 
