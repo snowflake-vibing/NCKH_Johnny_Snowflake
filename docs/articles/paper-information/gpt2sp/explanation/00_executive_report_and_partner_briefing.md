@@ -22,12 +22,14 @@ Tác giả (Michael Fu & Chakkrit Tantithamthavorn - Monash University) đề xu
   👉 *Xem phân tích chuyên sâu:* [01_subword_vocabularies_50257.md](../critical-thinking/01_subword_vocabularies_50257.md).
 * **Transformer Decoders:** Chuỗi token chạy qua 12 khối giải mã với cơ chế Multi-Head Masked Self-Attention ($768$ chiều ẩn, ma trận QKV $2304$, mở rộng FFN $3072$).  
   👉 *Xem phân tích phần cứng:* [02_why_hidden_dimension_768.md](../critical-thinking/02_why_hidden_dimension_768.md) và [03_why_qkv_2304_and_ffn_3072.md](../critical-thinking/03_why_qkv_2304_and_ffn_3072.md).
-* **Head hồi quy (MLP Regressor):** Trích xuất vector của token cuối cùng (Last Token Pooling, kích thước $1 \times 768$) và chiếu qua mạng MLP để dự đoán ra một con số thực duy nhất đại diện cho Story Point.  
-  👉 *Xem giải phẫu kiến trúc:* [03_the_gpt2sp_architecture.md](03_the_gpt2sp_architecture.md).
+* **Head hồi quy (MLP Regressor):** Trích xuất vector của token cuối cùng (Last Token Pooling, kích thước $1 \times 768$) và chiếu qua mạng MLP 2 tầng ($768 \rightarrow 768 \rightarrow 1$) với hàm kích hoạt GELU để dự đoán ra một con số thực duy nhất đại diện cho Story Point.  
+  👉 *Xem phân tích chuyên sâu MLP Regressor Head:* [14_why_mlp_regressor_head_architecture.md](../critical-thinking/14_why_mlp_regressor_head_architecture.md).
 * **Đột phá chuyển đổi từ Generative LLM sang Regressor:** Làm thế nào để "phẫu thuật" GPT-2 từ mô hình sinh chữ thành máy đoán điểm số thực?  
   👉 *Xem phân tích chuyên sâu:* [12_from_generative_llm_to_regression_head.md](../critical-thinking/12_from_generative_llm_to_regression_head.md).
 * **Bản chất toán học của Last Token Pooling:** Vì sao Causal Mask bắt buộc mô hình phải lấy token cuối cùng mà không thể lấy token đầu như BERT hay lấy trung bình cộng?  
   👉 *Xem giải mã toán học:* [13_why_last_token_pooling_not_first_or_mean.md](../critical-thinking/13_why_last_token_pooling_not_first_or_mean.md).
+* **Tổng hợp Toàn bộ Kiến trúc Mô hình GPT2SP (Chương 3):** Toàn cảnh quy trình tích hợp khép kín từ tiền xử lý, ma trận nhúng, 12 khối Decoders đến đầu hồi quy MLP và lan truyền ngược AdamW.  
+  👉 *Xem phân tích tổng quan toàn bộ Chương 3:* [03_the_gpt2sp_architecture.md](03_the_gpt2sp_architecture.md).
 
 ### 3. Nghiên cứu tình huống cụ thể trên Jira Issue XD-3751
 Để hình dung dòng chảy tính toán thực tế (từ chữ cái thô $\rightarrow$ ma trận nơ-ron $\rightarrow$ con số Story Point), Partner hãy đọc chuỗi bài Case Study trọn vẹn trên issue **Spring XD-3751**:
@@ -125,7 +127,8 @@ Khi thảo luận kỹ thuật, Partner có thể click trực tiếp vào các 
 | Phân hệ tri thức | Đường dẫn tập tin chi tiết | Giá trị tham khảo cho đề tài |
 | :--- | :--- | :--- |
 | **Phân tích từng chương** | [explanation/README.md](README.md) | Chi tiết 10 chương bài báo gốc GPT2SP. |
-| **Kiến trúc mô hình** | [03_the_gpt2sp_architecture.md](03_the_gpt2sp_architecture.md) | Công thức ma trận $W_{qkv}$, GELU, Last Token Pooling. |
+| **Tổng quan kiến trúc (Chương 3)** | [03_the_gpt2sp_architecture.md](03_the_gpt2sp_architecture.md) | Báo cáo phân tích tổng hợp toàn bộ Chương 3 bài báo gốc: BPE, 12 Decoders đến MLP Head. |
+| **Giải phẫu MLP Regressor Head** | [critical-thinking/14_why_mlp_regressor_head_architecture.md](../critical-thinking/14_why_mlp_regressor_head_architecture.md) | Mổ xẻ mạng MLP 2 tầng (768 -> 768 -> 1), kích hoạt GELU, 591K tham số và đánh đổi kỹ thuật. |
 | **Case Study thực tế** | [case-study/case_study_gpt2sp_architecture.md](../case-study/case_study_gpt2sp_architecture.md) | Dòng chảy dữ liệu cụ thể trên Jira Issue XD-3751. |
 | **Bản chất rò rỉ dữ liệu**| [critical-thinking/09_data_leakage_analysis_and_action_plan.md](../critical-thinking/09_data_leakage_analysis_and_action_plan.md) | Mổ xẻ vì sao Final Snapshot gây ra ảo tưởng hiệu năng. |
 | **Đánh giá hướng nghiên cứu**|[critical-thinking/10_research_directions_critical_evaluation.md](../critical-thinking/10_research_directions_critical_evaluation.md) | Ma trận điểm số 9 tiêu chí và chiến lược chọn WSESE. |

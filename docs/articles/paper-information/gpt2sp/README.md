@@ -58,6 +58,7 @@ docs/articles/paper-information/gpt2sp/
 * **[11_implementation_guide_for_research_directions.md](critical-thinking/11_implementation_guide_for_research_directions.md):** Sổ tay kỹ thuật thực thi chi tiết từ CSDL TAWOS, bóc tách kênh rò rỉ đến mô hình tiến trình Agile sạch.
 * **[12_from_generative_llm_to_regression_head.md](critical-thinking/12_from_generative_llm_to_regression_head.md):** Giải phẫu cơ chế biến GPT-2 từ mô hình sinh chữ thành đầu hồi quy số thực.
 * **[13_why_last_token_pooling_not_first_or_mean.md](critical-thinking/13_why_last_token_pooling_not_first_or_mean.md):** Bản chất toán học của Causal Masking và lý do bắt buộc lấy Last Token.
+* **[14_why_mlp_regressor_head_architecture.md](critical-thinking/14_why_mlp_regressor_head_architecture.md):** Giải phẫu cấu trúc 2 tầng của MLP Regressor Head ( \rightarrow 768 \rightarrow 1$) và hàm kích hoạt GELU.
 
 ---
 
