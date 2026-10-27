@@ -10,6 +10,8 @@
 ```text
 docs/articles/
 ├── paper-information/        # Thư mục chứa các file phân tích chi tiết từng bài báo (*.md)
+│   ├── gpt2sp/               # Hệ tri thức chuyên sâu GPT2SP (explanation, case-study, critical-thinking, glossary)
+│   └── paper_*.md            # Các bản tóm tắt Literature Matrix cho từng bài báo
 ├── *.pdf                     # Bản sao file PDF gốc của các bài báo khoa học
 └── README.md                 # Hướng dẫn quy trình & Mẫu chuẩn phân tích
 ```

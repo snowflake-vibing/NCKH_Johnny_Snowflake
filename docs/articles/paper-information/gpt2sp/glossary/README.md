@@ -111,4 +111,4 @@ flowchart TD
 ## 🧭 HƯỚNG DẪN ĐỌC & ĐỐI CHIẾU
 
 * **Quy chuẩn xây dựng tài liệu:** Đọc kỹ [`RULE.md`](RULE.md) trước khi bổ sung bất kỳ thuật ngữ mới nào.
-* **Tài liệu giải thích 11 chương bài báo GPT2SP:** Xem tại thư mục [`docs/articles/paper-information/explanation/`](../explanation/).
+* **Tài liệu giải thích 11 chương bài báo GPT2SP:** Xem tại thư mục [`docs/articles/paper-information/gpt2sp/explanation/`](../explanation/).

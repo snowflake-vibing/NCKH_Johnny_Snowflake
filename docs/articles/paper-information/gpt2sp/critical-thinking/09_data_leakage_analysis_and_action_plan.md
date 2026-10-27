@@ -172,9 +172,9 @@ flowchart TD
 
 ## 🔗 6. LIÊN KẾT ĐIỀU HƯỚNG HỆ THỐNG
 
-* 🛡️ [Chương 9: Các mối đe dọa đối với tính hợp lệ trong bài báo gốc](file:///d:/NCKH_3/docs/articles/paper-information/explanation/09_threats_to_validity.md)
-* 🔬 [Chương 4: Thiết lập thực nghiệm gốc của Fu et al. (Mục 4.1 Chronological Split)](file:///d:/NCKH_3/docs/articles/paper-information/explanation/04_experimental_setup.md)
-* 📖 [Chương 10: Kết luận và cam kết Open Science của Fu et al.](file:///d:/NCKH_3/docs/articles/paper-information/explanation/10_conclusion.md)
+* 🛡️ [Chương 9: Các mối đe dọa đối với tính hợp lệ trong bài báo gốc](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/explanation/09_threats_to_validity.md)
+* 🔬 [Chương 4: Thiết lập thực nghiệm gốc của Fu et al. (Mục 4.1 Chronological Split)](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/explanation/04_experimental_setup.md)
+* 📖 [Chương 10: Kết luận và cam kết Open Science của Fu et al.](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/explanation/10_conclusion.md)
 * 📑 [Tài liệu phân tích bài báo TAWOS (Tawosi et al. TSE 2022)](file:///d:/NCKH_3/docs/articles/paper-information/paper_tawosi_2022_replication.md)
-* 📚 [Chuyên mục Critical Thinking tổng quan](file:///d:/NCKH_3/docs/articles/paper-information/critical-thinking/README.md)
+* 📚 [Chuyên mục Critical Thinking tổng quan](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/critical-thinking/README.md)
 * 👑 [Quy chuẩn vận hành nghiên cứu NCKH Nhóm 3](file:///d:/NCKH_3/AGENTS.md)

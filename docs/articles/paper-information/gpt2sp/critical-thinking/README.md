@@ -56,7 +56,7 @@ Khi xuất hiện các câu hỏi phản biện mới trong quá trình thảo l
 
 ## 🔗 Liên Kết Điều Hướng Hệ Thống
 
-* 📖 [Chương 3: Kiến trúc mô hình GPT2SP](file:///d:/NCKH_3/docs/articles/paper-information/explanation/03_the_gpt2sp_architecture.md)
-* 🔬 [Case Study: Thực tế áp dụng kiến trúc trên Jira Issue XD-3751](file:///d:/NCKH_3/docs/articles/paper-information/case-study/case_study_gpt2sp_architecture.md)
-* 📚 [Thuật ngữ chuyên ngành GPT2SP (Glossary)](file:///d:/NCKH_3/docs/articles/paper-information/glossary/README.md)
+* 📖 [Chương 3: Kiến trúc mô hình GPT2SP](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/explanation/03_the_gpt2sp_architecture.md)
+* 🔬 [Case Study: Thực tế áp dụng kiến trúc trên Jira Issue XD-3751](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/case-study/case_study_gpt2sp_architecture.md)
+* 📚 [Thuật ngữ chuyên ngành GPT2SP (Glossary)](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/glossary/README.md)
 * 📑 [Báo cáo Tổng hợp Bài báo GPT2SP (IEEE TSE 2023)](file:///d:/NCKH_3/docs/articles/paper-information/paper_fu_2023_gpt2sp.md)

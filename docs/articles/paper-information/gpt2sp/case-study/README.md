@@ -18,7 +18,7 @@
 
 ## 🔗 Liên Kết Điều Hướng Hệ Thống
 
-* 📖 [Thư mục Giải thích chi tiết các chương bài báo GPT2SP (Explanation)](file:///d:/NCKH_3/docs/articles/paper-information/explanation/README.md)
-* 🧠 [Thư mục Phân tích phản biện chuyên sâu (Scientific Critical Thinking)](file:///d:/NCKH_3/docs/articles/paper-information/critical-thinking/README.md)
-* 📚 [Thư mục Tra cứu thuật ngữ chuyên ngành (Glossary)](file:///d:/NCKH_3/docs/articles/paper-information/glossary/README.md)
+* 📖 [Thư mục Giải thích chi tiết các chương bài báo GPT2SP (Explanation)](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/explanation/README.md)
+* 🧠 [Thư mục Phân tích phản biện chuyên sâu (Scientific Critical Thinking)](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/critical-thinking/README.md)
+* 📚 [Thư mục Tra cứu thuật ngữ chuyên ngành (Glossary)](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/glossary/README.md)
 * 📑 [Báo cáo Tổng hợp Bài báo GPT2SP (Fu & Tantithamthavorn 2023)](file:///d:/NCKH_3/docs/articles/paper-information/paper_fu_2023_gpt2sp.md)

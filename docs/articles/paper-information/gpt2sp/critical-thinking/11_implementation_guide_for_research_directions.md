@@ -1,7 +1,7 @@
 # 🛠️ PHÂN TÍCH PHẢN BIỆN 11: CẨM NANG THỰC THI CHI TIẾT TỪNG HƯỚNG NGHIÊN CỨU (HƯỚNG ĐẾN HỘI NGHỊ WSESE)
 
 > **Chuyên mục:** Phân tích phản biện khoa học & Hướng dẫn kỹ thuật thực nghiệm.  
-> **Liên kết chiến lược:** Tài liệu này hiện thực hóa toàn bộ chiến lược phân tích và chấm điểm tại [10_research_directions_critical_evaluation.md](file:///d:/NCKH_3/docs/articles/paper-information/critical-thinking/10_research_directions_critical_evaluation.md).  
+> **Liên kết chiến lược:** Tài liệu này hiện thực hóa toàn bộ chiến lược phân tích và chấm điểm tại [10_research_directions_critical_evaluation.md](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/critical-thinking/10_research_directions_critical_evaluation.md).  
 > **Đích ngắm:** Hoàn thiện bài báo và Replication Package nộp **Hội nghị Quốc tế WSESE** (*International Workshop on Methodological Issues with Empirical Studies in Software Engineering*) trong thời hạn **1 tháng (4 tuần)**.
 
 ---
@@ -327,7 +327,7 @@ replication_package_wsese/
 
 ## 🔗 LIÊN KẾT ĐIỀU HƯỚNG HỆ THỐNG
 
-* 🧠 [Phân tích 10: Đánh giá Đa tiêu chí & Xếp hạng 5 Hướng Nghiên Cứu cho WSESE](file:///d:/NCKH_3/docs/articles/paper-information/critical-thinking/10_research_directions_critical_evaluation.md)
-* 🧠 [Phân tích 09: GPT2SP đã giải quyết Data Leakage chưa & Kế hoạch Nhóm 3](file:///d:/NCKH_3/docs/articles/paper-information/critical-thinking/09_data_leakage_analysis_and_action_plan.md)
-* 📖 [Mục lục chuyên mục Critical Thinking](file:///d:/NCKH_3/docs/articles/paper-information/critical-thinking/README.md)
+* 🧠 [Phân tích 10: Đánh giá Đa tiêu chí & Xếp hạng 5 Hướng Nghiên Cứu cho WSESE](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/critical-thinking/10_research_directions_critical_evaluation.md)
+* 🧠 [Phân tích 09: GPT2SP đã giải quyết Data Leakage chưa & Kế hoạch Nhóm 3](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/critical-thinking/09_data_leakage_analysis_and_action_plan.md)
+* 📖 [Mục lục chuyên mục Critical Thinking](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/critical-thinking/README.md)
 * 📜 [Quy tắc Nghiên cứu & Chống rò rỉ dữ liệu (RULE.md)](file:///d:/NCKH_3/docs/draft/RULE.md)

@@ -2,7 +2,7 @@
 # MINH HỌA QUY TRÌNH ƯỚC LƯỢNG STORY POINT BẰNG KIẾN TRÚC GPT2SP
 
 > **Chuyên đề:** Minh họa chi tiết từng bước vận hành của mô hình GPT2SP trên một hạng mục công việc thực tế (Jira Issue).  
-> **Ánh xạ sơ đồ kiến trúc:** Đối chiếu trực tiếp với sơ đồ tại [03_the_gpt2sp_architecture.md](file:///d:/NCKH_3/docs/articles/paper-information/explanation/03_the_gpt2sp_architecture.md) (Trích xuất từ Figure 2, Trang 4, bài báo gốc IEEE TSE 2023 [Fu & Tantithamthavorn]).  
+> **Ánh xạ sơ đồ kiến trúc:** Đối chiếu trực tiếp với sơ đồ tại [03_the_gpt2sp_architecture.md](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/explanation/03_the_gpt2sp_architecture.md) (Trích xuất từ Figure 2, Trang 4, bài báo gốc IEEE TSE 2023 [Fu & Tantithamthavorn]).  
 > **Dự án mục tiêu:** Hệ thống mã nguồn mở **Spring XD** (`XD`) thuộc kho dữ liệu TAWOS / Choetkiertikul et al.
 
 ---
@@ -250,9 +250,9 @@ Hệ thống tự động truy vấn cơ sở dữ liệu của dự án Spring 
 
 ## 🔗 TÀI LIỆU LIÊN KẾT
 
-* 📖 [Chương 3: Kiến trúc mô hình GPT2SP](file:///d:/NCKH_3/docs/articles/paper-information/explanation/03_the_gpt2sp_architecture.md) — Phân tích chi tiết công thức toán học và cấu tạo 12 khối Transformer Decoders.
-* 📖 [Chương 4: Thiết lập thực nghiệm](file:///d:/NCKH_3/docs/articles/paper-information/explanation/04_experimental_setup.md) — Quy trình phân chia dữ liệu Chronological Split và các siêu tham số huấn luyện.
-* 📖 [Chương 6: Công cụ XAI & Khảo sát chuyên gia Agile](file:///d:/NCKH_3/docs/articles/paper-information/explanation/06_xai_tool_and_practitioner_survey.md) — Kết quả khảo sát 16 chuyên gia về tính hữu ích và độ tin cậy của GPT2SP.
-* 📚 [Thuật ngữ: Byte-Pair Encoding (BPE)](file:///d:/NCKH_3/docs/articles/paper-information/glossary/byte_pair_encoding.md)
-* 📚 [Thuật ngữ: Transformer Decoder](file:///d:/NCKH_3/docs/articles/paper-information/glossary/transformer_decoder.md)
-* 📚 [Thuật ngữ: MLP Regressor Head](file:///d:/NCKH_3/docs/articles/paper-information/glossary/mlp_regressor_head.md)
+* 📖 [Chương 3: Kiến trúc mô hình GPT2SP](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/explanation/03_the_gpt2sp_architecture.md) — Phân tích chi tiết công thức toán học và cấu tạo 12 khối Transformer Decoders.
+* 📖 [Chương 4: Thiết lập thực nghiệm](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/explanation/04_experimental_setup.md) — Quy trình phân chia dữ liệu Chronological Split và các siêu tham số huấn luyện.
+* 📖 [Chương 6: Công cụ XAI & Khảo sát chuyên gia Agile](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/explanation/06_xai_tool_and_practitioner_survey.md) — Kết quả khảo sát 16 chuyên gia về tính hữu ích và độ tin cậy của GPT2SP.
+* 📚 [Thuật ngữ: Byte-Pair Encoding (BPE)](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/glossary/byte_pair_encoding.md)
+* 📚 [Thuật ngữ: Transformer Decoder](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/glossary/transformer_decoder.md)
+* 📚 [Thuật ngữ: MLP Regressor Head](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/glossary/mlp_regressor_head.md)
