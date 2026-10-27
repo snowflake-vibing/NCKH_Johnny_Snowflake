@@ -7,21 +7,6 @@
 
 ---
 
-## 🧭 LƯỢC ĐỒ ĐIỀU HÀNH (EXECUTIVE ROADMAP)
-
-Toàn bộ lộ trình nghiên cứu của nhóm được tóm tắt qua 4 giai đoạn logic xuyên suốt:
-
-* **Giai đoạn 1: Khảo sát Bài báo gốc GPT2SP (IEEE TSE 2023)**  
-  Tác giả giải quyết nhược điểm từ điển đóng và không thể chuyển giao tri thức của Deep-SE bằng mô hình tiền huấn luyện GPT-2 (117M tham số). Bài báo công bố $\text{MAE} = 0.96$ trên Spring XD và tuyên bố vượt trội hơn Median baseline.
-* **Giai đoạn 2: Thẩm định & Phát hiện Lỗ hổng Khoa học của Nhóm 3**  
-  Nhóm 3 chạy lại checkpoint công khai của tác giả nhưng chỉ đạt $\text{MAE} = 1.7330$ (kém hơn Median baseline $1.7153$). Đồng thời phát hiện hiện tượng **Temporal Leakage** nghiêm trọng: Dữ liệu được trích xuất ở thời điểm Final Snapshot sau khi ticket đã đóng xong.
-* **Giai đoạn 3: Định vị Hướng nghiên cứu tối ưu cho Hội nghị WSESE**  
-  Loại bỏ phương án huấn luyện lại GPT-2 (quá nặng, rủi ro tràn VRAM, dễ vỡ tiến độ 1 tháng). Áp dụng **Chiến Lược Tổ Hợp Kim Cương** gồm: Baselines tinh gọn chứng minh lỗi dữ liệu (H2 & H3) + Phẫu thuật 3 kênh rò rỉ (H4) + Mô hình tiến trình Agile sạch tại ngày planning (H5).
-* **Giai đoạn 4: Thực thi 4 tuần & Đóng gói nộp bài WSESE**  
-  Bóc tách 3 kênh rò rỉ qua biểu đồ Thác nước (Waterfall). Đề xuất Benchmark sạch kết hợp Clean SBERT + Velocity + Workload qua LightGBM (huấn luyện chỉ trong 2.5 giây). Đóng gói Replication Package đạt chuẩn Artifact Evaluation của WSESE.
-
----
-
 ## 📖 PHẦN 1: BÀI BÁO GPT2SP GIẢI QUYẾT BÀI TOÁN GÌ & KIẾN TRÚC RA SAO?
 
 ### 1. Vấn đề của các nghiên cứu trước (Deep-SE)
