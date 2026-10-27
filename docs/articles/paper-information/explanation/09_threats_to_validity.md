@@ -73,11 +73,11 @@ flowchart TD
 > **LỖ HỔNG LỚN NHẤT MÀ BÀI BÁO GPT2SP HOÀN TOÀN BỎ QUÊN:**  
 > Khi đào sâu vào phương pháp luận của Fu & Tantithamthavorn (2023), nhóm nghiên cứu NCKH Johnny Snowflake đã phát hiện **hai lỗ hổng rò rỉ dữ liệu cực kỳ nghiêm trọng** mà bài báo không hề đề cập trong phần Threats to Validity:
 
-1. **Rò rỉ Dữ liệu Thời gian (Temporal Data Leakage):**
-   * Bài báo GPT2SP lấy trực tiếp các file CSV tĩnh được kết xuất lúc dự án đã kết thúc (tháng 8/2016).
-   * Trong thực tế Jira, trường `Description` liên tục bị lập trình viên chỉnh sửa trong suốt quá trình phát triển (bổ sung nguyên nhân lỗi, vết tràn ngăn xếp, các bước vá lỗi chi tiết). 
-   * Việc đưa mô tả đã sửa sau Sprint vào để "dự đoán" Story Point ban đầu khiến mô hình đạt được con số $\text{MAE} = 0,96$ (trên Spring XD) một cách **ảo tưởng và không thể hoạt động trong các buổi Sprint Planning thực tế**.
-2. **Rò rỉ do Phân chia Ngẫu nhiên (Random Split Leakage):**
-   * Tác giả chia ngẫu nhiên $60/20/20$ toàn bộ dữ liệu, khiến mô hình được huấn luyện trên các issue của năm 2016 để đi "dự đoán" các issue phát sinh từ năm 2013-2014. Điều này vi phạm nghiêm trọng tính nhân quả của dòng thời gian thực tế.
+1. **Rò rỉ Nội dung Sau Quy hoạch (Intra-Issue Post-Planning Leakage):**
+   * Bài báo GPT2SP lấy trực tiếp các file CSV tĩnh được kết xuất lúc dự án đã kết thúc (tháng 8/2016 từ nghiên cứu của Choetkiertikul et al., hoàn toàn không dùng CSDL quan hệ TAWOS v1.1).
+   * Dù bài báo **có sắp xếp theo thời gian (Chronological Split 60/20/20 theo `created_date`)**, nhưng văn bản `Description` của từng issue trong file CSV tĩnh lại là **ảnh chụp tức thời cuối cùng (Final Snapshot)** sau khi task đã hoàn thành.
+   * Trong suốt quá trình phát triển, lập trình viên liên tục cập nhật nguyên nhân gốc (root cause), vết tràn ngăn xếp (stack traces), log ngoại lệ và đoạn mã sửa lỗi vào trường `Description`. Đưa nội dung tương lai này vào để mô hình "dự đoán" điểm Story Point ban đầu khiến mô hình đạt được con số $\text{MAE} = 0,96$ (trên Spring XD) một cách **ảo tưởng và không thể vận hành trong các buổi họp Sprint Planning thực tế**.
+2. **Lệch pha Thời gian Ước lượng (Estimation Timing Mismatch):**
+   * GPT2SP sắp xếp dòng thời gian dựa trên `created_date` (ngày tạo issue). Trong thực tế quản trị dự án Agile, ngày tạo issue hoàn toàn lệch pha so với **`SP_Estimation_Date`** (ngày thực tế diễn ra buổi họp Planning Poker để gán điểm Story Point). Nhiều task tạo từ lâu trong Backlog mới được đem ra estimate, hoặc ngược lại task được estimate sau khi đã bắt đầu làm.
 3. **Sứ mệnh của Đề tài Nhóm 3:**  
-   Sử dụng CSDL quan hệ **TAWOS v1.1** để tái dựng trạng thái lịch sử chuẩn xác tại mốc **`SP_Estimation_Date`** qua bảng `CHANGE_LOG`, áp dụng phân chia dòng thời gian (**Chronological Split**) nhằm đưa ra kết quả ước lượng trung thực và tin cậy nhất.
+   Sử dụng CSDL quan hệ **TAWOS v1.1** để tái dựng trạng thái lịch sử chuẩn xác tại mốc **`SP_Estimation_Date`** qua bảng `CHANGE_LOG` và `CHANGE_ITEM` (*Time-Travel Reconstruction*), khôi phục nguyên bản mô tả thô ban đầu và phân chia theo chính mốc thời gian ước lượng nhằm đưa ra kết quả ước lượng trung thực và tin cậy nhất.

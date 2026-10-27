@@ -1,7 +1,7 @@
 # 🧠 PHÂN TÍCH PHẢN BIỆN 09: BÀI BÁO GPT2SP ĐÃ GIẢI QUYẾT VẤN ĐỀ DATA LEAKAGE CHƯA VÀ KẾ HOẠCH HÀNH ĐỘNG CỦA NHÓM 3
 
 > **Chuyên mục:** Phân tích phản biện khoa học độc lập (Scientific Critical Thinking).  
-> **Chủ đề trung tâm:** Đánh giá tính chân thực của dữ liệu thực nghiệm trong bài báo *GPT2SP* (IEEE TSE 2023), vạch trần lỗ hổng rò rỉ dữ liệu (Data Leakage), và thiết lập lộ trình nghiên cứu của Đề tài NCKH Nhóm 3:  
+> **Chủ đề trung tâm:** Đối chiếu sự thật học thuật về CSDL TAWOS, Chronological Split trong bài báo *GPT2SP* (IEEE TSE 2023), giải phẫu lỗ hổng rò rỉ dữ liệu (Data Leakage) tiềm ẩn, và thiết lập lộ trình nghiên cứu của Đề tài NCKH Nhóm 3:  
 > **"Agile Story Point Estimation at Planning Time with Temporal & Data Leakage Control"**.
 
 ---
@@ -10,157 +10,134 @@
 
 ### Câu trả lời trực diện: **HOÀN TOÀN CHƯA!**
 
-Ngược lại với sự kỳ vọng vào một công trình xuất bản trên tạp chí hàng đầu thế giới (*IEEE Transactions on Software Engineering*), bài báo GPT2SP của Fu & Tantithamthavorn (2023) **hoàn toàn bỏ qua vấn đề Data Leakage**. 
+Để làm rõ điều này, chúng ta cần đối chiếu chính xác hai câu hỏi thường gặp:
 
-* Trong toàn bộ 19 trang của bài báo, từ khóa **"Data Leakage"** hay **"Temporal Leakage"** không hề xuất hiện dù chỉ một lần.
-* Tại **Section 9 (Threats to Validity)** trên Trang 14 – 15, nhóm tác giả chỉ bàn luận về độ nhiễu của nhãn Story Point, việc tối ưu siêu tham số, và giới hạn khảo sát 16 người. Họ hoàn toàn không nhận thức (hoặc né tránh) nguy cơ rò rỉ thông tin tương lai trong tập dữ liệu thực nghiệm.
+1. **Bài báo GPT2SP có dùng CSDL TAWOS v1.1 không?**
+   * **KHÔNG!** GPT2SP (Fu & Tantithamthavorn, 2023) **hoàn toàn không dùng TAWOS v1.1**.
+   * Bài báo sử dụng bộ dữ liệu **CSV tĩnh trích xuất năm 2016 của Choetkiertikul et al. [7]** (tác giả bài báo Deep-SE). TAWOS v1.1 là bộ CSDL quan hệ do nhóm nghiên cứu của Vali Tawosi et al. (SOLAR Group - UCL) công bố sau này (2021–2022).
+2. **Bài báo GPT2SP khi test có dùng Chronological Split không?**
+   * **CÓ!** Về mặt chia tập train/val/test trong kịch bản nội dự án (Within-project - RQ1), bài báo gốc **có sắp xếp các issue theo thứ tự thời gian** và chia $60\%$ Train, $20\%$ Validation, $20\%$ Test (*Trang 7, Cột 2 của bài báo gốc*).
+
+> [!CAUTION]
+> **NÚT THẮT KHOA HỌC THEN CHỐT:**  
+> Dù GPT2SP **có dùng Chronological Split** để phân chia các issue, mô hình **vẫn bị rò rỉ dữ liệu nghiêm trọng (Severe Data Leakage)**!  
+> Bởi vì: **Chronological Split chỉ giải quyết được trật tự giữa các issue (Inter-issue Order), nhưng hoàn toàn bất lực trước hiện tượng Rò rỉ thông tin tương lai bên trong từng issue (Intra-issue Content Leakage)!**
 
 ```mermaid
 flowchart TD
-    subgraph Reality["Thực Tế Vận Hành Tại Doanh Nghiệp (Planning Time)"]
-        A1["Sprint Planning Meeting\n(Thời điểm t)"] --> A2["User Story & Description ban đầu\n(Sơ sài, chưa rõ giải pháp)"]
-        A2 --> A3["Đội ngũ ước lượng Story Point"]
-        A3 --> A4["Bắt đầu chu kỳ Sprint phát triển"]
+    subgraph GPT2SP_Setup["Thực Tế Phương Pháp Luận Của GPT2SP (Fu et al. 2023)"]
+        A1["Dùng tập CSV tĩnh năm 2016\n(Choetkiertikul et al.)"] --> A2["Sắp xếp issue theo Created Date\n(Chronological Split 60/20/20)"]
+        A2 --> A3["Tuy các issue ở Test Set nằm ở tương lai...\nNHƯNG Description của từng issue lại là\nSNAPSHOT CUỐI CÙNG LÚC DỰ ÁN KẾT THÚC!"]
+        A3 --> A4["Mô hình đọc trước Stack trace, Root cause,\nCode patch sinh ra SAU KHI task hoàn thành\n==> RÒ RỈ THÔNG TIN TƯƠNG LAI NỘI TẠI"]
     end
 
-    subgraph GPT2SP_Flaw["Lỗ Hổng Phương Pháp Luận Của GPT2SP (Fu et al. 2023)"]
-        B1["Trích xuất CSV tĩnh lúc dự án đã đóng\n(Tháng 8/2016)"] --> B2["Description đã bị sửa đổi nhiều lần:\n+ Stack traces, log lỗi\n+ Nguyên nhân gốc (root cause)\n+ Đoạn code vá lỗi"]
-        B2 --> B3["Chia ngẫu nhiên 60/20/20 (Random Split):\nLấy dữ liệu tương lai (2016)\nđoán dữ liệu quá khứ (2013)"]
-        B3 --> B4["Mô hình đạt MAE = 1.16\n(ẢO ẢNH HIỆU NĂNG - Performance Mirage)"]
+    subgraph Solution_Group3["Giải Pháp Đột Phá Của Nhóm NCKH 3 (Johnny Snowflake)"]
+        B1["Khai thác CSDL Quan Hệ TAWOS v1.1\n(Có bảng CHANGELOG, CHANGE_ITEM)"] --> B2["Xác định chuẩn xác mốc SP_Estimation_Date\n(Thời điểm diễn ra Sprint Planning Poker)"]
+        B2 --> B3["Tua ngược thời gian (Time-Travel Reconstruction):\nKhôi phục Title & Description nguyên bản\ntại thời điểm t <= SP_Estimation_Date"]
+        B3 --> B4["Loại bỏ 100% Stack trace, Comment, Solution sau Planning\n==> MÔ HÌNH THỰC SỰ SẠCH VÀ SẴN SÀNG TRIỂN KHAI"]
     end
 ```
 
 ---
 
-## 🔍 2. BÓC TÁCH 3 LỖ HỔNG RÒ RỈ DỮ LIỆU CỐT LÕI TRONG BÀI BÁO GPT2SP
+## 🔍 2. GIẢI PHẪU 3 LỖ HỔNG RÒ RỈ DỮ LIỆU CỐT LÕI MÀ CHRONOLOGICAL SPLIT CỦA GPT2SP BỎ QUÊN
 
-### 2.1. Lỗ hổng 1: Rò rỉ Văn bản sau Lập kế hoạch (Post-Planning Description Leakage)
-* **Bản chất kỹ thuật:** Tác giả sử dụng nguyên vẹn bộ dữ liệu CSV tĩnh từ nghiên cứu của Choetkiertikul et al. (2016). Các file CSV này được trích xuất (dump) tại thời điểm dự án đã kết thúc hoặc sau nhiều năm phát triển.
-* **Cơ chế rò rỉ trong Jira thực tế:**
-  1. Khi một issue mới được tạo ra trước buổi Sprint Planning, trường `Description` thường rất ngắn (ví dụ: *"Cần sửa lỗi tràn bộ nhớ khi đồng bộ dữ liệu người dùng"*).
-  2. Sau khi được chốt Story Point (ví dụ: 8 điểm), lập trình viên nhận task, debug mã nguồn, tìm ra nguyên nhân, và liên tục cập nhật trường `Description` bổ sung:
-     * Dấu vết ngăn xếp chi tiết (`Stack trace`, log exception).
-     * Tên các file mã nguồn, tên class, method bị lỗi (`UserSyncService.java`).
-     * Các bước tái hiện lỗi chi tiết và phương án vá lỗi (Pull Request link).
-* **Hậu quả:** GPT2SP đưa toàn bộ các thông tin kỹ thuật phát sinh **sau khi task đã được làm xong** vào mô hình để "dự đoán" điểm Story Point ban đầu. Mô hình dễ dàng đạt điểm cao không phải vì hiểu độ phức tạp của bài toán, mà vì nó đọc được chính đáp án và vết tích của quá trình giải quyết trong tương lai!
-
----
-
-### 2.2. Lỗ hổng 2: Rò rỉ Dòng thời gian do Phân chia Ngẫu nhiên (Lookahead Bias / Random Split Leakage)
-* **Bản chất kỹ thuật:** Bài báo phân chia tập dữ liệu theo tỷ lệ $60\%$ Training, $20\%$ Validation, $20\%$ Testing bằng phương pháp **phân chia ngẫu nhiên (Random Split)** trên toàn bộ 23.313 issues.
-* **Nghịch lý du hành thời gian (Time-Travel Paradox):**
-  * Một issue phát sinh vào tháng **06/2013** có thể bị xếp vào tập Test.
-  * Trong khi đó, các issue phát sinh vào tháng **12/2015** lại nằm trong tập Training của mô hình!
-* **Vi phạm nguyên lý nhân quả trong Công nghệ Phần mềm:**
-  * Trong thực tế doanh nghiệp, nhóm phát triển chỉ có thể dùng tri thức của các Sprint trong quá khứ ($t \le T$) để ước lượng cho Sprint tiếp theo ($T + 1$). 
-  * Không bao giờ tồn tại kịch bản nhóm kỹ sư lấy kiến thức của năm 2016 để quay ngược thời gian ước lượng cho công việc năm 2013. Việc áp dụng Random Split đã bơm toàn bộ tri thức của tương lai (ngữ vựng mới, phong cách viết issue mới, công nghệ mới cập nhật) vào tập huấn luyện.
+### 2.1. Lỗ hổng 1: Rò rỉ Văn bản Nội tại sau Lập kế hoạch (Intra-Issue Post-Planning Leakage)
+Đây là lỗ hổng tinh vi và nghiêm trọng nhất:
+* **Bản chất của file CSV tĩnh (Choetkiertikul 2016):** Khi Choetkiertikul cào dữ liệu Jira vào tháng 8/2016, họ chỉ cào một **ảnh chụp tức thời cuối cùng (Final Snapshot)** của trường `Description`.
+* **Diễn biến thực tế trong chu kỳ Agile:**
+  1. **Tại buổi Sprint Planning ($t_{\text{Planning}}$):** Lập trình viên chỉ có một bản mô tả sơ khai (User Story thô, ví dụ: *"Khắc phục lỗi treo luồng khi ghi log người dùng"*). Đây là lúc nhóm chấm Story Point (ví dụ: 5 điểm).
+  2. **Trong quá trình thực hiện task ($t > t_{\text{Planning}}$):** Lập trình viên debug mã nguồn, tìm ra nguyên nhân, và liên tục sửa đổi trường `Description` để bổ sung:
+     * Dấu vết ngăn xếp chi tiết (`Stack trace`, Exception logs).
+     * Tên class, package, method gây lỗi (`ThreadLogger.java:142`).
+     * Nguyên nhân cốt lõi (`Deadlock do race condition`) và giải pháp vá lỗi (kèm Pull Request).
+* **Hậu quả rò rỉ:** Dù issue đó nằm trong tập Test (sau mốc thời gian phân chia), nhưng `Description` mà GPT-2 đọc được lại chứa **chính lời giải và kết quả debug của tương lai**! Mô hình dễ dàng ước lượng đúng Story Point không phải vì hiểu độ phức tạp ban đầu, mà vì nó "đọc trộm đáp án" đã được thêm vào sau đó.
 
 ---
 
-### 2.3. Lỗ hổng 3: Rò rỉ Mục tiêu từ Siêu dữ liệu Sau Hoàn thành (Target & Metadata Leakage)
-* Trong các hệ thống quản lý như Jira, nhiều trường dữ liệu chỉ xuất hiện hoặc biến đổi sau khi task đã hoàn thành:
-  * Trạng thái `Resolution`, ngày giải quyết `Resolution Date`.
-  * Danh sách các bình luận thảo luận (`Comments`) chứa toàn bộ quá trình tranh luận sửa lỗi.
-  * Sự thay đổi người thực hiện (`Assignee`) từ nhân viên thực tập sang chuyên gia cao cấp.
-* Dữ liệu CSV tĩnh gom tất cả trạng thái cuối cùng thành một bản ghi phẳng, khiến mô hình học trên các đặc trưng đã bị biến đổi hoàn toàn so với nguyên trạng lúc Planning.
+### 2.2. Lỗ hổng 2: Lệch pha giữa Ngày tạo (`Created Date`) và Ngày ước lượng (`SP_Estimation_Date`)
+* GPT2SP sắp xếp các issue theo thứ tự thời gian dựa trên ngày tạo issue (`created_date`).
+* Tuy nhiên, trong thực tế quản trị dự án Jira:
+  * Nhiều issue được tạo ra trong Backlog từ **hàng tháng trước**, nhưng mãi đến các Sprint sau mới được đưa vào họp Planning Poker để chấm Story Point.
+  * Ngược lại, có những task đột xuất được đưa vào Sprint và lập trình viên đã bắt đầu nghiên cứu/code trước khi điểm Story Point được gán chính thức.
+* Việc sắp xếp theo `created_date` thay vì mốc thời gian gán điểm thực tế (`SP_Estimation_Date`) làm sai lệch thứ tự nhân quả thực sự của tri thức mà nhóm phát triển sở hữu tại từng thời điểm.
 
-> [!CAUTION]
-> **KẾT LUẬN VỀ HIỆU NĂNG CỦA GPT2SP:**  
-> Con số $\text{MAE} = 1,16$ (nội dự án) và $\text{MAE} = 0,96$ (trên dự án Spring XD) được công bố trên IEEE TSE 2023 thực chất là một **"bong bóng hiệu năng ảo"**. Khi triển khai công cụ Streamlit GPT2SP vào một buổi Sprint Planning thực tế với mô tả issue sơ khai, độ chính xác của mô hình chắc chắn sẽ sụt giảm nghiêm trọng.
+---
+
+### 2.3. Lỗ hổng 3: Sự vắng mặt hoàn toàn của Nhật ký Thay đổi (`CHANGELOG`)
+* Trong bộ dữ liệu của Choetkiertikul (2016) mà GPT2SP sử dụng, toàn bộ dữ liệu chỉ là các bảng CSV phẳng 1 dòng cho mỗi issue.
+* Dữ liệu phẳng **hoàn toàn không có bảng `CHANGELOG` hay `CHANGE_ITEM`**. Do đó, nhóm tác giả Fu & Tantithamthavorn (2023) **về mặt kỹ thuật là hoàn toàn bất khả thi** trong việc khôi phục lại trạng thái của issue lúc họp Sprint Planning nếu chỉ dựa vào tập dữ liệu cũ này!
+
+> [!IMPORTANT]
+> **KẾT LUẬN HỌC THUẬT:**  
+> Chronological Split của GPT2SP là một **bước tiến về mặt phương pháp luận** so với việc chia ngẫu nhiên (Random Split), nhưng nó **mới chỉ là điều kiện cần chứ chưa đủ**. Việc sử dụng văn bản kết xuất cuối vòng đời khiến con số $\text{MAE} = 1,16$ vẫn chứa đựng **ảo ảnh hiệu năng** do rò rỉ nội dung sau quy hoạch.
 
 ---
 
 ## 🛡️ 3. SỨ MỆNH VÀ KẾ HOẠCH HÀNH ĐỘNG CỦA NHÓM NCKH 3 (JOHNNY SNOWFLAKE)
 
-Để khắc phục triệt để lỗ hổng phương pháp luận mang tính hệ thống của các công trình tiền nhiệm (Deep-SE, GPT2SP), đề tài nghiên cứu của Nhóm 3 được định vị trực diện:  
+Nhận diện được khoảng trống nghiên cứu (Research Gap) mà cả Deep-SE (2016), TAWOS Replication (2022), và GPT2SP (2023) đều chưa giải quyết trọn vẹn, đề tài Nhóm 3 được định danh:  
 **"Agile Story Point Estimation at Planning Time with Temporal & Data Leakage Control"**.
 
-Nhóm nghiên cứu cam kết triển khai kế hoạch hành động 5 trụ cột khoa học:
+Nhóm nghiên cứu triển khai kế hoạch hành động 5 trụ cột:
 
 ```mermaid
-flowchart TD
-    subgraph P1["Trụ Cột 1: Dữ Liệu TAWOS"]
-        D1["CSDL Quan Hệ TAWOS v1.1\n(Bảng ISSUE, CHANGE_LOG, CHANGE_ITEM)"]
-    end
-
-    subgraph P2["Trụ Cột 2: Tái Dựng Lịch Sử"]
-        D1 --> R1["Xác định chính xác mốc thời gian:\nSP_Estimation_Date"]
-        R1 --> R2["Tua ngược lịch sử văn bản:\nKhôi phục Title & Description tại t <= SP_Estimation_Date"]
-        R2 --> R3["Loại bỏ 100% Comments & Edits phát sinh sau Planning"]
-    end
-
-    subgraph P3["Trụ Cột 3: Kiểm Soát Thời Gian"]
-        R3 --> S1["Sắp xếp dữ liệu theo trật tự thời gian t1 < t2 < ... < tn"]
-        S1 --> S2["Phân chia dữ liệu nhân quả (Chronological Split):\nTrain (Quá khứ) -> Val (Trung hạn) -> Test (Tương lai)"]
-    end
-
-    subgraph P4["Trụ Cột 4: Thực Nghiệm Đối Chứng"]
-        S2 --> E1["Kịch bản A: Dữ liệu rò rỉ (Baseline GPT2SP/Deep-SE)"]
-        S2 --> E2["Kịch bản B: Dữ liệu sạch có kiểm soát (Đề xuất Nhóm 3)"]
-        E1 & E2 --> B0["Baseline bắt buộc:\nMedian Effort Baseline"]
-    end
-
-    subgraph P5["Trụ Cột 5: Đánh Giá Học Thuật"]
-        E1 & E2 & B0 --> V1["Kiểm định phi tham số:\nWilcoxon Signed-Rank Test (p < 0.05)"]
-        V1 --> V2["Đo lường độ lớn hiệu ứng:\nCliff's Delta (d) & Scott-Knott ESD"]
-    end
+flowchart LR
+    P1["1. CSDL TAWOS v1.1\n(Lịch sử Changelog)"] --> P2["2. Tái dựng nguyên trạng\n(SP_Estimation_Date)"]
+    P2 --> P3["3. Phân chia nhân quả\n(Strict Chronological Split)"]
+    P3 --> P4["4. Thực nghiệm đối chứng\n(Leakage vs. Clean)"]
+    P4 --> P5["5. Kiểm định thống kê\n(Wilcoxon + Cliff's Delta)"]
 ```
 
 ---
 
-### 3.1. Trụ cột 1: Chuyển đổi nguồn dữ liệu từ CSV tĩnh sang CSDL quan hệ TAWOS v1.1
-* Không sử dụng các file CSV phẳng trích xuất tại một thời điểm cố định.
-* Khai thác cơ sở dữ liệu quan hệ **TAWOS (The Agile Web-based Open-source Software dataset)** lưu trữ toàn bộ lịch sử biến động của các issue Jira thông qua các bảng:
-  * `ISSUE`: Thông tin cơ bản ban đầu của task.
-  * `CHANGE_LOG` & `CHANGE_ITEM`: Nhật ký ghi lại từng thao tác sửa đổi trường (field), giá trị cũ (`oldvalue`), giá trị mới (`newvalue`) và dấu thời gian (`created`).
+### 3.1. Trụ cột 1: Tiên phong sử dụng CSDL quan hệ TAWOS v1.1
+* Thay thế hoàn toàn bộ 16 file CSV tĩnh cũ bằng CSDL quan hệ chuẩn mực **TAWOS v1.1** (SOLAR Group - UCL).
+* Khai thác cấu trúc quan hệ:
+  * Bảng `ISSUE`: Lưu trữ thông tin định danh và ngày tạo gốc.
+  * Bảng `CHANGE_LOG` & `CHANGE_ITEM`: Lưu giữ toàn bộ lịch sử biến động từng trường theo thời gian thực (ai sửa, sửa trường gì, giá trị cũ `oldvalue`, giá trị mới `newvalue`, vào thời điểm nào `created`).
 
 ---
 
-### 3.2. Trụ cột 2: Tái dựng nguyên trạng Issue tại đúng mốc Lập kế hoạch (`SP_Estimation_Date`)
-Đây là đóng góp kỹ thuật cốt lõi bảo đảm **Tính toàn vẹn khoa học (Scientific Rigor)**:
-
-1. **Xác định mốc `SP_Estimation_Date`:**  
-   Truy vấn trong bảng nhật ký thay đổi để tìm chính xác thời điểm đầu tiên trường Story Point được gán giá trị:
+### 3.2. Trụ cột 2: Tái dựng nguyên trạng Issue tại mốc Lập kế hoạch (`SP_Estimation_Date`)
+Đây là đóng góp kỹ thuật độc bản và tiên phong của Nhóm 3:
+1. **Xác định mốc `SP_Estimation_Date` ($t_{\text{SP\_Estimation}}$):**  
+   Truy vấn bảng nhật ký thay đổi để tìm chính xác thời điểm đầu tiên trường Story Point được gán giá trị:
    $$t_{\text{SP\_Estimation}} = \min \{ t \mid \text{field} = \text{'Story Points'} \wedge \text{newvalue} \neq \emptyset \}$$
-2. **Khôi phục văn bản ngược thời gian (Time-Travel Text Reconstruction):**  
+2. **Khôi phục văn bản ngược thời gian (Time-Travel Reconstruction):**  
    * Lấy phiên bản trường `Title` và `Description` tồn tại **ngay tại hoặc trước mốc $t_{\text{SP\_Estimation}}$**.
-   * Nếu người dùng sửa mô tả sau mốc $t_{\text{SP\_Estimation}}$, toàn bộ các chỉnh sửa đó bị đảo ngược (rollback) về trạng thái cũ.
+   * Đảo ngược (rollback) toàn bộ các chỉnh sửa bổ sung stack trace, exception log, code patch được thêm vào sau $t_{\text{SP\_Estimation}}$.
 3. **Thanh lọc dữ liệu tương lai:**  
-   * Cắt bỏ toàn bộ các bình luận (`Comments`) được tạo ra sau mốc $t_{\text{SP\_Estimation}}$.
-   * Loại trừ các trường kết quả: `Resolution Date`, `Resolved Status`, `Fix Versions`, và các nhãn gắn muộn.
+   * Cắt bỏ toàn bộ bình luận (`Comments`), trạng thái `Resolution`, `Fix Versions` phát sinh sau buổi họp Planning.
 
 ---
 
-### 3.3. Trụ cột 3: Chiến lược phân chia dữ liệu theo dòng thời gian nghiêm ngặt (Chronological Split)
-* **Triệt tiêu hoàn toàn Random Split:** Tuyệt đối không xáo trộn ngẫu nhiên dữ liệu xuyên qua các năm.
-* **Quy trình phân chia theo trục thời gian (Time-based / Prequential Evaluation):**
-  1. Toàn bộ các issue của dự án được sắp xếp theo thứ tự tăng dần của mốc $t_{\text{SP\_Estimation}}$.
-  2. Phân tách dòng dữ liệu thành 3 giai đoạn không chồng lấn:
-     $$\text{Train} = \{ \text{Issue}_i \mid t_i \le T_1 \}$$
-     $$\text{Validation} = \{ \text{Issue}_j \mid T_1 < t_j \le T_2 \}$$
-     $$\text{Test} = \{ \text{Issue}_k \mid T_2 < t_k \}$$
-  3. Bảo đảm $100\%$ rằng mô hình chỉ dùng tri thức của các Sprint đã qua để dự báo cho Sprint trong tương lai, phản ánh trung thực bài toán tại các doanh nghiệp.
+### 3.3. Trụ cột 3: Chuẩn hóa Chronological Split trên mốc `SP_Estimation_Date`
+* Khác với GPT2SP (sắp xếp theo ngày tạo `created_date`), Nhóm 3 sắp xếp toàn bộ dữ liệu theo **chính mốc thời gian diễn ra ước lượng $t_{\text{SP\_Estimation}}$**.
+* Đảm bảo tính nhân quả tuyệt đối:
+  $$\text{Train} = \{ \text{Issue}_i \mid t_{\text{SP}, i} \le T_{\text{train\_end}} \}$$
+  $$\text{Validation} = \{ \text{Issue}_j \mid T_{\text{train\_end}} < t_{\text{SP}, j} \le T_{\text{val\_end}} \}$$
+  $$\text{Test} = \{ \text{Issue}_k \mid T_{\text{val\_end}} < t_{\text{SP}, k} \}$$
 
 ---
 
 ### 3.4. Trụ cột 4: Thiết kế thực nghiệm đối chứng đa chiều (Ablation Study on Leakage)
-Để chứng minh cho hội đồng khoa học thấy mức độ tác động của Data Leakage, Nhóm 3 sẽ thực hiện thí nghiệm đối chứng song song trên 2 môi trường:
+Để chứng minh cho hội đồng khoa học giá trị của việc kiểm soát Data Leakage, Nhóm 3 tiến hành thực nghiệm so sánh song song:
 
-| Tiêu chí đối chứng | Môi trường 1: Rò rỉ Dữ liệu (Mô phỏng GPT2SP) | Môi trường 2: Kiểm soát Rò rỉ (Đề xuất Nhóm 3) |
+| Tiêu chí đối chứng | Kịch bản 1: Baseline Rò rỉ (Cách làm của GPT2SP / Deep-SE) | Kịch bản 2: Đề xuất Sạch (Nhóm 3 Johnny Snowflake) |
 | :--- | :--- | :--- |
-| **Nguồn dữ liệu** | CSV tĩnh năm 2016 (Choetkiertikul et al.) | CSDL TAWOS khôi phục tại $t_{\text{SP\_Estimation}}$ |
-| **Văn bản Description** | Bản cuối cùng (chứa stack trace, fix details) | Bản gốc lúc họp Sprint Planning |
-| **Phương pháp phân chia** | Ngẫu nhiên (Random Split 60/20/20) | Nhân quả theo thời gian (Chronological Split) |
-| **Mô hình thử nghiệm** | GPT2SP, Deep-SE, SBERT, Baselines | GPT2SP, Deep-SE, SBERT, Baselines |
-| **Baseline bắt buộc** | Mean / Median | **Median Effort Baseline** (Cố định theo từng Sprint quá khứ) |
+| **Nền tảng dữ liệu** | 16 file CSV tĩnh năm 2016 (Choetkiertikul et al.) | CSDL Quan Hệ TAWOS v1.1 |
+| **Trạng thái Description** | Snapshot cuối cùng (chứa stack trace, giải pháp) | Tái dựng nguyên bản tại $t \le t_{\text{SP\_Estimation}}$ |
+| **Trục thời gian phân chia** | Dựa trên `created_date` | Dựa trên chuẩn xác `SP_Estimation_Date` |
+| **Mô hình thử nghiệm** | GPT2SP, Deep-SE, SBERT | GPT2SP, Deep-SE, SBERT |
+| **Baseline đối chứng** | Median Effort Baseline | **Median Effort Baseline** (tính động theo các Sprint quá khứ) |
 
 ---
 
-### 3.5. Trụ cột 5: Kiểm định ý nghĩa thống kê chuẩn mực
-* Tuân thủ quy định tại [AGENTS.md](file:///d:/NCKH_3/AGENTS.md):
-  * Mọi cải tiến của mô hình đề xuất đều phải vượt qua **Median Effort Baseline**.
-  * Kiểm định phi tham số **Wilcoxon Signed-Rank Test** với mức ý nghĩa thống kê $\alpha = 0,05$.
-  * Đo lường kích thước hiệu ứng thực chất thông qua **Cliff's Delta ($\delta$)** (phải đạt mức *Medium* hoặc *Large*, tránh hiện tượng cải thiện số liệu không đáng kể).
+### 3.5. Trụ cột 5: Kiểm định ý nghĩa thống kê theo quy chuẩn [AGENTS.md](file:///d:/NCKH_3/AGENTS.md)
+* Mọi mô hình đề xuất đều phải đánh bại **Median Effort Baseline**.
+* Áp dụng kiểm định phi tham số **Wilcoxon Signed-Rank Test** với mức ý nghĩa $\alpha = 0,05$.
+* Đo lường kích thước hiệu ứng thực chất thông qua **Cliff's Delta ($\delta$)** hoặc **Vargha-Delaney $\hat{A}_{12}$**, khẳng định sự vượt trội là có ý nghĩa thực tế chứ không chỉ là ngẫu nhiên.
 
 ---
 
@@ -168,17 +145,28 @@ flowchart TD
 
 ```text
 ┌─────────────────────────────┬─────────────────────────────────┬─────────────────────────────────┐
-│ Thuộc tính so sánh          │ Bài báo gốc GPT2SP (TSE 2023)   │ Đề tài NCKH Nhóm 3 (Đề xuất)    │
+│ Tiêu chí so sánh            │ Bài báo gốc GPT2SP (TSE 2023)   │ Đề tài NCKH Nhóm 3 (Đề xuất)    │
 ├─────────────────────────────┼─────────────────────────────────┼─────────────────────────────────┤
-│ Nhận diện Data Leakage      │ ❌ Hoàn toàn bỏ qua             │ ✅ Trọng tâm phương pháp luận   │
-│ Nguồn dữ liệu trích xuất    │ ❌ CSV tĩnh (cuối vòng đời)     │ ✅ CSDL TAWOS v1.1 có lịch sử   │
-│ Thời điểm tái dựng đặc trưng│ ❌ Thời điểm kết xuất 2016      │ ✅ Chuẩn xác SP_Estimation_Date │
-│ Chiến lược chia tập dữ liệu │ ❌ Random Split (vi phạm thì)   │ ✅ Chronological Split (nhân quả│
-│ Rủi ro Description sau task │ ❌ Chứa log lỗi / lời giải      │ ✅ Rollback về bản thô sơ khai  │
-│ Đối chứng hiệu năng thực tế │ ❌ Ảo ảnh hiệu năng (MAE 1.16)  │ ✅ Số liệu trung thực, tin cậy  │
-│ Ứng dụng trong Sprint họp   │ ❌ Rớt độ chính xác khi áp dụng │ ✅ Sẵn sàng tích hợp thực tế    │
+│ Nguồn dữ liệu sử dụng       │ ❌ CSV tĩnh 2016 (Choetkiertikul)│ ✅ CSDL quan hệ TAWOS v1.1      │
+│ Có dữ liệu Changelog không? │ ❌ Không có (chỉ có bảng phẳng) │ ✅ Có bảng CHANGE_LOG đầy đủ    │
+│ Phân chia Chronological     │ ⚠️ Có (theo Created Date)       │ ✅ Có (theo SP_Estimation_Date) │
+│ Kiểm soát Intra-issue Leak  │ ❌ Hoàn toàn bỏ qua             │ ✅ Time-Travel Reconstruction   │
+│ Rủi ro Description sau task │ ❌ Bị rò rỉ stack trace/lời giải│ ✅ Rollback về mô tả thô sơ khai│
+│ Đánh giá tính khả thi XAI   │ ⚠️ Bị thiên kiến bởi từ khóa sau│ ✅ XAI giải thích trên từ thô   │
+│ Mức độ sẵn sàng triển khai  │ ❌ Dễ rớt hiệu năng thực tế     │ ✅ Sẵn sàng cho Sprint Planning │
 └─────────────────────────────┴─────────────────────────────────┴─────────────────────────────────┘
 ```
+
+---
+
+## 🔗 Liên Kết Điều Hướng Hệ Thống
+
+* 🛡️ [Chương 9: Các mối đe dọa đối với tính hợp lệ trong bài báo gốc](file:///d:/NCKH_3/docs/articles/paper-information/explanation/09_threats_to_validity.md)
+* 🔬 [Chương 4: Thiết lập thực nghiệm gốc của Fu et al. (Mục 4.1 Chronological Split)](file:///d:/NCKH_3/docs/articles/paper-information/explanation/04_experimental_setup.md)
+* 📖 [Tài liệu phân tích bài báo TAWOS (Tawosi et al. TSE 2022)](file:///d:/NCKH_3/docs/articles/paper-information/paper_tawosi_2022_replication.md)
+* 📚 [Chuyên mục Critical Thinking tổng quan](file:///d:/NCKH_3/docs/articles/paper-information/critical-thinking/README.md)
+* 👑 [Quy chuẩn vận hành nghiên cứu NCKH Nhóm 3](file:///d:/NCKH_3/AGENTS.md)
+
 
 ---
 
