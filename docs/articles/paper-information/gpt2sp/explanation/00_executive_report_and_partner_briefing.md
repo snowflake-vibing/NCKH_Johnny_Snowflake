@@ -9,15 +9,16 @@
 
 ## 🧭 LƯỢC ĐỒ ĐIỀU HÀNH (EXECUTIVE ROADMAP)
 
-Để Partner có cái nhìn bao quát trước khi đi vào chi tiết, toàn bộ lộ trình nghiên cứu của nhóm được tóm tắt qua sơ đồ dòng chảy 4 giai đoạn:
+Toàn bộ lộ trình nghiên cứu của nhóm được tóm tắt qua 4 giai đoạn logic xuyên suốt:
 
-```mermaid
-flowchart TD
-    G1["GIAI ĐOẠN 1: BÀI BÁO GỐC GPT2SP (IEEE TSE 2023)<br/>• Giải quyết nhược điểm Word2Vec của Deep-SE bằng GPT-2<br/>• Báo cáo MAE = 0.96 (Tuyên bố thắng Median baseline)"]
-    --> G2["GIAI ĐOẠN 2: THẨM ĐỊNH & PHÁT HIỆN LỖ HỔNG CỦA NHÓM 3<br/>• Tái lập thực tế checkpoint tác giả chỉ đạt MAE = 1.7330 (Thua Median 1.7153)<br/>• Bắt quả tang Temporal Leakage: Dùng Final Snapshot sau khi ticket đã đóng"]
-    --> G3["GIAI ĐOẠN 3: ĐỊNH VỊ HƯỚNG ĐI CHO HỘI NGHỊ WSESE<br/>• Không sa lầy train lại GPT-2 (Rủi ro trượt deadline 1 tháng)<br/>• Áp dụng Chiến Lược Tổ Hợp Kim Cương (Grand Hybrid): H2 + H4 + H5"]
-    --> G4["GIAI ĐOẠN 4: THỰC THI 4 TUẦN & NỘP BÀI WSESE<br/>• Bóc tách 3 kênh rò rỉ qua biểu đồ Waterfall (Ablation)<br/>• Đề xuất Benchmark sạch: SBERT + Velocity + Workload qua LightGBM (2.5 giây)<br/>• Đóng gói Replication Package đạt chuẩn Artifact Evaluation"]
-```
+* **Giai đoạn 1: Khảo sát Bài báo gốc GPT2SP (IEEE TSE 2023)**  
+  Tác giả giải quyết nhược điểm từ điển đóng và không thể chuyển giao tri thức của Deep-SE bằng mô hình tiền huấn luyện GPT-2 (117M tham số). Bài báo công bố $\text{MAE} = 0.96$ trên Spring XD và tuyên bố vượt trội hơn Median baseline.
+* **Giai đoạn 2: Thẩm định & Phát hiện Lỗ hổng Khoa học của Nhóm 3**  
+  Nhóm 3 chạy lại checkpoint công khai của tác giả nhưng chỉ đạt $\text{MAE} = 1.7330$ (kém hơn Median baseline $1.7153$). Đồng thời phát hiện hiện tượng **Temporal Leakage** nghiêm trọng: Dữ liệu được trích xuất ở thời điểm Final Snapshot sau khi ticket đã đóng xong.
+* **Giai đoạn 3: Định vị Hướng nghiên cứu tối ưu cho Hội nghị WSESE**  
+  Loại bỏ phương án huấn luyện lại GPT-2 (quá nặng, rủi ro tràn VRAM, dễ vỡ tiến độ 1 tháng). Áp dụng **Chiến Lược Tổ Hợp Kim Cương** gồm: Baselines tinh gọn chứng minh lỗi dữ liệu (H2 & H3) + Phẫu thuật 3 kênh rò rỉ (H4) + Mô hình tiến trình Agile sạch tại ngày planning (H5).
+* **Giai đoạn 4: Thực thi 4 tuần & Đóng gói nộp bài WSESE**  
+  Bóc tách 3 kênh rò rỉ qua biểu đồ Thác nước (Waterfall). Đề xuất Benchmark sạch kết hợp Clean SBERT + Velocity + Workload qua LightGBM (huấn luyện chỉ trong 2.5 giây). Đóng gói Replication Package đạt chuẩn Artifact Evaluation của WSESE.
 
 ---
 
@@ -27,7 +28,7 @@ flowchart TD
 Trước GPT2SP, mô hình tiêu biểu nhất là **Deep-SE (2019)** sử dụng LSTM + Word2Vec. Tuy nhiên, Deep-SE dính 3 hạn chế lớn:
 * **Từ điển đóng (Out-Of-Vocabulary - OOV):** Gặp từ mới trong phần mềm là "bó tay".
 * **Không chuyển giao tri thức (Non-transferable):** Mô hình học ở dự án này không dùng được cho dự án khác (Cross-project cực kém).
-* **Hiệu năng thực tế thấp:** Nhóm tác giả UCL (Tawosi et al.) đã chứng minh Deep-SE không vượt trội hơn Median Baseline.
+* **Hiệu năng thực tế thấp:** Nhóm tác giả UCL (Tawosi et al.) đã chứng minh Deep-SE không vượt trội hơn Median Baseline.  
 👉 *Partner đọc chi tiết tại:* [01_introduction.md](01_introduction.md) và [02_background.md](02_background.md).
 
 ### 2. Ý tưởng cốt lõi của GPT2SP
@@ -53,30 +54,17 @@ Tác giả (Michael Fu & Chakkrit Tantithamthavorn - Monash University) đề xu
 
 Khi bắt tay vào nghiên cứu để tái lập (Replication), Nhóm 3 đã phát hiện **2 sự thật gây chấn động** mà bài báo IEEE TSE 2023 không công bố rõ:
 
-```text
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ SỰ THẬT 1: CẠM BẪY TÁI LẬP HIỆU NĂNG (THE REPRODUCTION GAP)                            │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│ • Bài báo công bố: MAE trung vị = 0.96 trên Spring XD (vượt trội Median Baseline 1.72) │
-│ • Thực tế Nhóm 3 chạy lại Checkpoint tác giả công bố:                                 │
-│   ==> MAE thực tế = 1.7330 (THUA CẢ MEDIAN BASELINE = 1.7153!)                        │
-│ • Lý do: Bài báo nói dùng Title + Description, nhưng code công khai chỉ chạy riêng Title│
-│   với max_length = 20 tokens!                                                          │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-```
+> [!WARNING]
+> **SỰ THẬT 1: CẠM BẪY TÁI LẬP HIỆU NĂNG (THE REPRODUCTION GAP)**  
+> • Bài báo công bố: $\text{MAE}$ trung vị $= 0.96$ trên Spring XD (tuyên bố vượt trội Median Baseline $1.72$).  
+> • Thực tế Nhóm 3 chạy lại Checkpoint tác giả công bố: $\text{MAE}$ thực tế $= 1.7330$ (**thua cả Median Baseline $= 1.7153$!**).  
+> • Nguyên nhân: Bài báo mô tả dùng `Title + Description`, nhưng notebook công khai của tác giả chỉ chạy trên riêng `Title` với chiều dài tối đa chỉ vỏn vẹn $20$ tokens!
 
-```text
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ SỰ THẬT 2: RÒ RỈ DỮ LIỆU THỜI GIAN NGHIÊM TRỌNG (INTRA-ISSUE TEMPORAL LEAKAGE)         │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│ • Mặc dù tác giả chia train/test theo thời gian (Chronological Split), nhưng văn bản   │
-│   lại được cào ở thời điểm FINAL SNAPSHOT (khi issue đã đóng xong xuôi)!               │
-│ • Hậu quả: Dữ liệu huấn luyện chứa toàn bộ bình luận giải pháp kỹ thuật (Comments),     │
-│   mô tả bị sửa để thêm stack trace / log lỗi, và các trường cập nhật muộn (Assignee,   │
-│   Resolution).                                                                         │
-│ • Mô hình đạt kết quả ảo tưởng vì "được học bài thi đã có sẵn lời giải của tương lai"! │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-```
+> [!CAUTION]
+> **SỰ THẬT 2: RÒ RỈ DỮ LIỆU THỜI GIAN NGHIÊM TRỌNG (INTRA-ISSUE TEMPORAL LEAKAGE)**  
+> • Mặc dù tác giả chia train/test theo thời gian tạo ticket (Chronological Split), nhưng văn bản lại được cào ở thời điểm **Final Snapshot** (sau khi issue đã đóng xong xuôi)!  
+> • Hậu quả: Dữ liệu huấn luyện chứa toàn bộ bình luận giải pháp kỹ thuật (`comments`), mô tả bị sửa sau planning để bổ sung stack trace và log lỗi, cùng các trường cập nhật muộn (`Assignee`, `Resolution`).  
+> • Mô hình đạt kết quả ảo tưởng vì "được học bài thi đã có sẵn lời giải của tương lai"!
 
 👉 *Partner đọc bản phân tích đối chứng đầy đủ tại:*  
 🔗 [Phân tích 09: GPT2SP đã giải quyết Data Leakage chưa & Kế hoạch Nhóm 3](../critical-thinking/09_data_leakage_analysis_and_action_plan.md)
@@ -107,14 +95,14 @@ Sau khi đánh giá đa tiêu chí (Khả thi trong 1 tháng, Độ khớp WSESE
 
 ## 🏆 PHẦN 4: CHIẾN LƯỢC TỔ HỢP KIM CƯƠNG (THE GRAND HYBRID BLUEPRINT)
 
-Nhóm chúng ta sẽ trình bày bài báo nộp WSESE thành **một thiên phóng sự khoa học 3 hồi hoàn mỹ**:
+Nhóm chúng ta sẽ trình bày bài báo nộp WSESE thành **một cấu trúc 3 hồi hoàn mỹ**:
 
-```mermaid
-flowchart LR
-    Hoi1["HỒI 1: VẠCH TRẦN LỖ HỔNG (H2 + H3)<br/>• Chứng minh Temporal Leakage<br/>• Chạy TF-IDF + Ridge + Median<br/>• Khẳng định lỗi do Dữ liệu"]
-    --> Hoi2["HỒI 2: PHẪU THUẬT NGUYÊN NHÂN (H4)<br/>• 4 kịch bản cắt lớp (Ablation)<br/>• Đo % ảo tưởng của Comments vs Fields vs Edits<br/>• Xuất biểu đồ Thác nước (Waterfall)"]
-    --> Hoi3["HỒI 3: GIẢI PHÁP CỨU VÃN THỰC TIỄN (H5)<br/>• Tái dựng đặc trưng tại SP_Estimation_Date<br/>• Clean SBERT + Velocity + Workload<br/>• LightGBM vượt qua Median Baseline!"]
-```
+* **Hồi 1: Vạch trần Lỗ hổng Phương pháp luận (H2 + H3)**  
+  Chỉ ra sự tồn tại của Temporal Leakage trong GPT2SP và quy trình Chronological Split thông thường. Sử dụng bộ ba mô hình tinh gọn (TF-IDF + Ridge + Median Baseline) để chứng minh hiện tượng suy giảm hiệu năng là do dữ liệu rò rỉ chứ không phải do mô hình.
+* **Hồi 2: Phẫu thuật Phân rã Kênh Rò rỉ (H4 - Trọng tâm WSESE)**  
+  Thực hiện cắt lớp 4 kịch bản (Ablation Slices): *Full Leaked $\rightarrow$ Bóc bỏ Comments $\rightarrow$ Bóc bỏ Metadata muộn $\rightarrow$ Pure Clean Snapshot*. Đo lường chính xác tỷ lệ $\%$ đóng góp ảo tưởng của từng kênh thông tin và trực quan hóa qua **Biểu đồ Thác nước (Waterfall Plot)**.
+* **Hồi 3: Cung cấp Giải pháp Tiến trình Agile Chuẩn mực (H5 - Đóng góp giải pháp)**  
+  Tái dựng các đặc trưng tiến trình hợp lệ tại thời điểm `SP_Estimation_Date`: Team Historical Velocity, Assignee Current Workload, Component Churn kết hợp vector ngữ nghĩa Clean SBERT. Huấn luyện mô hình lai qua LightGBM và chứng minh vượt qua Median Baseline một cách hoàn toàn minh bạch.
 
 ### Điểm vượt trội giúp Partner yên tâm 100% về mặt kỹ thuật:
 1. **Không phụ thuộc vào card GPU đắt tiền:** Toàn bộ pipeline chạy bằng **LightGBM / Ridge Regression / Sentence-Transformers (SBERT)**, chạy mượt mà trên laptop thông thường chỉ mất **vài phút**.
@@ -130,27 +118,12 @@ flowchart LR
 
 Để đảm bảo nộp bài trước hạn 3 ngày, hai bạn có thể chia việc theo thế mạnh như sau:
 
-```text
-┌───────────────┬───────────────────────────────────┬───────────────────────────────────┐
-│ Giai đoạn     │ Trách nhiệm Bạn (Bạn A)           │ Trách nhiệm Đồng sự (Partner - B) │
-├───────────────┼───────────────────────────────────┼───────────────────────────────────┤
-│ TUẦN 1        │ • Viết script SQL từ CSDL TAWOS   │ • Thiết lập môi trường Python     │
-│ (Data & Base) │   để trích xuất ngày estimation.  │   (LightGBM, scikit-learn, SBERT).│
-│               │ • Xuất 4 file CSV cho Hướng 4.    │ • Chạy Median Baseline làm chuẩn. │
-├───────────────┼───────────────────────────────────┼───────────────────────────────────┤
-│ TUẦN 2        │ • Chạy thực nghiệm bóc tách H4.   │ • Viết hàm tính MAE, SA và vẽ     │
-│ (Ablation)    │ • Thu thập bảng số liệu 4 lát cắt.│   biểu đồ Thác nước (Waterfall).  │
-│               │                                   │ • Bắt đầu nháp mục Đặt vấn đề.    │
-├───────────────┼───────────────────────────────────┼───────────────────────────────────┤
-│ TUẦN 3        │ • Xây dựng bộ đặc trưng Hướng 5   │ • Viết script kiểm định thống kê  │
-│ (Contextual)  │   (Velocity, Workload, Component).│   (Wilcoxon Signed-Rank Test &    │
-│               │ • Huấn luyện mô hình LightGBM.    │   Cliff's Delta theo chuẩn AGENTS)│
-├───────────────┼───────────────────────────────────┼───────────────────────────────────┤
-│ TUẦN 4        │ • Ráp nối bài báo (Template IEEE/ │ • Đóng gói Replication Package    │
-│ (Đóng gói)    │   ACM 6 trang của WSESE).         │   (GitHub repo + 1-click script). │
-│               │ • Rà soát ngôn từ học thuật TA.   │ • Kiểm tra nộp bài trước deadline!│
-└───────────────┴───────────────────────────────────┴───────────────────────────────────┘
-```
+| Mốc thời gian | Trách nhiệm Bạn (Bạn A) | Trách nhiệm Đồng sự (Partner - B) |
+| :--- | :--- | :--- |
+| **TUẦN 1 (Data & Base)** | • Viết script SQL từ CSDL TAWOS để trích xuất ngày estimation.<br>• Xuất 4 file CSV cho Hướng 4. | • Thiết lập môi trường Python (LightGBM, scikit-learn, SBERT).<br>• Chạy Median Baseline làm chuẩn tham chiếu. |
+| **TUẦN 2 (Ablation)** | • Chạy thực nghiệm bóc tách H4.<br>• Thu thập bảng số liệu MAE/SA 4 lát cắt. | • Viết hàm tính độ lệch và xuất biểu đồ Thác nước (Waterfall plot).<br>• Bắt đầu nháp mục Đặt vấn đề và Phương pháp luận. |
+| **TUẦN 3 (Contextual)** | • Xây dựng bộ đặc trưng Hướng 5 (Velocity, Workload, Component).<br>• Huấn luyện mô hình lai LightGBM. | • Viết script kiểm định thống kê (Wilcoxon Signed-Rank Test & Cliff's Delta theo chuẩn AGENTS.md). |
+| **TUẦN 4 (Đóng gói)** | • Ráp nối bài báo (Template IEEE/ACM 6 trang của WSESE).<br>• Rà soát ngôn từ học thuật tiếng Anh. | • Đóng gói Replication Package (GitHub repo + script chạy 1 click).<br>• Kiểm tra và nộp bài trước deadline 2 ngày! |
 
 ---
 
