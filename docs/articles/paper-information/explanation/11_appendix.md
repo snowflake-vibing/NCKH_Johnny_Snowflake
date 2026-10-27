@@ -1,11 +1,13 @@
 # 📖 PHỤ LỤC: CÁC THỰC NGHIỆM BỔ SUNG & SỐ LIỆU CHI TIẾT (APPENDIX)
 
-> **Tài liệu gốc:** Trang 16 – 19, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
+> 📍 **Vị trí trong bài báo gốc:** **Appendix (Trang 17 – 19)**, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
+> Bao gồm: **Section 11, Section 12, Section 13 (13.1, 13.2)**, các biểu đồ **Fig. 9, Fig. 10** và các bảng số liệu chi tiết **Table 2, Table 3, Table 4**.  
 > **Tác giả:** Michael Fu, Chakkrit Tantithamthavorn (Đại học Monash, Úc).
 
 ---
 
 ## 👥 1. CHƯƠNG 11: CƠ CẤU NHÂN KHẨU HỌC NGƯỜI THAM GIA KHẢO SÁT (11. SURVEY RESPONDENT DEMOGRAPHICS)
+> 📍 **Vị trí bài báo gốc:** **Section 11 (Trang 17, Cột 1, Dòng y=74.2 – 234.1)** — *"11 SURVEY: RESPONDENT DEMOGRAPHICS"*
 
 Để đảm bảo tính khách quan và loại trừ nguy cơ ý kiến khảo sát bị chi phối bởi một nhóm đối tượng hẹp, 16 chuyên gia Agile được lựa chọn có cơ cấu vị trí công tác và kinh nghiệm làm việc rất đa dạng:
 
@@ -37,6 +39,7 @@ pie title Cơ cấu vai trò chuyên môn của người tham gia khảo sát
 ---
 
 ## 🗄️ 2. CHƯƠNG 12: CHI TIẾT TẬP DỮ LIỆU THỰC NGHIỆM (12. STUDIED DATASET)
+> 📍 **Vị trí bài báo gốc:** **Section 12 (Trang 17, Cột 1, Dòng y=252.1 – 459.8)** — *"12 STUDIED DATASET"*
 
 * **16 dự án mã nguồn mở chuẩn mực:** Apache Mesos (`ME`), Apache Usergrid (`UG`), Appcelerator Studio (`AS`), Aptana Studio (`AP`), Titanium SDK/CLI (`TI`), DuraCloud (`DC`), Bamboo (`BB`), Clover (`CV`), JIRA Software (`JI`), Moodle (`MD`), Data Management (`DM`), Mule (`MU`), Mule Studio (`MS`), Spring XD (`XD`), Talend Data Quality (`TD`), và Talend ESB (`TE`).
 * **Đặc tính phân phối Story Point:**  
@@ -46,8 +49,11 @@ pie title Cơ cấu vai trò chuyên môn của người tham gia khảo sát
 ---
 
 ## 🔬 3. CHƯƠNG 13: CÁC THỬ NGHIỆM MỞ RỘNG (13. ADDITIONAL EXPERIMENTS)
+> 📍 **Vị trí bài báo gốc:** **Section 13 (Trang 17, Cột 1, Dòng y=477.8 đến Trang 18, Cột 2, Dòng y=91.8)** — *"13 ADDITIONAL EXPERIMENTS"*
 
 ### 13.1. Đánh giá ABE0 khi được tối ưu hóa siêu tham số (Hyperparameter Optimization)
+> 📍 **Vị trí bài báo gốc:** Section 13.1 (Trang 17, Cột 1, Dòng y=495.7 – Trang 17, Cột 2, Dòng y=430.3) kèm **Fig. 9 (Trang 17, Cột 2, Dòng y=315.0 – 384.7)**.
+
 * **Câu hỏi đặt ra:** Liệu phương pháp tương đồng cổ điển ABE0 khi được tinh chỉnh siêu tham số tự động có thể vượt qua GPT2SP hay không?
 * **Thực nghiệm:** Tác giả xây dựng biến thể **`ABE0+Hyperopt`** sử dụng thư viện Hyperopt với giải thuật tối ưu hóa cây xác suất **Tree Parzen Estimators (TPE)** [4].
 * **Kết quả:**  
@@ -57,6 +63,8 @@ pie title Cơ cấu vai trò chuyên môn của người tham gia khảo sát
 ---
 
 ### 13.2. Năng lực truy xuất ví dụ minh chứng lịch sử (Model Inspection Analysis)
+> 📍 **Vị trí bài báo gốc:** Section 13.2 (Trang 17, Cột 2, Dòng y=459.3 – Trang 18, Cột 2, Dòng y=91.8) kèm **Fig. 10 (Trang 18, Cột 1, Dòng y=315.0 – 348.9)**.
+
 Để kiểm chứng xem công cụ GPT2SP XAI có thực sự tìm được các bằng chứng lịch sử thuyết phục hay không:
 * Với mỗi issue kiểm thử mà GPT2SP ước lượng chính xác Story Point, tác giả tính toán tỷ lệ phần trăm ví dụ minh chứng:
   $$\text{Supporting Examples (\%)} = \frac{\#\text{ các issue quá khứ (cùng dự án, cùng từ khóa XAI, cùng mức SP)}}{\#\text{ các issue quá khứ (cùng dự án, cùng từ khóa XAI)}} \times 100\%$$
@@ -73,6 +81,8 @@ pie title Cơ cấu vai trò chuyên môn của người tham gia khảo sát
 ---
 
 ## ⏱️ 4. BẢNG THỜI GIAN HUẤN LUYỆN VÀ SUY LUẬN CHI TIẾT (TABLE 4 TRONG BÀI BÁO)
+> 📍 **Vị trí bài báo gốc:** **TABLE 4 (Trang 19, Cột 1, Dòng y=546.6 – 733.5)**: *"TABLE 4: The model training time and inference time of our GPT2SP for each project."*  
+> *(Ghi chú: Trang 19 của bài báo còn chứa **TABLE 2** - Bảng so sánh MAE nội dự án RQ1 tại y=64.3–243.2 và **TABLE 3** - Bảng so sánh MAE liên dự án RQ2 tại y=276.1–512.2)*.
 
 Dưới đây là bảng thống kê thời gian huấn luyện (tính bằng Giây) và thời gian suy luận cho một issue (tính bằng Micro-giây, $\mu s$) của GPT2SP trên toàn bộ 16 dự án khi thực thi trên 01 card đồ họa NVIDIA RTX 3090:
 

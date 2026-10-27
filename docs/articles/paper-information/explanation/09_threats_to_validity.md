@@ -1,6 +1,6 @@
-# 📖 CHƯƠNG 9: CÁC MỐI ĐE DỌA ĐỐI VỚI TÍNH HỢP LỆ (THREATS TO VALIDITY)
+# 📖 CHƯƠNG 9: CÁC MỐI ĐE DỌA ĐỐI VỚI TÍNH HỢP LỆ (9 THREATS TO VALIDITY)
 
-> **Tài liệu gốc:** Trang 14 – 15, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
+> 📍 **Vị trí trong bài báo gốc:** **Section 9 (Trang 14, Cột 2, Dòng y=184.5 – Trang 15, Cột 1, Dòng y=115.7)**, bài báo *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
 > **Tác giả:** Michael Fu, Chakkrit Tantithamthavorn (Đại học Monash, Úc).
 
 ---
@@ -12,16 +12,18 @@ Trong các bài báo khoa học chuẩn mực của IEEE Transactions on Softwar
 ```mermaid
 flowchart TD
     subgraph Threats["4 Trụ Cột Đánh Giá Tính Hợp Lệ Khoa Học"]
-        C["1. Giá Trị Kiến Tạo\n(Construct Validity)"]
-        I["2. Giá Trị Nội Tại\n(Internal Validity)"]
-        E["3. Giá Trị Ngoại Tại\n(External Validity)"]
-        V["4. Giá Trị Kết Luận\n(Conclusion Validity)"]
+        C["1. Giá Trị Kiến Tạo\n(Construct Validity)\nTrang 14, Cột 2"]
+        I["2. Giá Trị Nội Tại\n(Internal Validity)\nTrang 14, Cột 2"]
+        E["3. Giá Trị Ngoại Tại\n(External Validity)\nTrang 14, Cột 2 - Trang 15, Cột 1"]
+        V["4. Giá Trị Kết Luận\n(Conclusion Validity)\nKiểm định thống kê phi tham số"]
     end
 ```
 
 ---
 
 ### 1.1. Giá trị Kiến tạo (Construct Validity)
+> 📍 **Vị trí bài báo gốc:** Trang 14, Cột 2, Đoạn 2 (Dòng y=213.5 – 402.9) — *"Threats to construct validity relate to the quality of story point datasets..."*
+
 * **Sự phù hợp của thang đo MAE:**  
   * *Mối đe dọa:* Việc chỉ sử dụng MAE có thể chưa phản ánh hết mọi góc nhìn đánh giá sai số.
   * *Biện pháp giảm thiểu:* Tác giả lý giải rằng MAE đo lường chính xác độ lớn sai số thực tế mà không phân biệt chiều hướng (over/under). MAE khắc phục được nhược điểm bỏ qua sai số ngoại lai của MdAE, tránh được thiên kiến ước lượng non của MMRE, và tập trung vào việc vượt qua Deep-SE thay vì so sánh với đoán ngẫu nhiên như SA.
@@ -34,6 +36,8 @@ flowchart TD
 ---
 
 ### 1.2. Giá trị Nội tại (Internal Validity)
+> 📍 **Vị trí bài báo gốc:** Trang 14, Cột 2, Đoạn 3 (Dòng y=404.7 – 570.0) — *"Threats to internal validity relate to the hyperparameter settings of GPT2SP..."*
+
 * **Thiết lập siêu tham số:**  
   * *Mối đe dọa:* Việc lựa chọn siêu tham số có thể làm sai lệch kết quả so sánh giữa các mô hình.
   * *Biện pháp giảm thiểu:* Nhóm tác giả chỉ sử dụng phiên bản GPT-2 Small với cấu hình mặc định cơ bản nhất và tối ưu tốc độ học trên **tập Xác thực (Validation set)**, hoàn toàn không chạm vào tập Kiểm thử (Test set). Điều này chứng minh hiệu năng của GPT2SP đạt được không phải do "tinh chỉnh quá đà" (over-tuning) để gian lận số liệu.
@@ -43,6 +47,8 @@ flowchart TD
 ---
 
 ### 1.3. Giá trị Ngoại tại (External Validity)
+> 📍 **Vị trí bài báo gốc:** Trang 14, Cột 2, Đoạn 4 – Trang 15, Cột 1, Đoạn 1 (Dòng y=570.1 Trang 14 đến y=115.7 Trang 15) — *"Threats to the external validity relate to the generalizability..."* & *"The results of our survey study are limited to 16 Agile practitioners..."*
+
 * **Khả năng tổng quát hóa sang môi trường doanh nghiệp thương mại:**  
   * *Mối đe dọa:* Nghiên cứu được thực nghiệm trên **16 dự án mã nguồn mở (Open-Source Software - OSS)**. Văn hóa phát triển, tính kỷ luật trong chấm Story Point và độ chi tiết của mô tả issue trong các dự án OSS có thể khác biệt so với các công ty phần mềm đóng (Proprietary/Commercial Software).
   * *Biện pháp giảm thiểu:* 16 dự án được chọn thuộc các tổ chức lớn có quy trình quản trị chuyên nghiệp chuẩn mực (như Apache, Atlassian, Spring). Dù vậy, nhóm tác giả vẫn khuyến nghị cần có thêm các nghiên cứu người dùng trong các doanh nghiệp thương mại trong tương lai.
@@ -50,6 +56,8 @@ flowchart TD
 ---
 
 ### 1.4. Giá trị Kết luận (Conclusion Validity)
+> 📍 **Vị trí bài báo gốc:** Trang 14, Cột 2 & kết nối với toàn bộ thiết kế phân tích thống kê tại Section 5 (Trang 7 – 11) và Section 4.4 (Trang 7, Cột 1).
+
 * **Độ tin cậy của phân tích thống kê:**  
   * *Mối đe dọa:* Kết luận vượt trội có thể chỉ là ngẫu nhiên do phương sai mẫu.
   * *Biện pháp giảm thiểu:* Nghiên cứu không sử dụng các kiểm định tham số dựa trên giả định phân phối chuẩn (như Student's t-test hay ANOVA vốn không phù hợp với phân phối Story Point bị lệch). Thay vào đó, nhóm áp dụng toàn diện chuỗi kiểm định phi tham số nghiêm ngặt:
