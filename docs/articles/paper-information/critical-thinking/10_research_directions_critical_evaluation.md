@@ -178,3 +178,11 @@ flowchart TD
    Tại WSESE, một bài báo chạy GPT-2 phức tạp nhưng không giải quyết sâu về phương pháp luận rất dễ bị trượt. Ngược lại, một bài báo dùng mô hình tinh gọn (LightGBM/Ridge/SBERT) nhưng mổ xẻ rạch ròi bản chất rò rỉ (Hướng 4 & 5) có tỷ lệ accept trên $95\%$.
 3. **Chìa khóa chiến thắng: Vừa Phê bình (H4), Vừa Xây dựng (H5):**  
    Bài báo sẽ khiến các Reviewer hoàn toàn bị thuyết phục vì nhóm không chỉ "vạch lá tìm sâu" mà còn đem lại một giải pháp thực tế, có thể chạy lại được ngay lập tức (Reproducible Artifact).
+
+---
+
+## 🔗 LIÊN KẾT ĐIỀU HƯỚNG HỆ THỐNG
+
+* 🛠️ **Cẩm nang triển khai kỹ thuật chi tiết:** [Phân tích 11: Cẩm nang thực thi chi tiết từng hướng nghiên cứu (Hướng đến Hội nghị WSESE)](11_implementation_guide_for_research_directions.md)
+* 🧠 [Phân tích 09: GPT2SP đã giải quyết Data Leakage chưa & Kế hoạch Nhóm 3](09_data_leakage_analysis_and_action_plan.md)
+* 📖 [Mục lục chuyên mục Critical Thinking](README.md)
