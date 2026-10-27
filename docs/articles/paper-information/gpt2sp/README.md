@@ -19,6 +19,7 @@ docs/articles/paper-information/gpt2sp/
 ---
 
 ## 📑 1. [explanation/](explanation/README.md) — Phân Tích Chi Tiết Từng Chương
+* **[00_executive_report_and_partner_briefing.md](explanation/00_executive_report_and_partner_briefing.md):** **Báo cáo điều hành & Kế hoạch hành động tổng thể (Dành cho Partner)**.
 * **[01_introduction.md](explanation/01_introduction.md):** Đặt vấn đề, bối cảnh ước lượng Agile và đóng góp của bài báo.
 * **[02_background.md](explanation/02_background.md):** Kiến thức nền tảng về Story Point và Transformer Decoders.
 * **[03_the_gpt2sp_architecture.md](explanation/03_the_gpt2sp_architecture.md):** Kiến trúc tổng thể mô hình GPT2SP.
