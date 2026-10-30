@@ -4,7 +4,7 @@
 
 > [!TIP]
 > **🎧 BẢN THUYẾT MINH ÂM THANH TOÀN BỘ CASE STUDY (AUDIO WALKTHROUGH):**  
-> Để nghe thuyết minh âm thanh toàn bộ 9 bài Case Study từ 00 đến 07 trên issue Spring XD-3751 (thời lượng 11.8 phút, giọng đọc AI tiếng Việt chuẩn học thuật, chỉ âm thanh không có video):  
+> Để nghe thuyết minh âm thanh toàn bộ 9 bài Case Study từ 00 đến 07 trên issue Spring XD-3751 (thời lượng $10.3$ phút, **giọng đọc nam AI tiếng Việt trầm ấm, tự nhiên kèm khoảng ngắt nghỉ chuẩn nhịp thở**, chỉ âm thanh không có video):  
 > • **Tập tin MP4 (Audio-only container):** 🎙️ **[case_study_full_audio_walkthrough.mp4](case_study_full_audio_walkthrough.mp4)**.  
 > • **Tập tin MP3 phụ trợ:** 🎧 **[case_study_full_audio_walkthrough.mp3](case_study_full_audio_walkthrough.mp3)**.
 
