@@ -29,6 +29,7 @@
 | **09** | [`09_threats_to_validity.md`](09_threats_to_validity.md) | **9. Threats to Validity** | Đánh giá 4 nhóm đe dọa giá trị khoa học: Giá trị nội tại (Internal validity), Giá trị ngoại tại (External validity), Giá trị kiến tạo (Construct validity), Giá trị kết luận (Conclusion validity). |
 | **10** | [`10_conclusion.md`](10_conclusion.md) | **10. Conclusion** | Tổng kết thành tựu bài báo; Công bố bộ tái lập mở (Open Science replication package trên GitHub và Hugging Face); Hướng nghiên cứu mở rộng trong tương lai. |
 | **11** | [`11_appendix.md`](11_appendix.md) | **Appendix (Sections 11, 12, 13)** | Chi tiết cơ cấu nhân khẩu học người tham gia khảo sát; Bảng phân phối xác suất Story Point 16 dự án; Thử nghiệm bổ sung tối ưu siêu tham số ABE0+Hyperopt; Phân tích năng lực truy hồi ví dụ minh chứng lịch sử (Supporting Examples); Bảng thời gian huấn luyện và suy luận chi tiết. |
+| **12** | [`12_gpt2sp_code_audit_and_reproduction_discrepancies.md`](12_gpt2sp_code_audit_and_reproduction_discrepancies.md) | **Thẩm định Mã nguồn & Sai lệch Tái lập (Code Audit)** | Đối soát thực chứng 4 điểm sai lệch giữa bài báo IEEE TSE 2023 và repo GitHub của Fu et al.: Title-only (20 tokens), huấn luyện siêu tốc 14s, bug tính MAE của UCL phát hiện, và kết quả tái lập thực tế MAE = 1.7330 (thua Median 1.7153). |
 
 ---
 

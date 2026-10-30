@@ -30,6 +30,7 @@ docs/articles/paper-information/gpt2sp/
 * **[05_experimental_design_and_results.md](explanation/05_experimental_design_and_results.md):** 4 câu hỏi nghiên cứu (RQ1 - RQ4) và kết quả.
 * **[06_xai_tool_and_practitioner_survey.md](explanation/06_xai_tool_and_practitioner_survey.md):** Công cụ Web Streamlit XAI và khảo sát 16 chuyên gia Agile.
 * **[07_discussion.md](explanation/07_discussion.md) - [11_appendix.md](explanation/11_appendix.md):** Thảo luận, nghiên cứu liên quan, các mối đe dọa giá trị và phụ lục.
+* **[12_gpt2sp_code_audit_and_reproduction_discrepancies.md](explanation/12_gpt2sp_code_audit_and_reproduction_discrepancies.md):** Báo cáo thẩm định mã nguồn & 4 sai lệch thực nghiệm giữa bài báo và repo GitHub.
 
 ---
 
@@ -41,6 +42,8 @@ docs/articles/paper-information/gpt2sp/
 * **[02_case_study_mlp_regressor_head.md](case-study/02_case_study_mlp_regressor_head.md):** Trích xuất Last Token Embedding và dự đoán qua đầu hồi quy MLP.
 * **[04_case_study_training_phase.md](case-study/04_case_study_training_phase.md):** Quá trình huấn luyện, tính hàm mất mát MSE và cập nhật trọng số.
 * **[05_case_study_inference_phase.md](case-study/05_case_study_inference_phase.md):** Quy trình suy luận thực tế khi người dùng nhập User Story mới.
+* **[06_case_study_intra_issue_temporal_leakage_evidence.md](case-study/06_case_study_intra_issue_temporal_leakage_evidence.md):** Bằng chứng thực nghiệm bằng mắt về rò rỉ nội tại: Planning vs Lúc đóng ticket XD-3751.
+* **[07_case_study_leakage_free_contextual_features_xd3751.md](case-study/07_case_study_leakage_free_contextual_features_xd3751.md):** Tái dựng đặc trưng tiến trình Agile sạch tại mốc planning nạp vào LightGBM.
 
 ---
 

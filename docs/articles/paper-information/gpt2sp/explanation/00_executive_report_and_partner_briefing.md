@@ -40,6 +40,8 @@ Tác giả (Michael Fu & Chakkrit Tantithamthavorn - Monash University) đề xu
 * 🔬 [Case Study 02: Cơ chế trích xuất và dự đoán qua MLP Regressor](../case-study/02_case_study_mlp_regressor_head.md)
 * 🔬 [Case Study 04: Quy trình Training Phase (Lan truyền ngược & AdamW)](../case-study/04_case_study_training_phase.md)
 * 🔬 [Case Study 05: Quy trình Inference Phase khi người dùng nhập User Story mới](../case-study/05_case_study_inference_phase.md)
+* 🔬 [Case Study 06: Bằng chứng thực nghiệm về rò rỉ nội tại trên XD-3751](../case-study/06_case_study_intra_issue_temporal_leakage_evidence.md)
+* 🔬 [Case Study 07: Tái dựng đặc trưng Agile sạch tại ngày planning](../case-study/07_case_study_leakage_free_contextual_features_xd3751.md)
 
 ---
 
@@ -51,13 +53,15 @@ Khi bắt tay vào nghiên cứu để tái lập (Replication), Nhóm 3 đã ph
 > **SỰ THẬT 1: CẠM BẪY TÁI LẬP HIỆU NĂNG (THE REPRODUCTION GAP)**  
 > • Bài báo công bố: $\text{MAE}$ trung vị $= 0.96$ trên Spring XD (tuyên bố vượt trội Median Baseline $1.72$).  
 > • Thực tế Nhóm 3 chạy lại Checkpoint tác giả công bố: $\text{MAE}$ thực tế $= 1.7330$ (**thua cả Median Baseline $= 1.7153$!**).  
-> • Nguyên nhân: Bài báo mô tả dùng `Title + Description`, nhưng notebook công khai của tác giả chỉ chạy trên riêng `Title` với chiều dài tối đa chỉ vỏn vẹn $20$ tokens!
+> • Nguyên nhân: Bài báo mô tả dùng `Title + Description`, nhưng notebook công khai của tác giả chỉ chạy trên riêng `Title` với chiều dài tối đa chỉ vỏn vẹn $20$ tokens!  
+> 👉 *Xem báo cáo thẩm định chi tiết 4 sai lệch mã nguồn:* [12_gpt2sp_code_audit_and_reproduction_discrepancies.md](12_gpt2sp_code_audit_and_reproduction_discrepancies.md).
 
 > [!CAUTION]
 > **SỰ THẬT 2: RÒ RỈ DỮ LIỆU THỜI GIAN NGHIÊM TRỌNG (INTRA-ISSUE TEMPORAL LEAKAGE)**  
 > • Mặc dù tác giả chia train/test theo thời gian tạo ticket (Chronological Split), nhưng văn bản lại được cào ở thời điểm **Final Snapshot** (sau khi issue đã đóng xong xuôi)!  
 > • Hậu quả: Dữ liệu huấn luyện chứa toàn bộ bình luận giải pháp kỹ thuật (`comments`), mô tả bị sửa sau planning để bổ sung stack trace và log lỗi, cùng các trường cập nhật muộn (`Assignee`, `Resolution`).  
-> • Mô hình đạt kết quả ảo tưởng vì "được học bài thi đã có sẵn lời giải của tương lai"!
+> • Mô hình đạt kết quả ảo tưởng vì "được học bài thi đã có sẵn lời giải của tương lai"!  
+> 👉 *Xem bằng chứng thực nghiệm đối chiếu 2 ảnh chụp trên issue XD-3751:* [06_case_study_intra_issue_temporal_leakage_evidence.md](../case-study/06_case_study_intra_issue_temporal_leakage_evidence.md).
 
 👉 *Partner đọc bản phân tích đối chứng đầy đủ tại:*  
 🔗 [Phân tích 09: GPT2SP đã giải quyết Data Leakage chưa & Kế hoạch Nhóm 3](../critical-thinking/09_data_leakage_analysis_and_action_plan.md)
@@ -95,7 +99,8 @@ Nhóm chúng ta sẽ trình bày bài báo nộp WSESE thành **một cấu trú
 * **Hồi 2: Phẫu thuật Phân rã Kênh Rò rỉ (H4 - Trọng tâm WSESE)**  
   Thực hiện cắt lớp 4 kịch bản (Ablation Slices): *Full Leaked $\rightarrow$ Bóc bỏ Comments $\rightarrow$ Bóc bỏ Metadata muộn $\rightarrow$ Pure Clean Snapshot*. Đo lường chính xác tỷ lệ $\%$ đóng góp ảo tưởng của từng kênh thông tin và trực quan hóa qua **Biểu đồ Thác nước (Waterfall Plot)**.
 * **Hồi 3: Cung cấp Giải pháp Tiến trình Agile Chuẩn mực (H5 - Đóng góp giải pháp)**  
-  Tái dựng các đặc trưng tiến trình hợp lệ tại thời điểm `SP_Estimation_Date`: Team Historical Velocity, Assignee Current Workload, Component Churn kết hợp vector ngữ nghĩa Clean SBERT. Huấn luyện mô hình lai qua LightGBM và chứng minh vượt qua Median Baseline một cách hoàn toàn minh bạch.
+  Tái dựng các đặc trưng tiến trình hợp lệ tại thời điểm `SP_Estimation_Date`: Team Historical Velocity, Assignee Current Workload, Component Churn kết hợp vector ngữ nghĩa Clean SBERT. Huấn luyện mô hình lai qua LightGBM và chứng minh vượt qua Median Baseline một cách hoàn toàn minh bạch.  
+  👉 *Xem thực tế tái dựng đặc trưng sạch trên XD-3751:* [07_case_study_leakage_free_contextual_features_xd3751.md](../case-study/07_case_study_leakage_free_contextual_features_xd3751.md).
 
 ### Điểm vượt trội giúp Partner yên tâm 100% về mặt kỹ thuật:
 1. **Không phụ thuộc vào card GPU đắt tiền:** Toàn bộ pipeline chạy bằng **LightGBM / Ridge Regression / Sentence-Transformers (SBERT)**, chạy mượt mà trên laptop thông thường chỉ mất **vài phút**.
@@ -137,4 +142,7 @@ Khi thảo luận kỹ thuật, Partner có thể click trực tiếp vào các 
 | **Bản chất Last Token Pooling** | [critical-thinking/13_why_last_token_pooling_not_first_or_mean.md](../critical-thinking/13_why_last_token_pooling_not_first_or_mean.md) | Mặt nạ Causal Mask và nguyên lý lấy token cuối. |
 | **Quy trình tiền xử lý Jira** | [case-study/00_case_study_jira_raw_to_token_pipeline.md](../case-study/00_case_study_jira_raw_to_token_pipeline.md) | Biến ticket XD-3751 thành prompt và input_ids BPE. |
 | **Mắt xích Last Token XD-3751** | [case-study/03_case_study_last_token_pooling_xd3751.md](../case-study/03_case_study_last_token_pooling_xd3751.md) | Cắt lát tensor [1, 48, 768] thành vector [1, 768]. |
+| **Thẩm định mã nguồn & Tái lập** | [12_gpt2sp_code_audit_and_reproduction_discrepancies.md](12_gpt2sp_code_audit_and_reproduction_discrepancies.md) | Đối soát 4 điểm sai lệch giữa bài báo và repo GitHub của Fu et al. |
+| **Bằng chứng rò rỉ trên XD-3751** | [case-study/06_case_study_intra_issue_temporal_leakage_evidence.md](../case-study/06_case_study_intra_issue_temporal_leakage_evidence.md) | Bằng chứng bằng mắt: Trạng thái sạch tại Planning vs Trạng thái rò rỉ lúc Đóng. |
+| **Đặc trưng Agile sạch trên XD-3751** | [case-study/07_case_study_leakage_free_contextual_features_xd3751.md](../case-study/07_case_study_leakage_free_contextual_features_xd3751.md) | Tái dựng Velocity, Workload, Component Churn + SBERT sạch nạp vào LightGBM. |
 | **Từ điển thuật ngữ** | [glossary/README.md](../glossary/README.md) | Tra cứu nhanh các khái niệm: BPE, Wilcoxon, Cliff's Delta... |
