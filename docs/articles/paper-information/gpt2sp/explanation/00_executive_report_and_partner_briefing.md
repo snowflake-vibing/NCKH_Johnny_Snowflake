@@ -6,9 +6,10 @@
 > **Mục tiêu sống còn:** Giúp Partner nắm trọn vẹn **bản chất mô hình GPT2SP**, **lỗ hổng khoa học mà nhóm đã phát hiện**, và **kế hoạch thực nghiệm 4 tuần để nộp bài Hội nghị Quốc tế WSESE**.
 
 > [!TIP]
-> **🎬 BẢN THUYẾT MINH VIDEO MP4 KÈM GIỌNG ĐỌC AI (DÀNH CHO PARTNER):**  
-> Để xem và nghe tóm tắt toàn bộ bản báo cáo này một cách trực quan trong $5.7$ phút (kèm slide đồ họa chuẩn 1080p và giọng đọc AI tiếng Việt), Partner có thể mở trực tiếp tập tin video:  
-> 🔗 **[00_executive_report_and_partner_briefing.mp4](00_executive_report_and_partner_briefing.mp4)**.
+> **🎧 BẢN THUYẾT MINH ÂM THANH & VIDEO (DÀNH CHO PARTNER):**  
+> Để nghe nhanh tóm tắt toàn bộ bản báo cáo này trong $5.7$ phút:  
+> • **Tập tin âm thanh thuần túy (MP3):** 🎙️ **[00_executive_report_and_partner_briefing.mp3](00_executive_report_and_partner_briefing.mp3)** (thích hợp nghe nhanh trên điện thoại/tai nghe).  
+> • **Tập tin video kèm slide (MP4 1080p):** 🎬 **[00_executive_report_and_partner_briefing.mp4](00_executive_report_and_partner_briefing.mp4)**.
 
 ---
 
@@ -151,4 +152,4 @@ Khi thảo luận kỹ thuật, Partner có thể click trực tiếp vào các 
 | **Bằng chứng rò rỉ trên XD-3751** | [case-study/06_case_study_intra_issue_temporal_leakage_evidence.md](../case-study/06_case_study_intra_issue_temporal_leakage_evidence.md) | Bằng chứng bằng mắt: Trạng thái sạch tại Planning vs Trạng thái rò rỉ lúc Đóng. |
 | **Đặc trưng Agile sạch trên XD-3751** | [case-study/07_case_study_leakage_free_contextual_features_xd3751.md](../case-study/07_case_study_leakage_free_contextual_features_xd3751.md) | Tái dựng Velocity, Workload, Component Churn + SBERT sạch nạp vào LightGBM. |
 | **Từ điển thuật ngữ** | [glossary/README.md](../glossary/README.md) | Tra cứu nhanh các khái niệm: BPE, Wilcoxon, Cliff's Delta... |
-| **Video thuyết minh AI** | [00_executive_report_and_partner_briefing.mp4](00_executive_report_and_partner_briefing.mp4) | Video MP4 độ phân giải 1080p, thời lượng 5.7 phút kèm giọng đọc AI tiếng Việt. |
+| **Audio / Video thuyết minh** | [00_executive_report_and_partner_briefing.mp3](00_executive_report_and_partner_briefing.mp3) / [.mp4](00_executive_report_and_partner_briefing.mp4) | File âm thanh MP3 & Video MP4 thời lượng 5.7 phút kèm giọng đọc AI tiếng Việt. |
