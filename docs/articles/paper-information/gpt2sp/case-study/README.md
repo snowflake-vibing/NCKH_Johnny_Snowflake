@@ -2,6 +2,12 @@
 
 > Thư mục này tập hợp các bài phân tích tình huống thực tế (Case Studies), minh họa chi tiết quy trình xử lý dữ liệu từ đầu vào Jira Issue thô đến kết quả dự đoán và giải thích XAI của các mô hình ước lượng Story Point.
 
+> [!TIP]
+> **🎧 BẢN THUYẾT MINH ÂM THANH TOÀN BỘ CASE STUDY (AUDIO WALKTHROUGH):**  
+> Để nghe thuyết minh âm thanh toàn bộ 9 bài Case Study từ 00 đến 07 trên issue Spring XD-3751 (thời lượng 11.8 phút, giọng đọc AI tiếng Việt chuẩn học thuật, chỉ âm thanh không có video):  
+> • **Tập tin MP4 (Audio-only container):** 🎙️ **[case_study_full_audio_walkthrough.mp4](case_study_full_audio_walkthrough.mp4)**.  
+> • **Tập tin MP3 phụ trợ:** 🎧 **[case_study_full_audio_walkthrough.mp3](case_study_full_audio_walkthrough.mp3)**.
+
 ---
 
 ## 📑 Danh Sách Các Bài Case Study Chuyên Sâu
