@@ -1,8 +1,10 @@
 # 🧠 PHÂN TÍCH PHẢN BIỆN 09: BÀI BÁO GPT2SP ĐÃ GIẢI QUYẾT VẤN ĐỀ DATA LEAKAGE CHƯA VÀ KẾ HOẠCH HÀNH ĐỘNG CỦA NHÓM 3
 
-> **Chuyên mục:** Phân tích phản biện khoa học độc lập (Scientific Critical Thinking).  
-> **Chủ đề trung tâm:** Đối chiếu sự thật học thuật về CSDL TAWOS, Chronological Split trong bài báo *GPT2SP* (IEEE TSE 2023), giải phẫu lỗ hổng rò rỉ dữ liệu (Data Leakage) tiềm ẩn, và thiết lập lộ trình nghiên cứu của Đề tài NCKH Nhóm 3:  
-> **"Agile Story Point Estimation at Planning Time with Temporal & Data Leakage Control"**.
+> **Câu hỏi phản biện của nhà nghiên cứu:**  
+> 1. *"Bài báo gốc GPT2SP (IEEE TSE 2023) có thực sự sử dụng cơ sở dữ liệu quan hệ TAWOS v1.1 và giải quyết triệt để rò rỉ dữ liệu (Data Leakage) hay không?"*  
+> 2. *"Tại sao trong phần thực nghiệm của bài báo có nhắc đến việc sắp xếp theo thời gian (Chronological Split 60/20/20), nhưng mô hình vẫn mắc phải lỗ hổng rò rỉ thông tin tương lai nghiêm trọng?"*  
+> 3. *"Sự khác biệt cốt lõi giữa rò rỉ cấp độ phân chia issue (Inter-issue Temporal Order) và rò rỉ nội dung bên trong từng issue (Intra-issue Content Leakage) là gì?"*  
+> 4. *"Đề tài NCKH Nhóm 3 (Johnny Snowflake) cần xây dựng kế hoạch hành động và phương pháp luận như thế nào để khắc phục hoàn toàn các sai số ảo này?"*
 
 ---
 
@@ -15,7 +17,7 @@
 | Câu hỏi thực chứng | Thực tế trong bài báo gốc GPT2SP (*Fu & Tantithamthavorn, 2023*) | Nhận định học thuật |
 | :--- | :--- | :--- |
 | **1. GPT2SP có dùng CSDL TAWOS v1.1 không?** | **KHÔNG!** Bài báo dùng 16 file CSV tĩnh trích xuất năm 2016 của Choetkiertikul et al. (*Deep-SE*). | CSDL TAWOS v1.1 là của Vali Tawosi et al. (*SOLAR Group - UCL*, 2021–2022). GPT2SP không hề tiếp cận nguồn dữ liệu này. |
-| **2. GPT2SP có dùng Chronological Split khi kiểm thử không?** | **CÓ!** Tại Trang 7, Cột 2, tác giả sắp xếp các issue theo thứ tự thời gian và chia $60\%$ Train, $20\%$ Validation, $20\%$ Test. | GPT2SP đã nỗ lực kiểm soát thứ tự phân chia giữa các issue (Inter-issue Temporal Order). |
+| **2. GPT2SP có dùng Chronological Split khi kiểm thử không?** | **CÓ!** Tại Trang 7, Cột 2, tác giả sắp xếp các issue theo thứ tự thời gian và chia 60% Train, 20% Validation, 20% Test. | GPT2SP đã nỗ lực kiểm soát thứ tự phân chia giữa các issue (Inter-issue Temporal Order). |
 
 > [!CAUTION]
 > **NÚT THẮT KHOA HỌC THEN CHỐT (THE SCIENTIFIC BOTTLENECK):**  
@@ -102,7 +104,9 @@ flowchart LR
 Đây là đóng góp kỹ thuật độc bản và tiên phong của Nhóm 3:
 1. **Xác định mốc `SP_Estimation_Date` ($t_{\text{SP\_Estimation}}$):**  
    Truy vấn bảng nhật ký thay đổi để tìm chính xác thời điểm đầu tiên trường Story Point được gán giá trị:
+
    $$t_{\text{SP\_Estimation}} = \min \{ t \mid \text{field} = \text{Story Points} \wedge \text{newvalue} \neq \emptyset \}$$
+
 2. **Khôi phục văn bản ngược thời gian (Time-Travel Reconstruction):**  
    * Lấy phiên bản trường `Title` và `Description` tồn tại **ngay tại hoặc trước mốc $t_{\text{SP\_Estimation}}$**.
    * Đảo ngược (rollback) toàn bộ các chỉnh sửa bổ sung stack trace, exception log, code patch được thêm vào sau $t_{\text{SP\_Estimation}}$.
@@ -114,8 +118,11 @@ flowchart LR
 ### 3.3. Trụ cột 3: Chuẩn hóa Chronological Split trên mốc `SP_Estimation_Date`
 * Khác với GPT2SP (sắp xếp theo ngày tạo `created_date`), Nhóm 3 sắp xếp toàn bộ dữ liệu theo **chính mốc thời gian diễn ra ước lượng $t_{\text{SP\_Estimation}}$**.
 * Đảm bảo tính nhân quả tuyệt đối:
+
   $$\text{Train} = \{ \text{Issue}_i \mid t_{\text{SP}, i} \le T_{\text{train}} \}$$
+
   $$\text{Validation} = \{ \text{Issue}_j \mid T_{\text{train}} < t_{\text{SP}, j} \le T_{\text{val}} \}$$
+
   $$\text{Test} = \{ \text{Issue}_k \mid T_{\text{val}} < t_{\text{SP}, k} \}$$
 
 ---
