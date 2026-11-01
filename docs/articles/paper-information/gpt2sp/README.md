@@ -9,12 +9,21 @@
 
 ```text
 docs/articles/paper-information/gpt2sp/
+├── code/               # Toàn bộ mã nguồn gốc GPT2SP và giải thích chi tiết đối ứng bài báo
 ├── explanation/        # Phân tích chi tiết từng chương (Chương 1 - 10 & Phụ lục của bài báo)
 ├── case-study/          # Nghiên cứu tình huống thực tế trên Jira Issue XD-3751 & các khối kiến trúc
-├── critical-thinking/   # 11 bài phân tích phản biện chuyên sâu, toán học, rò rỉ dữ liệu & hướng đi WSESE
+├── critical-thinking/   # 15 bài phân tích phản biện chuyên sâu, toán học, rò rỉ dữ liệu & hướng đi WSESE
 ├── glossary/            # Từ điển tra cứu thuật ngữ chuyên ngành (BPE, Self-Attention, GELU, Regressor...)
 └── README.md            # Mục lục điều hướng tổng quan (Tài liệu này)
 ```
+
+---
+
+## 💻 0. [code/](code/README.md) — Toàn Bộ Mã Nguồn & Giải Mã Source Code
+* **[00_full_source_code.md](code/00_full_source_code.md):** Lưu trữ 100% nguyên văn toàn bộ mã nguồn gốc GPT2SP (GPT2SP.py và model_training_notebook.ipynb).
+* **[01_architecture_code_explanation.md](code/01_architecture_code_explanation.md):** Giải thích chi tiết mã nguồn kiến trúc mô hình (GPT2SP.py) đối ứng với Section 3 bài báo.
+* **[02_training_pipeline_code_explanation.md](code/02_training_pipeline_code_explanation.md):** Giải thích chi tiết mã nguồn pipeline huấn luyện và đánh giá thực nghiệm RQ1, RQ2.
+* **[03_code_vs_paper_discrepancies.md](code/03_code_vs_paper_discrepancies.md):** Mổ xẻ 4 điểm sai lệch cốt tử giữa code thực tế và công bố trong bài báo IEEE TSE 2023.
 
 ---
 
