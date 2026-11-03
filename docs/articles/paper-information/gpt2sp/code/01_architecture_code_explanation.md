@@ -72,7 +72,19 @@ class GPT2ForSequenceClassification(GPT2PreTrainedModel):
      Bài toán ước lượng Story Point **không phải là bài toán sinh văn bản** (chúng ta không cần mô hình viết tiếp User Story), mà là bài toán **dự đoán một giá trị độ khó thực $\hat{y} \in \mathbb{R}^+$**. Nếu giữ lại `lm_head.weight`, mô hình sẽ lãng phí hơn 38,5 triệu tham số (chiếm gần 1/3 tổng số tham số của GPT-2 Small) vào một việc hoàn toàn vô nghĩa. Do đó, tác giả phẫu thuật cắt bỏ nó và khai báo `_keys_to_ignore_on_load_missing` để khi gọi lệnh `from_pretrained('gpt2')`, PyTorch hiểu rằng việc thiếu ma trận `lm_head.weight` là chủ đích thiết kế, không báo lỗi thiếu trọng số.
    * `r"h\.\d+\.attn\.masked_bias"`: Bỏ qua các giá trị mặt nạ đệm chú ý tĩnh trong các phiên bản Hugging Face cũ để tránh cảnh báo rác.
 2. `self.num_labels = config.num_labels`:
-   * Lấy số lượng nhãn đầu ra từ cấu hình. Với bài toán hồi quy Story Point, giá trị này được cấu hình bằng đúng **1** (`num_labels = 1`).
+   * **Bản chất kỹ thuật:** Lấy số lượng nhãn/đầu ra mong muốn từ đối tượng cấu hình `config`.
+   * **Tại sao không gán cứng luôn `self.num_labels = 1` mà phải dùng biến `config.num_labels`?**
+     * **1. Nguồn gốc mã nguồn (Thừa hưởng từ Hugging Face):** Nhóm tác giả bài báo sao chép và cải biên từ lớp chuẩn `GPT2ForSequenceClassification` của thư viện Hugging Face. Lớp chuẩn này được thiết kế để giải quyết cả 3 bài toán:
+       * **Hồi quy (Regression):** `num_labels = 1` $\rightarrow$ Tầng output ra 1 số thực duy nhất, dùng hàm mất mát L1 hoặc MSE.
+       * **Phân loại nhị phân (Binary Classification):** `num_labels = 2` $\rightarrow$ Tầng output ra 2 logits, dùng Cross-Entropy.
+       * **Phân loại đa lớp (Multi-class Classification):** `num_labels = C` $\rightarrow$ Tầng output ra $C$ logits.
+       Vì thế trong code có cả đoạn `if self.num_labels == 1: loss_fct = nn.L1Loss() else: loss_fct = CrossEntropyLoss()`.
+     * **2. Nguyên lý Đóng gói & Tách biệt Cấu hình (Decoupling Architecture & Config):** Theo chuẩn kiến trúc của Hugging Face (`PreTrainedModel`), mã nguồn mô hình **tuyệt đối không được hardcode số chiều**. Tham số này được truyền từ bên ngoài vào qua lệnh cấu hình:
+       ```python
+       config = GPT2Config.from_pretrained('gpt2', num_labels=1, pad_token_id=50257)
+       ```
+       Khi lưu mô hình (`model.save_pretrained()`), PyTorch sẽ ghi `num_labels: 1` vào file `config.json`. Nhờ vậy, khi ai đó nạp lại mô hình đã huấn luyện, hệ thống tự biết mô hình này có 1 đầu ra hồi quy mà không sợ xung đột kích thước ma trận.
+     * **3. Khả năng mở rộng cho các nghiên cứu Agile khác:** Trong lĩnh vực Story Point, bên cạnh bài toán *Hồi quy liên tục* (Continuous Regression: điểm số là số thực bất kỳ), nhiều nghiên cứu coi Story Point là bài toán *Phân loại đa lớp* theo thang Fibonacci rời rạc $\{1, 2, 3, 5, 8, 13, 20\}$ (`num_labels = 7`) hoặc cỡ áo T-shirt $\{S, M, L, XL\}$ (`num_labels = 4`). Việc giữ nguyên `config.num_labels` cho phép tái sử dụng toàn bộ khung mô hình này cho bài toán phân loại mà không phải sửa lại code bên trong lớp.
 3. `self.transformer = GPT2Model(config)`:
    * Khởi tạo phần thân 12 khối Transformer Decoders kế thừa toàn bộ tri thức biểu diễn ngôn ngữ đã học từ WebText.
 4. `self.dense1 = nn.Linear(config.n_embd, 4 * config.n_embd, bias=False)`:
