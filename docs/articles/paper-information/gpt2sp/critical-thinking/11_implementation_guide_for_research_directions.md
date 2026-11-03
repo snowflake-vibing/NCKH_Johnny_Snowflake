@@ -133,7 +133,7 @@ flowchart LR
 #### Công thức phân rã tỷ lệ đóng góp (Causal Attribution Formula):
 Tỷ lệ $\%$ mà một kênh rò rỉ $k$ gây ra ảo tưởng hiệu năng được tính theo công thức:
 
-$$\text{Contribution}(C_k) = \frac{\text{MAE}_{k} - \text{MAE}_{k-1}}{\text{MAE}_{\text{Clean}} - \text{MAE}_{\text{Full\_Leaked}}} \times 100\%$$
+$$\text{Contribution}(C_k) = \frac{\text{MAE}_{k} - \text{MAE}_{k-1}}{\text{MAE}_{\text{Clean}} - \text{MAE}_{\text{Full-Leaked}}} \times 100\%$$
 
 #### Script Python vẽ Biểu đồ Thác nước (Waterfall Plot) nộp bài báo WSESE:
 ```python

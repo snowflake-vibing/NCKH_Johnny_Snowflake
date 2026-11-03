@@ -23,8 +23,8 @@ Tuy nhiên, bài toán ước lượng Story Point trong Agile hoàn toàn khôn
 ## 🔬 2. BA BƯỚC "PHẪU THUẬT" KIẾN TRÚC TRONG MÃ NGUỒN PYTORCH
 
 ### Bước 1: Vứt bỏ Language Modeling Head (LM Head)
-Trong kiến trúc GPT-2 chuẩn của OpenAI (`GPT2LMHeadModel`), sau khi chuỗi token đi qua 12 khối Transformer Decoders, ta thu được tensor trạng thái ẩn cuối cùng:
-$$H \in \mathbb{R}^{\text{batch\_size} \times \text{seq\_len} \times 768}$$
+Trong kiến trúc GPT-2 chuẩn của OpenAI (`GPT2LMHeadModel`), sau khi chuỗi token đi qua 12 khối Transformer Decoders, ta thu được tensor trạng thái ẩn cuối cùng có kích thước `[batch_size, sequence_length, 768]`:
+$$H \in \mathbb{R}^{B \times S \times 768}$$
 
 Ở mô hình gốc, tensor này sẽ được nhân với một ma trận chiếu tuyến tính khổng lồ gọi là **LM Head**:
 $$W_{\text{lm}} \in \mathbb{R}^{768 \times 50.257}$$

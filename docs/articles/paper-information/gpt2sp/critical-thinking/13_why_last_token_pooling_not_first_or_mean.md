@@ -8,10 +8,10 @@
 
 ## 🧭 1. NGUỒN GỐC CÂU HỎI & THẮC MẮC CỦA NGƯỜI MỚI
 
-Trong xử lý ngôn ngữ tự nhiên (NLP), để đưa một đoạn văn bản có độ dài bất kỳ vào mạng nơ-ron hồi quy, ta cần một cơ chế gộp (**Pooling**) để chuyển tensor 3 chiều:
-$$H \in \mathbb{R}^{\text{batch\_size} \times \text{seq\_len} \times 768}$$
-về tensor 2 chiều đại diện cho toàn bộ câu:
-$$h_{\text{sentence}} \in \mathbb{R}^{\text{batch\_size} \times 768}$$
+Trong xử lý ngôn ngữ tự nhiên (NLP), để đưa một đoạn văn bản có độ dài bất kỳ vào mạng nơ-ron hồi quy, ta cần một cơ chế gộp (**Pooling**) để chuyển tensor 3 chiều `[batch_size, sequence_length, 768]`:
+$$H \in \mathbb{R}^{B \times S \times 768}$$
+về tensor 2 chiều đại diện cho toàn bộ câu `[batch_size, 768]`:
+$$h_{\text{sentence}} \in \mathbb{R}^{B \times 768}$$
 
 Người mới học thường biết đến 2 kỹ thuật phổ biến:
 1. **First Token Pooling (như BERT):** Lấy vector của token đầu tiên đứng ở vị trí index 0 (token đặc biệt `[CLS]`).

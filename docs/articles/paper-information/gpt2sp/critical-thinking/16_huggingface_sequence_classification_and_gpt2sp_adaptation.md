@@ -119,7 +119,7 @@ Hàm Loss: MSELoss() (L2)                                             ▼
 ### 🔄 3.1. Ba điểm thay đổi kỹ thuật then chốt
 
 #### Điểm 1: Chèn thêm 2 tầng `dense1` và `dense2` trước `score`
-* **Trong Hugging Face:** Vector 768 chiều được đưa thẳng vào `self.score` ($768 \rightarrow \text{num\_labels}$).
+* **Trong Hugging Face:** Vector 768 chiều được đưa thẳng vào `self.score` (`768 -> num_labels`).
 * **Trong GPT2SP:** Tác giả chèn thêm một mạng MLP thu phóng kích thước:
   ```python
   self.dense1 = nn.Linear(config.n_embd, 4 * config.n_embd, bias=False)  # 768 -> 3072

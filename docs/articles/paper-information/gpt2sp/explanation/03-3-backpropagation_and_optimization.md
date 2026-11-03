@@ -74,7 +74,7 @@ Dòng tín hiệu gradient $\frac{\partial \mathcal{L}}{\partial \hat{y}}$ chả
    $$\frac{\partial \mathcal{L}}{\partial \mathbf{a}_1} = \frac{\partial \mathcal{L}}{\partial \hat{y}} W_{\text{mlp2}}^T \in \mathbb{R}^{B \times 256}$$
 
 2. **Đạo hàm qua Tầng Kích hoạt Phi tuyến GELU & Dropout:**  
-   $$\frac{\partial \mathcal{L}}{\partial \mathbf{z}_1} = \frac{\partial \mathcal{L}}{\partial \mathbf{a}_1} \odot \text{Dropout\_Mask} \odot \text{GELU}'(\mathbf{z}_1) \in \mathbb{R}^{B \times 256}$$
+   $$\frac{\partial \mathcal{L}}{\partial \mathbf{z}_1} = \frac{\partial \mathcal{L}}{\partial \mathbf{a}_1} \odot \mathbf{M}_{\text{dropout}} \odot \text{GELU}'(\mathbf{z}_1) \in \mathbb{R}^{B \times 256}$$
    *(Nhờ GELU là hàm trơn khả vi liên tục trên toàn trục số, đạo hàm $\text{GELU}'(\mathbf{z}_1)$ không bao giờ bị cắt đột ngột về 0 như ReLU, bảo đảm dòng gradient luôn được lưu thông êm ái).*
 
 3. **Đạo hàm tại Tầng Tuyến tính Thứ nhất (Linear Layer 1):**  
@@ -129,7 +129,7 @@ Khi dòng gradient vượt qua Khối 1 về đến chân mô hình:
   $$\frac{\partial \mathcal{L}}{\partial W_{pe}[i]} = \sum_{b=1}^{B} \frac{\partial \mathcal{L}}{\partial \mathbf{e}_{b, i}} \in \mathbb{R}^{768}$$
 * **Gradient ma trận nhúng từ ($W_{te}$):**  
   Chỉ những từ con nào thực sự xuất hiện trong câu của mini-batch đó mới nhận được gradient để cập nhật hàng vector tương ứng trong cuốn từ điển $50.257$ từ:
-  $$\frac{\partial \mathcal{L}}{\partial W_{te}[\text{token\_id}]} += \frac{\partial \mathcal{L}}{\partial \mathbf{e}_{b, i}} \in \mathbb{R}^{768}$$
+  $$\frac{\partial \mathcal{L}}{\partial W_{te}[\text{token-id}]} += \frac{\partial \mathcal{L}}{\partial \mathbf{e}_{b, i}} \in \mathbb{R}^{768}$$
 
 ---
 

@@ -87,7 +87,7 @@ Nhóm 3 đã đo lường độ lệch ngữ nghĩa giữa văn bản sạch t�
 * **Số lượng từ (Word count):** Tăng từ $29$ từ lên $72$ từ (tăng **$+148.3\%$** dung lượng văn bản).
 * **Số lượng token BPE:** Tăng từ $34$ tokens lên $86$ tokens.
 * **Độ tương đồng ngữ nghĩa (Cosine Similarity giữa $D_{\text{clean}}$ và $D_{\text{leaked}}$):**  
-  $$\text{Cosine\_Similarity}(\mathbf{e}_{\text{clean}}, \mathbf{e}_{\text{leaked}}) = 0.612$$
+  $$\text{Cosine-Similarity}(\mathbf{e}_{\text{clean}}, \mathbf{e}_{\text{leaked}}) = 0.612$$
   * Con số $0.612$ cho thấy văn bản đã bị **trôi dạt ngữ nghĩa gần $40\%$**!
   * Bản mô tả cuối cùng chứa đựng một lượng khổng lồ tri thức kỹ thuật giải pháp mà người chấm Story Point ban đầu không hề có.
 

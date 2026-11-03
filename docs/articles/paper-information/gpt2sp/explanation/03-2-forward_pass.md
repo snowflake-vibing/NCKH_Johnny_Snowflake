@@ -116,13 +116,13 @@ Chiếu qua ma trận $W_1 \in \mathbb{R}^{768 \times 3072}$ kết hợp hàm k�
 $$\mathbf{H}_{\text{ffn}} = \text{GELU}(\mathbf{X}_{\text{norm2}} W_1 + \mathbf{b}_1) \in \mathbb{R}^{B \times N \times 3072}$$
 
 #### 3. Chiếu thu hẹp về không gian gốc ($3072 \rightarrow 768$ chiều):
-$$\mathbf{X}_{\text{ffn\_out}} = \mathbf{H}_{\text{ffn}} W_2 + \mathbf{b}_2 \in \mathbb{R}^{B \times N \times 768}$$
+$$\mathbf{X}_{\text{ffn-out}} = \mathbf{H}_{\text{ffn}} W_2 + \mathbf{b}_2 \in \mathbb{R}^{B \times N \times 768}$$
 
 #### 4. Kết nối tắt thứ hai (Residual Connection 2):
-$$\mathbf{X}^{(l)} = \mathbf{X}_{\text{mid}} + \text{Dropout}(\mathbf{X}_{\text{ffn\_out}}, p=0.1) \in \mathbb{R}^{B \times N \times 768}$$
+$$\mathbf{X}^{(l)} = \mathbf{X}_{\text{mid}} + \text{Dropout}(\mathbf{X}_{\text{ffn-out}}, p=0.1) \in \mathbb{R}^{B \times N \times 768}$$
 
 👉 Kết thúc Khối thứ 12, ta cho toàn bộ ma trận đi qua tầng chuẩn hóa cuối cùng:
-$$\mathbf{H}^{(12)} = \text{Final\_LayerNorm}(\mathbf{X}^{(12)}) \in \mathbb{R}^{B \times N \times 768}$$
+$$\mathbf{H}^{(12)} = \text{LayerNorm}(\mathbf{X}^{(12)}) \in \mathbb{R}^{B \times N \times 768}$$
 
 ---
 

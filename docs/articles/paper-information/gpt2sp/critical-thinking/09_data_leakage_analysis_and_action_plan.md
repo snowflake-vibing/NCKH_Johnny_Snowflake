@@ -102,21 +102,21 @@ flowchart LR
 
 ### 3.2. Trụ cột 2: Tái dựng nguyên trạng Issue tại mốc Lập kế hoạch (`SP_Estimation_Date`)
 Đây là đóng góp kỹ thuật độc bản và tiên phong của Nhóm 3:
-1. **Xác định mốc `SP_Estimation_Date` ($t_{\text{SP\_Estimation}}$):**  
+1. **Xác định mốc `SP_Estimation_Date` ($t_{\text{SP-Estimation}}$):**  
    Truy vấn bảng nhật ký thay đổi để tìm chính xác thời điểm đầu tiên trường Story Point được gán giá trị:
 
-   $$t_{\text{SP\_Estimation}} = \min \{ t \mid \text{field} = \text{Story Points} \wedge \text{newvalue} \neq \emptyset \}$$
+   $$t_{\text{SP-Estimation}} = \min \{ t \mid \text{field} = \text{Story Points} \wedge \text{newvalue} \neq \emptyset \}$$
 
 2. **Khôi phục văn bản ngược thời gian (Time-Travel Reconstruction):**  
-   * Lấy phiên bản trường `Title` và `Description` tồn tại **ngay tại hoặc trước mốc $t_{\text{SP\_Estimation}}$**.
-   * Đảo ngược (rollback) toàn bộ các chỉnh sửa bổ sung stack trace, exception log, code patch được thêm vào sau $t_{\text{SP\_Estimation}}$.
+   * Lấy phiên bản trường `Title` và `Description` tồn tại **ngay tại hoặc trước mốc $t_{\text{SP-Estimation}}$**.
+   * Đảo ngược (rollback) toàn bộ các chỉnh sửa bổ sung stack trace, exception log, code patch được thêm vào sau $t_{\text{SP-Estimation}}$.
 3. **Thanh lọc dữ liệu tương lai:**  
    * Cắt bỏ toàn bộ bình luận (`Comments`), trạng thái `Resolution`, `Fix Versions` phát sinh sau buổi họp Planning.
 
 ---
 
 ### 3.3. Trụ cột 3: Chuẩn hóa Chronological Split trên mốc `SP_Estimation_Date`
-* Khác với GPT2SP (sắp xếp theo ngày tạo `created_date`), Nhóm 3 sắp xếp toàn bộ dữ liệu theo **chính mốc thời gian diễn ra ước lượng $t_{\text{SP\_Estimation}}$**.
+* Khác với GPT2SP (sắp xếp theo ngày tạo `created_date`), Nhóm 3 sắp xếp toàn bộ dữ liệu theo **chính mốc thời gian diễn ra ước lượng $t_{\text{SP-Estimation}}$**.
 * Đảm bảo tính nhân quả tuyệt đối:
 
   $$\text{Train} = \{ \text{Issue}_i \mid t_{\text{SP}, i} \le T_{\text{train}} \}$$
@@ -133,7 +133,7 @@ flowchart LR
 | Tiêu chí đối chứng | Kịch bản 1: Baseline Rò rỉ (Cách làm của GPT2SP / Deep-SE) | Kịch bản 2: Đề xuất Sạch (Nhóm 3 Johnny Snowflake) |
 | :--- | :--- | :--- |
 | **Nền tảng dữ liệu** | 16 file CSV tĩnh năm 2016 (Choetkiertikul et al.) | CSDL Quan Hệ TAWOS v1.1 |
-| **Trạng thái Description** | Snapshot cuối cùng (chứa stack trace, giải pháp) | Tái dựng nguyên bản tại $t \le t_{\text{SP\_Estimation}}$ |
+| **Trạng thái Description** | Snapshot cuối cùng (chứa stack trace, giải pháp) | Tái dựng nguyên bản tại $t \le t_{\text{SP-Estimation}}$ |
 | **Trục thời gian phân chia** | Dựa trên `created_date` | Dựa trên chuẩn xác `SP_Estimation_Date` |
 | **Mô hình thử nghiệm** | GPT2SP, Deep-SE, SBERT | GPT2SP, Deep-SE, SBERT |
 | **Baseline đối chứng** | Median Effort Baseline | **Median Effort Baseline** (tính động theo các Sprint quá khứ) |
