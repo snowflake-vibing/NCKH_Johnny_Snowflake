@@ -146,20 +146,34 @@ Dưới đây là bảng đối soát chi tiết diễn biến trạng thái c�
 ```python
 encoding = tokenizer(stories, max_length=20, padding="max_length", truncation=True, return_tensors="pt")
 ```
-* **Output sinh ra:** Một đối tượng `BatchEncoding` chứa 2 ma trận Tensor kích thước `[4, 20]`:
+* **Output sinh ra:** Một đối tượng `BatchEncoding` chứa 2 ma trận Tensor kích thước `[4, 20]`, hiển thị đầy đủ 100% tất cả các con số không rút gọn:
   1. `input_ids = encoding['input_ids']`:
      ```text
-     tensor([[ 8241, 38166,   287, 10998, 14920, 50257, 50257, ... 50257],  # Câu 1: 5 tokens thật, 15 tokens PAD
-             [ 7894,  2092,  5527,  4810, 15003,   284,  1617, ... 50257],  # Câu 2: 8 tokens thật, 12 tokens PAD
-             [34084, 12891,  4125,   281,  6006,  9243,   618, ... 50257],  # Câu 3: 11 tokens thật, 9 tokens PAD
-             [ 3821,  3068,  5765,  5405,  4693,   284,  3975, ... 50257]]) # Câu 4: 10 tokens thật, 10 tokens PAD
+     tensor([[22743, 46517,   287, 20832, 11682, 10314, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257],
+             [10260,  2836, 17594,  6246, 26827,   284,  1542,  2431, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257],
+             [49322, 19937,  8075,   281, 12515, 14833,   618,  2496,  4909,   725,   292, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257],
+             [ 8134, 11218,  6831,  4637,  5933,   284,  5412, 24580,  4580, 15271, 20743, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257]])
      ```
+     * Chi tiết các token ID thực tế cho từng câu:
+       - **Câu 1 (`Fix typo in README documentation`):** Gồm đúng 6 tokens ngữ nghĩa thật:
+         `[22743 ("Fix"), 46517 (" typo"), 287 (" in"), 20832 (" READ"), 11682 ("ME"), 10314 (" documentation")]`
+         kèm theo đúng 14 tokens đệm `50257` (`[PAD]`).
+       - **Câu 2 (`Update user login session timeout to 30 minutes`):** Gồm đúng 8 tokens ngữ nghĩa thật:
+         `[10260 ("Update"), 2836 (" user"), 17594 (" login"), 6246 (" session"), 26827 (" timeout"), 284 (" to"), 1542 (" 30"), 2431 (" minutes")]`
+         kèm theo đúng 12 tokens đệm `50257` (`[PAD]`).
+       - **Câu 3 (`Deploy Module creates an invalid deployment when target contains commas`):** Gồm đúng 11 tokens ngữ nghĩa thật:
+         `[49322 ("Deploy"), 19937 (" Module"), 8075 (" creates"), 281 (" an"), 12515 (" invalid"), 14833 (" deployment"), 618 (" when"), 2496 (" target"), 4909 (" contains"), 725 (" comm"), 292 ("as")]`
+         kèm theo đúng 9 tokens đệm `50257` (`[PAD]`).
+       - **Câu 4 (`Refactor database connection pool to handle concurrent microservice queries`):** Gồm đúng 11 tokens ngữ nghĩa thật:
+         `[8134 ("Ref"), 11218 ("actor"), 6831 (" database"), 4637 (" connection"), 5933 (" pool"), 284 (" to"), 5412 (" handle"), 24580 (" concurrent"), 4580 (" micro"), 15271 ("service"), 20743 (" queries")]`
+         kèm theo đúng 9 tokens đệm `50257` (`[PAD]`).
+
   2. `attention_mask = encoding['attention_mask']`:
      ```text
-     tensor([[1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+     tensor([[1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
              [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
              [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
      ```
 * **Sự thay đổi trạng thái:** Văn bản ngôn ngữ tự nhiên đã được số hóa hoàn toàn. Các vị trí số `0` trong `attention_mask` báo hiệu cho mô hình biết đây là khoảng trống cần bỏ qua khi tính toán tích vô hướng Attention.
 
@@ -200,12 +214,12 @@ logits = self.score(hidden_states)
 ```python
 sequence_lengths = torch.ne(input_ids, self.config.pad_token_id).sum(-1) - 1
 ```
-* **Output sinh ra:** Tensor 1 chiều: `sequence_lengths = tensor([4, 7, 10, 9])`.
-* **Sự thay đổi trạng thái:**
-  - Câu 1: Có 5 tokens thật $\rightarrow$ vị trí index cuối cùng là $5 - 1 = 4$.
-  - Câu 2: Có 8 tokens thật $\rightarrow$ index cuối là $8 - 1 = 7$.
-  - Câu 3: Có 11 tokens thật $\rightarrow$ index cuối là $11 - 1 = 10$.
-  - Câu 4: Có 10 tokens thật $\rightarrow$ index cuối là $10 - 1 = 9$.
+* **Output sinh ra:** Tensor 1 chiều đầy đủ 4 số: `sequence_lengths = tensor([5, 7, 10, 10])`.
+* **Sự thay đổi trạng thái và giải mã từng con số:**
+  - **Câu 1:** Có đúng 6 tokens ngữ nghĩa thật $\rightarrow$ vị trí index cuối cùng trong mảng là $6 - 1 = 5$.
+  - **Câu 2:** Có đúng 8 tokens ngữ nghĩa thật $\rightarrow$ vị trí index cuối cùng trong mảng là $8 - 1 = 7$.
+  - **Câu 3:** Có đúng 11 tokens ngữ nghĩa thật $\rightarrow$ vị trí index cuối cùng trong mảng là $11 - 1 = 10$.
+  - **Câu 4:** Có đúng 11 tokens ngữ nghĩa thật $\rightarrow$ vị trí index cuối cùng trong mảng là $11 - 1 = 10$.
 
 #### 6. Dòng code:
 ```python
@@ -295,17 +309,17 @@ Dưới đây là bảng số liệu thực tế ghi lại sự biến đổi c�
 Kết thúc 5 bước huấn luyện, sự thay đổi độ chính xác được thể hiện rõ rệt:
 
 ```text
-========================================================================================
-TASK       TIÊU ĐỀ JIRA               TRUE SP   TRƯỚC TRAIN   SAU TRAIN   KẾT QUẢ ĐẠT ĐƯỢC
-========================================================================================
-Task 1     Fix typo in README...        1.0        0.04         0.78      ✅ Lệch chỉ còn 0.22 SP
-Task 2     Update user login...         2.0       -0.12         1.54      ✅ Lệch chỉ còn 0.46 SP
-Task 3     Deploy Module creates...     3.0        0.08         2.61      ✅ Lệch chỉ còn 0.39 SP
-Task 4     Refactor database pool...    8.0        0.06         6.89      ✅ Lệch chỉ còn 1.11 SP
-========================================================================================
+=========================================================================================================================================================
+TASK     TIÊU ĐỀ JIRA ĐẦY ĐỦ                                                            TRUE SP   TRƯỚC TRAIN   SAU TRAIN   KẾT QUẢ ĐẠT ĐƯỢC
+=========================================================================================================================================================
+Task 1   Fix typo in README documentation                                                 1.0        0.04         0.78      ✅ Lệch chỉ còn 0.22 SP
+Task 2   Update user login session timeout to 30 minutes                                  2.0       -0.12         1.54      ✅ Lệch chỉ còn 0.46 SP
+Task 3   Deploy Module creates an invalid deployment when target contains commas          3.0        0.08         2.61      ✅ Lệch chỉ còn 0.39 SP
+Task 4   Refactor database connection pool to handle concurrent microservice queries      8.0        0.06         6.89      ✅ Lệch chỉ còn 1.11 SP
+=========================================================================================================================================================
 📉 Sai số tuyệt đối ban đầu (MAE) : 3.4812
 🎯 Sai số tuyệt đối sau cùng (MAE): 1.2180 (Cải thiện vượt bậc: -65.01% sai số)
-========================================================================================
+=========================================================================================================================================================
 ```
 
 ---

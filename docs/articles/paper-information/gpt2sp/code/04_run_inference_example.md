@@ -210,7 +210,7 @@ Khi bạn thực thi đoạn code trên máy tính cục bộ, màn hình sẽ h
 [Bước 3] Tokenize và chuyển đổi văn bản sang PyTorch Tensors...
    * Kích thước input_ids     : [1, 20] (batch_size=1, max_len=20)
    * Kích thước attention_mask: [1, 20]
-   * Chuỗi Token IDs          : [34084, 12891, 4125, 281, 6006, 9243, 618, 2529, 3538, 11463, 290, 50257, 50257, ...]
+   * Chuỗi Token IDs đầy đủ (20 số): [49322, 19937, 8075, 281, 12515, 14833, 618, 2496, 4909, 725, 292, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257, 50257]
    * Các từ thực tế được nạp  : ['Deploy', ' Module', ' creates', ' an', ' invalid', ' deployment', ' when', ' target', ' contains', ' comm', 'as']
    * Số lượng từ thực tế      : 11 tokens (còn lại 9 tokens là đệm PAD)
 
