@@ -96,13 +96,12 @@ class GPT2ForSequenceClassification(GPT2PreTrainedModel):
 
 * **`hidden_states = transformer_outputs[0]`:**  
   Vector đầu ra từ khối Transformer Decoder thứ 12, có kích thước tensor:  
-
-  $$[\text{batch\_size}, \text{sequence\_length}, 768]$$
+  `[batch_size, sequence_length, 768]`.
 
 * **Biến đổi qua MLP Head:**  
-  * `dense1`: Tensor chuyển thành $[\text{batch\_size}, \text{sequence\_length}, 3072]$.
-  * `dense2`: Tensor chuyển thành $[\text{batch\_size}, \text{sequence\_length}, 768]$.
-  * `score`: Tensor chuyển thành $[\text{batch\_size}, \text{sequence\_length}, 1]$.
+  * `dense1`: Tensor chuyển thành `[batch_size, sequence_length, 3072]`.
+  * `dense2`: Tensor chuyển thành `[batch_size, sequence_length, 768]`.
+  * `score`: Tensor chuyển thành `[batch_size, sequence_length, 1]`.
 * **Điểm đáng chú ý:** Trong code này, tác giả chiếu thẳng qua 2 tầng Dense **mà không hề chèn hàm kích hoạt phi tuyến (như GELU hay ReLU) giữa `dense1` và `dense2`**! Về mặt đại số tuyến tính:
 
   $$W_{\text{eff}} = W_2 \times W_1$$
