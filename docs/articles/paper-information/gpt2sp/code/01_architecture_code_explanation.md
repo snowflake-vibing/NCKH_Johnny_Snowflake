@@ -1,14 +1,15 @@
-# 📖 GIẢI THÍCH CHI TIẾT MÃ NGUỒN KIẾN TRÚC MÔ HÌNH (`GPT2SP.py`)
-## ĐỐI SOÁT TỪNG DÒNG CODE VÀ BẢN CHẤT LOGIC ĐẰNG SAU KIẾN TRÚC
+# 📖 GIẢI THÍCH CHI TIẾT TỪNG DÒNG MÃ NGUỒN KIẾN TRÚC MÔ HÌNH (`GPT2SP.py`)
+## ĐỐI SOÁT TỪNG BIẾN, TỪNG DÒNG CODE VÀ BẢN CHẤT LOGIC TOÁN HỌC BÊN DƯỚI (SECTION 3 THE GPT2SP ARCHITECTURE)
 
 > **Mã nguồn phân tích:** File [`GPT2SP.py`](https://github.com/awsm-research/gpt2sp/blob/main/GPT2SP.py) trong Replication Package.  
-> **Chương đối ứng trong bài báo gốc:** **Section 3: The GPT2SP Architecture** (Trang 3 – 5, IEEE TSE 2023).
+> **Chương đối ứng trong bài báo gốc:** **Section 3: The GPT2SP Architecture** (Trang 3 – 5, IEEE TSE 2023).  
+> **Tôn chỉ phân tích:** Bóc tách chi tiết từng dòng lệnh, giải mã bản chất các tham số nhập vào, cấu trúc trả về của `transformer_outputs`, lý do cắt bỏ `lm_head.weight`, và cơ chế tính toán thực tế bên trong PyTorch.
 
 ---
 
 ## 🧭 1. LOGIC THIẾT KẾ CỐT LÕI: TỪ GENERATIVE LLM SANG REGRESSION MODEL
 
-Trong bài toán xử lý ngôn ngữ tự nhiên thông thường, mô hình GPT-2 được sinh ra để làm nhiệm vụ **Sinh văn bản tự hồi quy (Autoregressive Text Generation)**: từ chuỗi token đầu vào $x_1, x_2, \dots, x_t$, mô hình dự đoán xác suất token tiếp theo $x_{t+1}$ thông qua tầng phân loại ngôn ngữ `lm_head` có kích thước `[768, 50257]`.
+Trong bài toán xử lý ngôn ngữ tự nhiên thông thường, mô hình GPT-2 được sinh ra để làm nhiệm vụ **Sinh văn bản tự hồi quy (Autoregressive Causal Language Modeling)**: từ chuỗi token đầu vào $x_1, x_2, \dots, x_t$, mô hình dự đoán xác suất token tiếp theo $x_{t+1}$ thông qua tầng phân loại ngôn ngữ `lm_head` có kích thước ma trận `[768, 50257]`.
 
 Tuy nhiên, bài toán ước lượng Story Point trong Agile là một **bài toán hồi quy số thực (Continuous Regression)**:
 $$\text{Input: Văn bản User Story} \longrightarrow \text{Output: Một số thực duy nhất } \hat{y} \in \mathbb{R}^+$$
@@ -20,9 +21,27 @@ $$\text{Input: Văn bản User Story} \longrightarrow \text{Output: Một số t
 
 ---
 
-## 🔍 2. GIẢI PHẪU TỪNG DÒNG CODE VÀ LOGIC ĐẰNG SAU
+## 🔍 2. GIẢI PHẪU CHI TIẾT TỪNG DÒNG LỆNH TRONG `GPT2SP.py`
 
-### 2.1. Khởi tạo mô hình và loại bỏ trọng số thừa (`__init__`)
+### 2.1. Phần 1: Khai báo thư viện và định nghĩa lớp
+
+```python
+from transformers.modeling_outputs import SequenceClassifierOutputWithPast
+import torch.nn as nn
+from transformers import GPT2Model, GPT2PreTrainedModel
+import torch
+```
+
+* `from transformers.modeling_outputs import SequenceClassifierOutputWithPast`:
+  * **Ý nghĩa:** Nạp lớp dữ liệu trả về chuẩn (Data Class) của Hugging Face cho các bài toán phân loại / hồi quy chuỗi.
+  * **Tại sao cần?** Giúp mô hình đóng gói kết quả đầu ra thành một đối tượng đồng nhất chứa `loss`, `logits`, `hidden_states`, và `attentions` tương thích với toàn bộ hệ sinh thái Hugging Face (như Trainer, Pipelines, hay Transformers-Interpret).
+* `from transformers import GPT2Model, GPT2PreTrainedModel`:
+  * `GPT2Model`: Lớp chứa phần thân chính (backbone) của GPT-2, gồm tầng nhúng từ ngữ, nhúng vị trí và 12 khối Transformer Decoders (nhưng **không bao gồm** tầng sinh từ vựng `lm_head`).
+  * `GPT2PreTrainedModel`: Lớp cơ sở trừu tượng cung cấp các tiện ích nạp trọng số tiền huấn luyện (`from_pretrained`), lưu mô hình (`save_pretrained`) và quản lý cấu hình kiến trúc (`config`).
+
+---
+
+### 2.2. Phần 2: Khởi tạo mô hình và loại bỏ trọng số thừa (`__init__`)
 
 ```python
 class GPT2ForSequenceClassification(GPT2PreTrainedModel):
@@ -37,27 +56,77 @@ class GPT2ForSequenceClassification(GPT2PreTrainedModel):
         self.score = nn.Linear(config.n_embd, self.num_labels, bias=False)
 
         self.init_weights()
+
+        # Model parallel
+        self.model_parallel = False
+        self.device_map = None
 ```
 
-#### 💡 Logic đằng sau từng câu lệnh:
-1. `class GPT2ForSequenceClassification(GPT2PreTrainedModel)`:
-   * **Tại sao không viết `nn.Module` thuần?** Kế thừa `GPT2PreTrainedModel` cho phép mô hình tận dụng cơ chế `from_pretrained('gpt2')` của Hugging Face để tự động tải các checkpoint trọng số 117M tham số đã được huấn luyện sẵn, đồng thời hỗ trợ quản lý cấu hình `GPT2Config`.
-2. `_keys_to_ignore_on_load_missing = [r"h\.\d+\.attn\.masked_bias", r"lm_head\.weight"]`:
-   * **Bản chất logic:** Báo cho PyTorch biết khi tải trọng số GPT-2 chính thức từ Hugging Face Hub, nếu không thấy `lm_head.weight` thì **không được báo lỗi**. Vì GPT2SP đã cố tình vứt bỏ ma trận này để thay thế bằng đầu hồi quy.
+#### 💡 Bóc tách từng dòng code:
+
+1. `_keys_to_ignore_on_load_missing = [r"h\.\d+\.attn\.masked_bias", r"lm_head\.weight"]`:
+   * **`lm_head.weight` là cung cấp cái gì trong GPT-2 gốc?**  
+     Trong kiến trúc nguyên bản của OpenAI GPT-2, `lm_head` là một tầng tuyến tính `nn.Linear(768, 50257)` có trọng số là ma trận $W_{\text{lm}} \in \mathbb{R}^{768 \times 50.257}$ (thường dùng chung trọng số với ma trận nhúng từ $W_{te}$ qua kỹ thuật Weight Tying). Nhiệm vụ của `lm_head.weight` là nhận vector ẩn 768 chiều từ decoder cuối cùng và nhân với từng vector trong 50.257 từ vựng để tính ra 50.257 điểm số logits. Sau đó qua hàm Softmax sẽ cho ra xác suất từ tiếp theo:
+     $$P(w_{t+1} \mid w_{1:t}) = \text{Softmax}(h_t \cdot W_{\text{lm}})$$
+   * **Vì sao trong GPT2SP BẮT BUỘC PHẢI BỎ NÓ?**  
+     Bài toán ước lượng Story Point **không phải là bài toán sinh văn bản** (chúng ta không cần mô hình viết tiếp User Story), mà là bài toán **dự đoán một giá trị độ khó thực $\hat{y} \in \mathbb{R}^+$**. Nếu giữ lại `lm_head.weight`, mô hình sẽ lãng phí hơn 38,5 triệu tham số (chiếm gần 1/3 tổng số tham số của GPT-2 Small) vào một việc hoàn toàn vô nghĩa. Do đó, tác giả phẫu thuật cắt bỏ nó và khai báo `_keys_to_ignore_on_load_missing` để khi gọi lệnh `from_pretrained('gpt2')`, PyTorch hiểu rằng việc thiếu ma trận `lm_head.weight` là chủ đích thiết kế, không báo lỗi thiếu trọng số.
+   * `r"h\.\d+\.attn\.masked_bias"`: Bỏ qua các giá trị mặt nạ đệm chú ý tĩnh trong các phiên bản Hugging Face cũ để tránh cảnh báo rác.
+2. `self.num_labels = config.num_labels`:
+   * Lấy số lượng nhãn đầu ra từ cấu hình. Với bài toán hồi quy Story Point, giá trị này được cấu hình bằng đúng **1** (`num_labels = 1`).
 3. `self.transformer = GPT2Model(config)`:
-   * Giữ nguyên xương sống của GPT-2: Ma trận nhúng từ $W_{te}$ ($50.257 \times 768$), ma trận nhúng vị trí $W_{pe}$ ($1024 \times 768$) và 12 khối Transformer Decoders liên tiếp.
-4. `self.dense1 = nn.Linear(768, 3072, bias=False)` & `self.dense2 = nn.Linear(3072, 768, bias=False)`:
-   * **Tại sao lại phóng đại 4 lần (từ 768 lên 3072 rồi ép về 768)?**  
-     Đây là thiết kế mô phỏng lại tầng Feed-Forward Network (FFN) kinh điển của Transformer. Theo lý thuyết bộ nhớ tri thức (*Key-Value Memory Theory*), việc chiếu vector biểu diễn lên không gian 3.072 chiều giúp các mẫu tổ hợp từ ngữ kỹ thuật phức tạp trong User Story phân tách tuyến tính tốt hơn trước khi cô đọng lại.
-   * **Tại sao `bias=False`?** Việc bỏ toàn bộ hệ số điều chỉnh bias giúp giảm thiểu số lượng tham số tự do, hạn chế nguy cơ mạng nơ-ron học vẹt (overfitting) trên các bộ dữ liệu Jira vốn chỉ có vài ngàn mẫu.
-5. `self.score = nn.Linear(768, 1, bias=False)`:
-   * Vì `config.num_labels = 1`, tầng này thực hiện phép tích vô hướng giữa vector ngữ cảnh 768 chiều của User Story với 768 trọng số để sinh ra một giá trị scalar duy nhất: điểm Story Point dự báo.
+   * Khởi tạo phần thân 12 khối Transformer Decoders kế thừa toàn bộ tri thức biểu diễn ngôn ngữ đã học từ WebText.
+4. `self.dense1 = nn.Linear(config.n_embd, 4 * config.n_embd, bias=False)`:
+   * `config.n_embd = 768`. Tầng này nhân vector 768 chiều với ma trận trọng số $W_1 \in \mathbb{R}^{768 \times 3072}$ để phóng đại không gian biểu diễn lên **4 lần** (3.072 chiều).
+   * **Tại sao phóng đại 4 lần?** Đây là thiết kế phỏng theo tầng FFN của Transformer. Không gian chiều cao 3.072 chiều giúp các đặc trưng ngữ nghĩa phức tạp phân tách tuyến tính tốt hơn (*Cover's Theorem*).
+   * `bias=False`: Bỏ hệ số tự do bias để giảm bớt số tham số cần cập nhật, chống hiện tượng học vẹt (overfitting) trên tập Jira nhỏ.
+5. `self.dense2 = nn.Linear(4 * config.n_embd, config.n_embd, bias=False)`:
+   * Tầng thu hẹp kích thước: nhân vector 3.072 chiều với ma trận trọng số $W_2 \in \mathbb{R}^{3072 \times 768}$ để nén thông tin trở về chiều chuẩn 768.
+6. `self.score = nn.Linear(config.n_embd, self.num_labels, bias=False)`:
+   * Tầng tính điểm cuối cùng: nhân ma trận $W_3 \in \mathbb{R}^{768 \times 1}$ để ánh xạ vector ngữ cảnh 768 chiều thành 1 số thực duy nhất đại diện cho điểm Story Point dự báo.
+7. `self.init_weights()`:
+   * Khởi tạo các trọng số mới (`dense1`, `dense2`, `score`) theo phân phối chuẩn cụt (*Truncated Normal Distribution*) với độ lệch chuẩn $\sigma = 0.02$.
 
 ---
 
-### 2.2. Luồng tính toán lan truyền xuôi (`forward pass`)
+### 2.3. Phần 3: Khai báo tham số của hàm Lan truyền Xuôi (`forward`)
 
 ```python
+    def forward(
+        self,
+        input_ids=None,
+        past_key_values=None,
+        attention_mask=None,
+        token_type_ids=None,
+        position_ids=None,
+        head_mask=None,
+        inputs_embeds=None,
+        labels=None,
+        use_cache=None,
+        output_attentions=None,
+        output_hidden_states=None,
+        return_dict=None,
+    ):
+```
+
+#### 💡 Bóc tách chi tiết từng tham số đầu vào:
+* `input_ids` (`torch.LongTensor`, kích thước `[batch_size, sequence_length]`):  
+  Chuỗi các chỉ số ID của từ vựng sau khi đi qua BPE Tokenizer (ví dụ: `[40, 1101, 247, 50257, 50257]`).
+* `attention_mask` (`torch.FloatTensor`, kích thước `[batch_size, sequence_length]`):  
+  Mặt nạ nhị phân đánh dấu vị trí: giá trị `1` cho token thật cần tính toán, và `0` cho token đệm `[PAD]` cần bỏ qua trong Self-Attention.
+* `labels` (`torch.FloatTensor` hoặc `torch.LongTensor`, kích thước `[batch_size]`):  
+  Nhãn mục tiêu thực tế (Ground-Truth Story Point) dùng để tính toán hàm mất mát trong quá trình huấn luyện.
+* `past_key_values`: Bộ nhớ đệm KV Cache lưu các vector Key/Value từ các bước trước (dùng trong sinh từ tuần tự, trong bài toán hồi quy GPT2SP không dùng).
+* `position_ids`: Chỉ số vị trí thứ tự của token trong câu ($0, 1, 2, \dots$). Nếu truyền `None`, mô hình tự động sinh từ $0$ đến $\text{len} - 1$.
+* `inputs_embeds`: Truyền trực tiếp vector nhúng thay vì truyền ID từ vựng `input_ids` (hữu ích khi làm giải thích mô hình XAI bằng Integrated Gradients).
+* `return_dict`: Cờ boolean quy định kết quả trả về là đối tượng chuẩn `SequenceClassifierOutputWithPast` (`True`) hay là dạng tuple thuần túy (`False`).
+
+---
+
+### 2.4. Phần 4: Thực thi Transformer Backbone và Cấu trúc của `transformer_outputs`
+
+```python
+        return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+
         transformer_outputs = self.transformer(
             input_ids,
             past_key_values=past_key_values,
@@ -72,7 +141,29 @@ class GPT2ForSequenceClassification(GPT2PreTrainedModel):
             return_dict=return_dict,
         )
         hidden_states = transformer_outputs[0]
-                
+```
+
+#### 💡 `transformer_outputs` bao gồm những gì bên trong?
+Khi gọi `self.transformer(...)`, dữ liệu đầu vào chạy qua tầng Word & Positional Embedding, sau đó lần lượt xuyên qua cả 12 khối Transformer Decoders. Đối tượng `transformer_outputs` trả về là một `BaseModelOutputWithPastAndCrossAttentions` gồm các thành phần sau:
+
+| Chỉ mục / Thuộc tính | Tên trường | Kiểu dữ liệu & Kích thước Tensor | Ý nghĩa bản chất trong Transformer |
+| :---: | :--- | :--- | :--- |
+| **`[0]`** | **`last_hidden_state`** | `Tensor [batch_size, sequence_length, 768]` | **Trạng thái ẩn ở tầng cuối cùng (Khối thứ 12):** Đây là thành phần quan trọng nhất! Mỗi token trong câu lúc này sở hữu một vector 768 chiều mang đầy đủ ngữ cảnh phong phú của câu. |
+| **`[1]`** | `past_key_values` | `Tuple` 12 phần tử (tương ứng 12 tầng) | Lưu các tensor Key và Value của từng khối Attention để phục vụ suy luận nhanh (trong GPT2SP không sử dụng). |
+| **`[2]`** *(nếu bật)* | `hidden_states` | `Tuple` 13 tensor `[batch_size, seq_len, 768]` | Toàn bộ vector trạng thái ẩn từ tầng Embedding ban đầu (tầng 0) cho đến hết cả 12 khối Decoders. |
+| **`[3]`** *(nếu bật)* | `attentions` | `Tuple` 12 tensor `[batch, 12, seq_len, seq_len]` | Ma trận trọng số Attention Weights của 12 đầu tại 12 khối (được trích xuất để làm XAI trong Chương 6). |
+
+👉 Do mục tiêu của mô hình là lấy vector đặc trưng cuối cùng để ước lượng Story Point, dòng lệnh:
+```python
+hidden_states = transformer_outputs[0]
+```
+đã trích xuất chính xác tensor `last_hidden_state` kích thước `[batch_size, sequence_length, 768]`.
+
+---
+
+### 2.5. Phần 5: Tính toán qua MLP Regressor Head
+
+```python
         # MLP Layer
         hidden_states = self.dense1(hidden_states)
         hidden_states = self.dense2(hidden_states)
@@ -80,23 +171,33 @@ class GPT2ForSequenceClassification(GPT2PreTrainedModel):
         logits = self.score(hidden_states)
 ```
 
-#### 💡 Logic đằng sau từng câu lệnh:
-1. `hidden_states = transformer_outputs[0]`:
-   * Vector đầu ra từ khối Transformer Decoder thứ 12 có hình dạng tensor là `[batch_size, sequence_length, 768]`. Mỗi vị trí token trong câu hiện đang mang một vector 768 chiều đại diện cho ngữ cảnh của nó.
-2. `hidden_states = self.dense1(hidden_states)` $\rightarrow$ `self.dense2(hidden_states)`:
-   * Tensor được chiếu qua `dense1` thành `[batch_size, sequence_length, 3072]`.
-   * Sau đó chiếu qua `dense2` trở lại `[batch_size, sequence_length, 768]`.
-   * **Phát hiện logic bất thường trong code của tác giả:** Ở đây tác giả thực hiện hai phép nhân ma trận liên tiếp mà **hoàn toàn không có hàm kích hoạt phi tuyến (như GELU hay ReLU) ở giữa**. Về mặt toán học:
-     $$W_{\text{eff}} = W_2 \times W_1$$
-     Hai tầng tuyến tính ghép liền nhau thực chất chỉ tương đương với một tầng tuyến tính đơn cấp! Điều này cho thấy kiến trúc MLP Head trong mã nguồn thực tế đơn giản và thô sơ hơn rất nhiều so với mô tả lý thuyết trong bài báo.
+#### 💡 Bóc tách từng bước biến đổi hình dạng Tensor:
+1. `hidden_states = self.dense1(hidden_states)`:
+   * **Phép toán:** Nhân ma trận giữa `hidden_states` `[B, S, 768]` và trọng số $W_1^T$ `[768, 3072]`.
+   * **Hình dạng mới:** `[batch_size, sequence_length, 3072]`.
+2. `hidden_states = self.dense2(hidden_states)`:
+   * **Phép toán:** Nhân ma trận giữa tensor trên `[B, S, 3072]` và trọng số $W_2^T$ `[3072, 768]`.
+   * **Hình dạng mới:** `[batch_size, sequence_length, 768]`.
+   * ⚠️ **Phát hiện phản biện:** Tác giả không chèn hàm kích hoạt phi tuyến nào (như GELU hay ReLU) giữa `dense1` và `dense2`. Về mặt toán học:
+     $$h_{\text{out}} = (h_{\text{in}} \cdot W_1) \cdot W_2 = h_{\text{in}} \cdot (W_1 \cdot W_2) = h_{\text{in}} \cdot W_{\text{eff}}$$
+     Hai tầng Dense liên tiếp này tương đương với một tầng tuyến tính duy nhất $W_{\text{eff}} \in \mathbb{R}^{768 \times 768}$.
 3. `logits = self.score(hidden_states)`:
-   * Đưa tensor về kích thước `[batch_size, sequence_length, 1]`. Lúc này, tại mỗi vị trí token trong câu đều có một điểm số tạm thời.
+   * **Phép toán:** Nhân ma trận giữa `[B, S, 768]` và trọng số $W_3^T$ `[768, 1]`.
+   * **Hình dạng mới:** `[batch_size, sequence_length, 1]`. Tại mỗi vị trí token trong User Story đều có một điểm số cục bộ.
 
 ---
 
-### 2.3. Logic cốt tử: Tại sao bắt buộc dùng Last Token Pooling?
+### 2.6. Phần 6: Cơ chế Last Token Pooling (Trích xuất điểm số đại diện chuỗi)
 
 ```python
+        if input_ids is not None:
+            batch_size, sequence_length = input_ids.shape[:2]
+        else:
+            batch_size, sequence_length = inputs_embeds.shape[:2]
+
+        assert (
+            self.config.pad_token_id is not None or batch_size == 1
+        ), "Cannot handle batch sizes > 1 if no padding token is defined."
         if self.config.pad_token_id is None:
             sequence_lengths = -1
         else:
@@ -104,27 +205,33 @@ class GPT2ForSequenceClassification(GPT2PreTrainedModel):
                 sequence_lengths = torch.ne(input_ids, self.config.pad_token_id).sum(-1) - 1
             else:
                 sequence_lengths = -1
+                logger.warning(
+                    f"{self.__class__.__name__} will not detect padding tokens in `inputs_embeds`. Results may be "
+                    f"unexpected if using padding tokens in conjunction with `inputs_embeds.`"
+                )
 
         pooled_logits = logits[range(batch_size), sequence_lengths]
 ```
 
-#### 💡 Logic toán học và kiến trúc:
-* **Tại sao không lấy token đầu tiên giống BERT (token `[CLS]`)?**
-  * BERT là mô hình **Transformer Encoder**: Cơ chế Attention là hai chiều (Bidirectional Attention), token đầu tiên `[CLS]` được phép nhìn thấy tất cả các từ phía sau, do đó vector `[CLS]` gom đủ ý nghĩa cả câu.
-  * GPT-2 là mô hình **Transformer Decoder**: Cơ chế Attention là **nhân quả một chiều có mặt nạ (Causal Masked Self-Attention)**. Token đứng trước không bao giờ được nhìn thấy token đứng sau.
-  * Vì vậy:
-    * Token 1 chỉ thấy chính nó.
-    * Token 2 chỉ thấy Token 1 và 2.
-    * **Chỉ duy nhất Token CUỐI CÙNG mới được phép nhìn thấy toàn bộ các từ từ đầu đến cuối câu!**
-* **Giải mã dòng code trích xuất:**
-  * Do trong một batch huấn luyện, các User Story có độ dài ngắn khác nhau và được chèn thêm token đệm `[PAD]` ở phía sau để bằng độ dài cố định.
-  * `torch.ne(input_ids, self.config.pad_token_id)`: Trả về `True` cho các từ thực tế và `False` cho token `[PAD]`.
-  * `.sum(-1) - 1`: Đếm tổng số token thật trừ đi 1 để tìm ra đúng vị trí chỉ số (index) của từ cuối cùng có nghĩa.
-  * `logits[range(batch_size), sequence_lengths]`: Cắt lát tensor (tensor slicing) lấy đúng giá trị dự đoán tại vị trí token cuối cùng này.
+#### 💡 Bóc tách logic từng dòng lệnh:
+1. `batch_size, sequence_length = input_ids.shape[:2]`:
+   * Lấy số lượng mẫu trong lô (`batch_size`) và độ dài chuỗi tối đa (`sequence_length`).
+2. `torch.ne(input_ids, self.config.pad_token_id)`:
+   * Hàm `torch.ne` (Not Equal) so sánh từng phần tử với ID của token `[PAD]` (trong code tác giả gán pad_token_id = 50257).
+   * Trả về ma trận boolean: vị trí nào chứa từ thật trả về `True` (tương đương 1), vị trí nào là padding trả về `False` (0).
+   * Ví dụ câu có 3 từ thật và 2 từ đệm: `[True, True, True, False, False]`.
+3. `.sum(-1) - 1`:
+   * `.sum(-1)`: Cộng dồn theo hàng ngang để đếm tổng số token có nghĩa thực tế (ví dụ: $3$).
+   * `- 1`: Vì chỉ số mảng trong lập trình bắt đầu từ $0$, nên từ cuối cùng có nghĩa nằm ở chỉ số $3 - 1 = 2$.
+   * Biến `sequence_lengths` lúc này chứa một vector 1 chiều lưu vị trí index của token cuối cùng cho từng mẫu trong batch.
+4. `pooled_logits = logits[range(batch_size), sequence_lengths]`:
+   * Thực hiện phép cắt lát tensor nhiều chiều: với mỗi hàng $i$ trong batch (`0 <= i < batch_size`), lấy giá trị tại cột `sequence_lengths[i]`.
+   * **Kết quả:** `pooled_logits` có hình dạng `[batch_size, 1]` — chính là điểm Story Point dự đoán đại diện cho toàn bộ User Story.
+   * **Bản chất kiến trúc:** Vì GPT-2 dùng mặt nạ nhân quả (Causal Masking), từ phía trước không nhìn thấy từ phía sau, do đó chỉ có token cuối cùng mới tổng hợp được tri thức của toàn bộ câu.
 
 ---
 
-### 2.4. Hàm mất mát huấn luyện: Tại sao tác giả dùng L1 Loss thay vì L2 Loss?
+### 2.7. Phần 7: Tính toán Hàm Mất mát và Đóng gói Kết quả Đầu ra
 
 ```python
         loss = None
@@ -136,33 +243,45 @@ class GPT2ForSequenceClassification(GPT2PreTrainedModel):
             else:
                 loss_fct = CrossEntropyLoss()
                 loss = loss_fct(pooled_logits.view(-1, self.num_labels), labels.view(-1))
+
+        if not return_dict:
+            output = (pooled_logits,) + transformer_outputs[1:]
+            return ((loss,) + output) if loss is not None else output
+
+        return SequenceClassifierOutputWithPast(
+            loss=loss,
+            logits=pooled_logits,
+            past_key_values=transformer_outputs.past_key_values,
+            hidden_states=transformer_outputs.hidden_states,
+            attentions=transformer_outputs.attentions,
+        )
 ```
 
-#### 💡 Logic toán học đằng sau:
-1. `self.num_labels == 1`:
-   * Xác nhận mô hình đang chạy chế độ hồi quy đơn biến (Single-target Regression).
-2. `loss_fct = nn.L1Loss()`:
-   * **Bản chất của dữ liệu Story Point trong thực tế:** Điểm Story Point có phân phối lệch phải cực mạnh (*Right-skewed Distribution*). Đa số task là 1, 2, 3, 5 điểm, nhưng thỉnh thoảng có những task ngoại lai cực lớn như 40, 100 điểm.
-   * **Nếu dùng $L_2$ Loss (MSE - Sai số bình phương):**
-     $$\mathcal{L}_{L2} = (\hat{y} - y)^2$$
-     Khi gặp một task 100 điểm mà mô hình đoán 10 điểm, độ lệch là 90, bình phương lên là $8.100$. Gradient bùng nổ sẽ kéo toàn bộ trọng số của mô hình chạy theo điểm ngoại lai này, làm sai lệch việc dự đoán của hàng ngàn task nhỏ khác.
-   * **Dùng $L_1$ Loss (MAE - Sai số tuyệt đối):**
-     $$\mathcal{L}_{L1} = |\hat{y} - y|$$
-     Đạo hàm của $L_1$ chỉ là $+1$ hoặc $-1$ (hàm dấu $\text{sign}$), không phụ thuộc vào độ lớn của sai số. Điều này giúp mô hình cực kỳ **vững chắc trước các điểm ngoại lai (Robust to Outliers)**.
+#### 💡 Bóc tách từng dòng code:
+1. `if labels is not None:`:
+   * Nếu có nhãn truyền vào (chế độ Training hoặc Evaluation), mô hình sẽ tự động tính hàm mất mát `loss`. Nếu không truyền nhãn (chế độ Inference / Production), `loss = None`.
+2. `if self.num_labels == 1: loss_fct = nn.L1Loss()`:
+   * **Tại sao tác giả chọn $L_1$ Loss (MAE)?**  
+     Trong dữ liệu Jira, phần lớn User Story có điểm số nhỏ ($1, 2, 3, 5$), nhưng có những task ngoại lai cực lớn ($40, 100$). Hàm $L_2$ Loss ($(\hat{y} - y)^2$) có đạo hàm tỷ lệ thuận với độ lệch sai số, khi gặp ngoại lai gradient sẽ bùng nổ và làm hỏng toàn bộ các trọng số đã học. Hàm $L_1$ Loss ($|\hat{y} - y|$) có đạo hàm luôn là hằng số $\pm 1$, giúp quá trình cập nhật gradient cực kỳ ổn định và kháng ngoại lai.
 3. `loss_fct(pooled_logits.view(-1), labels.to(self.dtype).view(-1))`:
-   * Kéo phẳng tensor dự đoán và nhãn thực tế về vector 1 chiều để tính sai số trung bình trên toàn batch.
+   * Dùng `.view(-1)` để kéo phẳng cả 2 tensor về vector 1 chiều có độ dài `[batch_size]` trước khi đưa vào hàm mất mát $L_1$.
+4. `return SequenceClassifierOutputWithPast(...)`:
+   * Đóng gói toàn bộ kết quả gồm giá trị mất mát `loss`, điểm số dự báo `logits`, bộ nhớ đệm `past_key_values`, trạng thái các tầng `hidden_states` và trọng số chú ý `attentions` vào đối tượng chuẩn, hoàn tất một chu trình lan truyền xuôi hoàn hảo.
 
 ---
 
-## 📋 3. BẢNG TỔNG KẾT BẢN CHẤT LOGIC CỦA TỪNG KHỐI LỆNH
+## 📋 3. BẢNG TỔNG HỢP ÁNH XẠ TOÀN DIỆN: DÒNG CODE VS. BÀI BÁO GỐC
 
-| Khối mã nguồn | Tác vụ lập trình thực tế | Logic toán học & Kỹ thuật bên dưới |
+| Dòng code trong `GPT2SP.py` | Thành phần trong bài báo (IEEE TSE 2023) | Vai trò kỹ thuật & Bản chất toán học |
 | :--- | :--- | :--- |
-| `_keys_to_ignore_on_load_missing` | Bỏ qua `lm_head.weight` | Chuyển đổi công năng từ sinh ngôn ngữ tự do sang bộ ước lượng nỗ lực. |
-| `dense1` & `dense2` | Nhân ma trận $768 \rightarrow 3072 \rightarrow 768$ | Tái cấu trúc đặc trưng nhưng thiếu phi tuyến, tương đương phép chiếu tuyến tính. |
-| `score` | Chiếu $768 \rightarrow 1$ không có bias | Tích vô hướng rút gọn không gian ngữ cảnh thành điểm số thực $\hat{y}$. |
-| `sequence_lengths` | Tính vị trí token thực cuối cùng | Thích ứng với mặt nạ nhân quả Causal Mask của GPT-2; chỉ token cuối gom đủ ngữ cảnh. |
-| `nn.L1Loss()` | Tính trung bình trị tuyệt đối sai số | Kháng ngoại lai, chống bùng nổ gradient trên phân phối điểm lệch phải của Jira. |
+| `_keys_to_ignore_on_load_missing` | Bỏ qua `lm_head.weight` | Cắt bỏ 38,5 triệu tham số sinh từ, chuyển GPT-2 thành mô hình hồi quy. |
+| `self.transformer = GPT2Model(config)` | 12 Blocks Transformer Decoders (Mục 3.2) | 12 tầng Masked Self-Attention biểu diễn ngữ cảnh User Story (117M params). |
+| `self.dense1` & `self.dense2` | MLP Regressor Head (Mục 3.3) | Phóng đại $768 \rightarrow 3072 \rightarrow 768$ (thiếu phi tuyến trong code thực tế). |
+| `self.score` | Regression Linear Score | Tích vô hướng rút gọn 768 chiều thành 1 số thực duy nhất $\hat{y}$. |
+| `transformer_outputs[0]` | `last_hidden_state` từ Decoders | Tensor `[B, S, 768]` chứa biểu diễn ngữ cảnh ở tầng 12 của tất cả tokens. |
+| `torch.ne(...).sum(-1) - 1` | Last Token Pooling Strategy (Mục 3.3) | Bắt vị trí token thật cuối cùng trước padding `[PAD]`. |
+| `pooled_logits = logits[range, seq]` | Vector Token cuối cùng đại diện User Story | Token duy nhất gom trọn ngữ cảnh toàn câu do cơ chế Causal Mask. |
+| `loss_fct = nn.L1Loss()` | L1 Loss Optimization (Mục 3.4) | Kháng ngoại lai, trực tiếp tối ưu hóa hàm mục tiêu MAE. |
 
 ---
 
