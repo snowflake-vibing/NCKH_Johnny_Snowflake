@@ -299,6 +299,7 @@ hidden_states = transformer_outputs[0]
 
 ## 🔗 Liên Kết Điều Hướng Hệ Thống
 
+* 🧠 [16_huggingface_sequence_classification_and_gpt2sp_adaptation.md](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/critical-thinking/16_huggingface_sequence_classification_and_gpt2sp_adaptation.md): Phân tích chi tiết code Hugging Face gốc và cách GPT2SP cải biên.
 * 📜 [00_full_source_code.md](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/code/00_full_source_code.md): Toàn bộ mã nguồn gốc GPT2SP.
 * 🔬 [02_training_pipeline_code_explanation.md](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/code/02_training_pipeline_code_explanation.md): Giải thích chi tiết mã nguồn pipeline huấn luyện và đánh giá thực nghiệm.
 * ⚠️ [03_code_vs_paper_discrepancies.md](file:///d:/NCKH_3/docs/articles/paper-information/gpt2sp/code/03_code_vs_paper_discrepancies.md): Mổ xẻ 4 điểm sai lệch cốt tử giữa code thực tế và bài báo.
