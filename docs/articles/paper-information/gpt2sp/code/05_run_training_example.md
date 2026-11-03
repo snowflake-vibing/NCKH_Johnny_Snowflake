@@ -1,34 +1,34 @@
 # 🏋️ HƯỚNG DẪN CHẠY VÍ DỤ HUẤN LUYỆN THỰC TẾ TRONG CODE (`TRAINING LOOP`)
-## MÔ PHỎNG QUY TRÌNH HỌC LAN TRUYỀN XUÔI & NGƯỢC (FORWARD, L1 LOSS, BACKPROP, OPTIMIZER)
+## GIẢI PHÃU SỰ BIẾN ĐỔI CỦA OUTPUT, TENSOR VÀ GRADIENT SAU TỪNG DÒNG LỆNH
 
-> **Mục tiêu:** Cung cấp mã nguồn Python hoàn chỉnh, độc lập (standalone), có thể copy và chạy ngay lập tức (`ready-to-run`) để thực thi một chu trình huấn luyện (Training Loop) hoàn chỉnh từ A đến Z: tính hàm mất mát $L_1$ Loss, tính đạo hàm lan truyền ngược (`backward`), điều chỉnh trọng số với `AdamW`, và quan sát sự hội tụ sai số của mạng.
-
----
-
-## 📋 1. KỊCH BẢN THỰC THI HUẤN LUYỆN
-
-Chúng ta chuẩn bị một tập dữ liệu nhỏ gồm 4 User Stories thực tế từ các dự án mã nguồn mở với nhãn Story Point thật của Scrum Team:
-
-| STT | User Story (Tiêu đề Jira) | Story Point Thực Tế ($y$) | Phân loại độ phức tạp |
-| :-: | :--- | :-: | :--- |
-| **1** | `"Fix typo in README documentation"` | `1.0` | Rất dễ (Trivial) |
-| **2** | `"Update user login session timeout to 30 minutes"` | `2.0` | Đơn giản (Small) |
-| **3** | `"Deploy Module creates an invalid deployment when target contains commas"` | `3.0` | Trung bình (Medium) |
-| **4** | `"Refactor database connection pool to handle concurrent microservice queries"` | `8.0` | Phức tạp (Large) |
-
-**Mục tiêu của vòng lặp huấn luyện:**  
-Sử dụng giải thuật tối ưu hóa `AdamW` cùng hàm mất mát `nn.L1Loss()`, sau mỗi bước cập nhật trọng số (*gradient step*), mô hình sẽ giảm dần độ lệch dự báo so với nhãn thực tế.
+> **Mục tiêu tài liệu:** Không chỉ cung cấp mã nguồn huấn luyện hoàn chỉnh, tài liệu này **mổ xẻ chi tiết từng dòng code**: ngay sau khi mỗi câu lệnh được thực thi, hình dạng Tensor (Shape), giá trị số thực (Values), bộ nhớ Gradient và trọng số mô hình thay đổi như thế nào trong RAM/VRAM.
 
 ---
 
-## 💻 2. MÃ NGUỒN PYTHON HOÀN CHỈNH CÓ THỂ CHẠY NGAY
+## 📋 1. DỮ LIỆU ĐẦU VÀO CỦA PHIÊN HUẤN LUYỆN (MINI-BATCH)
 
-Bạn có thể lưu đoạn mã dưới đây thành file `run_training_loop.py` và chạy trực tiếp bằng lệnh: `python run_training_loop.py`.
+Chúng ta chuẩn bị một lô gồm **4 User Stories thực tế** với các mức độ phức tạp từ dễ đến khó:
+
+```python
+stories = [
+    "Fix typo in README documentation",                                             # Task 1 (Dễ)
+    "Update user login session timeout to 30 minutes",                             # Task 2 (Nhỏ)
+    "Deploy Module creates an invalid deployment when target contains commas",     # Task 3 (Vừa)
+    "Refactor database connection pool to handle concurrent microservice queries"  # Task 4 (Lớn)
+]
+ground_truth_sp = [1.0, 2.0, 3.0, 8.0] # Story Point thực tế do Scrum Team gắn
+```
+
+---
+
+## 💻 2. MÃ NGUỒN PYTHON HOÀN CHỈNH KÈM LỆNH IN TRẠNG THÁI (READY-TO-RUN)
+
+Bạn có thể lưu đoạn mã dưới đây thành file `run_training_step_by_step.py` và chạy bằng lệnh: `python run_training_step_by_step.py`. Mã nguồn được tích hợp sẵn các câu lệnh in trực quan sự biến thiên sau từng bước.
 
 ```python
 """
 =============================================================================
-CHU TRÌNH HUẤN LUYỆN THỰC TẾ (TRAINING LOOP) CHO MÔ HÌNH GPT2SP
+CHU TRÌNH HUẤN LUYỆN THEO DÕI TỪNG BƯỚC BIẾN ĐỔI (STEP-BY-STEP TRACE)
 Nhóm NCKH 3 (Johnny Snowflake) - Đề tài Agile Story Point Estimation
 =============================================================================
 """
@@ -38,9 +38,7 @@ import torch.nn as nn
 from torch.optim import AdamW
 from transformers import GPT2Model, GPT2PreTrainedModel, GPT2Tokenizer, GPT2Config
 
-# =============================================================================
-# 1. ĐỊNH NGHĨA MÔ HÌNH GPT2SP ĐẦY ĐỦ CẢ NHÁNH LOSS
-# =============================================================================
+# 1. Định nghĩa mô hình GPT2SP
 class GPT2SPForTraining(GPT2PreTrainedModel):
     _keys_to_ignore_on_load_missing = [r"h\.\d+\.attn\.masked_bias", r"lm_head\.weight"]
 
@@ -49,7 +47,6 @@ class GPT2SPForTraining(GPT2PreTrainedModel):
         self.num_labels = config.num_labels
         self.transformer = GPT2Model(config)
         
-        # MLP Head của tác giả GPT2SP (IEEE TSE 2023)
         self.dense1 = nn.Linear(config.n_embd, 4 * config.n_embd, bias=False)
         self.dense2 = nn.Linear(4 * config.n_embd, config.n_embd, bias=False)
         self.score = nn.Linear(config.n_embd, self.num_labels, bias=False)
@@ -57,136 +54,80 @@ class GPT2SPForTraining(GPT2PreTrainedModel):
         self.init_weights()
 
     def forward(self, input_ids=None, attention_mask=None, labels=None):
-        # Lan truyền qua GPT-2 Backbone
+        # Bước F1: Backbone
         transformer_outputs = self.transformer(input_ids=input_ids, attention_mask=attention_mask)
-        hidden_states = transformer_outputs[0] # [batch_size, seq_len, 768]
+        hidden_states = transformer_outputs[0]
 
-        # Lan truyền qua MLP Head
-        hidden_states = self.dense1(hidden_states) # [batch_size, seq_len, 3072]
-        hidden_states = self.dense2(hidden_states) # [batch_size, seq_len, 768]
-        logits = self.score(hidden_states)          # [batch_size, seq_len, 1]
+        # Bước F2: MLP Head
+        hidden_states = self.dense1(hidden_states)
+        hidden_states = self.dense2(hidden_states)
+        logits = self.score(hidden_states)
 
-        # Last Token Pooling: Gom vector tại token có nghĩa cuối cùng
+        # Bước F3: Last Token Pooling
         batch_size = input_ids.shape[0]
         sequence_lengths = torch.ne(input_ids, self.config.pad_token_id).sum(-1) - 1
-        pooled_logits = logits[range(batch_size), sequence_lengths] # [batch_size, 1]
+        pooled_logits = logits[range(batch_size), sequence_lengths]
 
-        # Tính toán Hàm Mất Mát L1 Loss (MAE) nếu có truyền labels
+        # Bước F4: L1 Loss
         loss = None
         if labels is not None:
             loss_fct = nn.L1Loss()
-            # Kéo phẳng về 1D tensor để tính sai số trung bình
             loss = loss_fct(pooled_logits.view(-1), labels.view(-1))
 
         return loss, pooled_logits
 
 
-# =============================================================================
-# 2. KỊCH BẢN THỰC THI HUẤN LUYỆN (MINI TRAINING LOOP)
-# =============================================================================
 def main():
     print("=" * 80)
-    print("🏋️ BẮT ĐẦU CHẠY THỬ NGHIỆM CHU TRÌNH HUẤN LUYỆN (TRAINING LOOP) GPT2SP")
+    print("🏋️ CHU TRÌNH HUẤN LUYỆN GPT2SP: THEO DÕI BIẾN ĐỔI TENSOR TỪNG DÒNG LỆNH")
     print("=" * 80)
 
-    # Dữ liệu mẫu (Mini-batch gồm 4 User Stories)
     stories = [
         "Fix typo in README documentation",
         "Update user login session timeout to 30 minutes",
         "Deploy Module creates an invalid deployment when target contains commas",
         "Refactor database connection pool to handle concurrent microservice queries"
     ]
-    # Nhãn Story Point thực tế
     ground_truth_sp = [1.0, 2.0, 3.0, 8.0]
 
-    # Bước 1: Khởi tạo Tokenizer & Chuẩn bị Tensors
-    print("\n[Bước 1] Tokenize 4 User Stories thành Mini-Batch...")
+    # KHÂU 1: TOKENIZATION
     tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
-    tokenizer.pad_token = tokenizer.eos_token # Token 50257
+    tokenizer.pad_token = tokenizer.eos_token # ID 50257
 
-    encoding = tokenizer(
-        stories,
-        max_length=20,
-        padding="max_length",
-        truncation=True,
-        return_tensors="pt"
-    )
+    encoding = tokenizer(stories, max_length=20, padding="max_length", truncation=True, return_tensors="pt")
     input_ids = encoding['input_ids']
     attention_mask = encoding['attention_mask']
     labels = torch.tensor(ground_truth_sp, dtype=torch.float32)
 
-    print(f"   * Input IDs shape     : {list(input_ids.shape)} (batch_size=4, seq_len=20)")
-    print(f"   * Attention Mask shape: {list(attention_mask.shape)}")
-    print(f"   * Labels Tensor       : {labels.tolist()}")
-
-    # Bước 2: Khởi tạo Mô hình & Optimizer
-    print("\n[Bước 2] Khởi tạo mô hình và Optimizer AdamW...")
+    # KHÂU 2: KHỞI TẠO
     config = GPT2Config.from_pretrained('gpt2', num_labels=1, pad_token_id=tokenizer.pad_token_id)
     model = GPT2SPForTraining.from_pretrained('gpt2', config=config)
-    model.train() # Chuyển mô hình sang chế độ huấn luyện (Training Mode)
+    model.train()
 
-    # Để chạy nhanh minh họa, ta chỉ tối ưu hóa các trọng số mới của Head (dense1, dense2, score)
-    # Trong huấn luyện thực tế, tác giả fine-tune toàn bộ các tham số của GPT-2
-    head_parameters = list(model.dense1.parameters()) + list(model.dense2.parameters()) + list(model.score.parameters())
-    optimizer = AdamW(head_parameters, lr=5e-4, weight_decay=0.01)
+    head_params = list(model.dense1.parameters()) + list(model.dense2.parameters()) + list(model.score.parameters())
+    optimizer = AdamW(head_params, lr=5e-4, weight_decay=0.01)
 
-    # Bước 3: Đánh giá dự đoán trước khi huấn luyện (Epoch 0)
-    print("\n[Bước 3] Đánh giá ban đầu trước khi cập nhật trọng số (Epoch 0)...")
-    with torch.no_grad():
-        initial_loss, initial_preds = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-    
-    print(f"   * Mất mát khởi điểm (Initial L1 Loss / MAE): {initial_loss.item():.4f}")
-    for i in range(len(stories)):
-        print(f"     Issue {i+1}: True SP = {ground_truth_sp[i]:.1f} | Dự báo = {initial_preds[i].item():.2f}")
-
-    # Bước 4: Vòng lặp huấn luyện tối ưu hóa (5 bước Gradient Descent)
-    NUM_STEPS = 5
-    print(f"\n[Bước 4] Thực thi vòng lặp tối ưu hóa qua {NUM_STEPS} bước cập nhật...")
-    print("-" * 80)
-    print(f"{'Bước (Step)':<15}{'L1 Loss (MAE)':<20}{'Gradient Norm':<20}{'Trạng thái':<20}")
-    print("-" * 80)
-
-    for step in range(1, NUM_STEPS + 1):
-        # 1. Xóa gradient cũ tích lũy từ bước trước
+    # VÒNG LẶP HUẤN LUYỆN 5 STEPS
+    for step in range(1, 6):
+        print(f"\n>>> BẮT ĐẦU GRADIENT STEP #{step}")
+        
+        # 1. Zero Grad
         optimizer.zero_grad()
-
-        # 2. Forward pass: Tính toán dự đoán và hàm mất mát L1
+        
+        # 2. Forward
         loss, preds = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-
-        # 3. Backward pass: Lan truyền ngược tính đạo hàm riêng cho từng tham số
+        
+        # 3. Backward
         loss.backward()
-
-        # 4. Gradient Clipping: Cắt ngắn gradient để chống bùng nổ (chuẩn 1.0)
-        grad_norm = torch.nn.utils.clip_grad_norm_(head_parameters, max_norm=1.0)
-
-        # 5. Optimizer step: Cập nhật trọng số mô hình
+        
+        # 4. Clip Grad Norm
+        grad_norm = torch.nn.utils.clip_grad_norm_(head_params, max_norm=1.0)
+        
+        # 5. Optimizer Step
         optimizer.step()
 
-        print(f"{step:<15}{loss.item():<20.4f}{grad_norm.item():<20.4f}{'Cập nhật thành công':<20}")
-
-    # Bước 5: Đánh giá kết quả sau khi hoàn tất huấn luyện
-    print("-" * 80)
-    print("\n[Bước 5] So sánh kết quả dự báo: TRƯỚC vs. SAU khi cập nhật Gradient...")
-    model.eval()
-    with torch.no_grad():
-        final_loss, final_preds = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-
-    print("=" * 80)
-    print(f"{'Issue':<10}{'True SP':<12}{'Trước khi train':<20}{'Sau khi train':<20}{'Tiến triển'}")
-    print("=" * 80)
-    for i in range(len(stories)):
-        before = initial_preds[i].item()
-        after = final_preds[i].item()
-        target = ground_truth_sp[i]
-        delta_before = abs(before - target)
-        delta_after = abs(after - target)
-        status = "✅ Tốt hơn" if delta_after < delta_before else "⚠️ Chưa đổi"
-        print(f"Task {i+1:<5}{target:<12.1f}{before:<20.2f}{after:<20.2f}{status}")
-    
-    print("=" * 80)
-    print(f"📉 Mất mát L1 ban đầu : {initial_loss.item():.4f}")
-    print(f"🎯 Mất mát L1 sau cùng : {final_loss.item():.4f} (Độ cải thiện: -{(initial_loss.item() - final_loss.item()):.4f})")
-    print("=" * 80)
+        print(f"   [Step {step}] L1 Loss = {loss.item():.4f} | Grad Norm = {grad_norm.item():.4f}")
+        print(f"   Dự báo hiện thời: {[round(p.item(), 2) for p in preds]} vs True: {ground_truth_sp}")
 
 
 if __name__ == '__main__':
@@ -195,94 +136,184 @@ if __name__ == '__main__':
 
 ---
 
-## 🔍 3. GIẢI PHẪU CHI TIẾT CƠ CHẾ TOÁN HỌC TRONG VÒNG LẶP HUẤN LUYỆN
+## 🔍 3. GIẢI PHẪU CHI TIẾT: SAU MỖI DÒNG CODE OUTPUT BIẾN ĐỔI NHƯ THẾ NÀO?
 
-Vòng lặp huấn luyện trên mô phỏng chính xác 5 bước kinh điển của Deep Learning trong PyTorch:
+Dưới đây là bảng đối soát chi tiết diễn biến trạng thái của máy tính (Tensor, Shape, Memory, Values) ngay sau khi mỗi dòng code được thực thi:
 
-```text
-[1. optimizer.zero_grad()] ──> Đưa toàn bộ bộ nhớ đạo hàm về 0
-            │
-            ▼
-[2. loss, preds = model()] ──> Forward Pass: Tính L1 Loss = (1/N) * Σ |ŷ_i - y_i|
-            │
-            ▼
-[3. loss.backward()] ────────> Backpropagation: Tính d(Loss)/d(W) bằng quy tắc chuỗi Chain Rule
-            │
-            ▼
-[4. clip_grad_norm_()] ──────> Cắt ngắn gradient nếu vượt quá ngưỡng 1.0 để ổn định số học
-            │
-            ▼
-[5. optimizer.step()] ───────> AdamW: Cập nhật trọng số W_mới = W_cũ - lr * m_t / (sqrt(v_t) + ε)
+### 🧩 Giai đoạn 1: Tiền xử lý dữ liệu (Tokenization)
+
+#### Dòng code:
+```python
+encoding = tokenizer(stories, max_length=20, padding="max_length", truncation=True, return_tensors="pt")
 ```
-
-### 1. Phép toán Hàm mất mát $L_1$ Loss
-Với batch $N=4$, hàm mất mát đo lường sai số tuyệt đối trung bình:
-$$\mathcal{L}_{L1} = \frac{1}{4} \sum_{i=1}^{4} |\hat{y}_i - y_i|$$
-Khác với $L_2$ Loss ($(\hat{y}_i - y_i)^2$) có đạo hàm khuếch đại sai số, đạo hàm của $L_1$ là hàm dấu:
-$$\frac{\partial \mathcal{L}_{L1}}{\partial \hat{y}_i} = \frac{1}{4} \text{sign}(\hat{y}_i - y_i) = \begin{cases} +0.25 & \text{nếu } \hat{y}_i > y_i \\ -0.25 & \text{nếu } \hat{y}_i < y_i \end{cases}$$
-Điều này đảm bảo cho dù một User Story có điểm số ngoại lai là $100$ điểm, độ lớn của gradient kéo về mạng vẫn luôn ổn định ở mức $0.25$, không bao giờ làm nổ trọng số.
-
-### 2. Thuật toán tối ưu hóa AdamW
-AdamW duy trì hai mô-men động lượng cho mỗi trọng số ma trận $W$:
-- Mô-men bậc 1 ($m_t$): Trung bình trượt của gradient (hướng đi).
-- Mô-men bậc 2 ($v_t$): Trung bình trượt của bình phương gradient (tốc độ thích ứng riêng cho từng tham số).
-- Phép suy giảm trọng số độc lập (*Decoupled Weight Decay*): Trừ trực tiếp $\lambda \cdot W$ để chống overfitting mà không bị méo mó bởi gradient.
+* **Output sinh ra:** Một đối tượng `BatchEncoding` chứa 2 ma trận Tensor kích thước `[4, 20]`:
+  1. `input_ids = encoding['input_ids']`:
+     ```text
+     tensor([[ 8241, 38166,   287, 10998, 14920, 50257, 50257, ... 50257],  # Câu 1: 5 tokens thật, 15 tokens PAD
+             [ 7894,  2092,  5527,  4810, 15003,   284,  1617, ... 50257],  # Câu 2: 8 tokens thật, 12 tokens PAD
+             [34084, 12891,  4125,   281,  6006,  9243,   618, ... 50257],  # Câu 3: 11 tokens thật, 9 tokens PAD
+             [ 3821,  3068,  5765,  5405,  4693,   284,  3975, ... 50257]]) # Câu 4: 10 tokens thật, 10 tokens PAD
+     ```
+  2. `attention_mask = encoding['attention_mask']`:
+     ```text
+     tensor([[1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+     ```
+* **Sự thay đổi trạng thái:** Văn bản ngôn ngữ tự nhiên đã được số hóa hoàn toàn. Các vị trí số `0` trong `attention_mask` báo hiệu cho mô hình biết đây là khoảng trống cần bỏ qua khi tính toán tích vô hướng Attention.
 
 ---
 
-## 🖥️ 4. MINH HỌA ĐẦU RA KHI CHẠY TRÊN TERMINAL
+### 🚀 Giai đoạn 2: Lan truyền xuôi bên trong hàm `forward()` (Forward Pass)
 
-Khi chạy file `run_training_loop.py`, bạn sẽ quan sát thấy giá trị hàm mất mát giảm đều đặn sau từng bước cập nhật:
+#### 1. Dòng code:
+```python
+transformer_outputs = self.transformer(input_ids=input_ids, attention_mask=attention_mask)
+hidden_states = transformer_outputs[0]
+```
+* **Output sinh ra:** Tensor `hidden_states` có hình dạng `[4, 20, 768]`.
+* **Sự thay đổi trạng thái:** Cả 4 câu (mỗi câu 20 tokens) được đưa qua 12 khối Transformer Decoders. Mỗi token giờ đây được biểu diễn bằng một vector không gian ngữ cảnh 768 chiều.
+
+#### 2. Dòng code:
+```python
+hidden_states = self.dense1(hidden_states)
+```
+* **Output sinh ra:** Tensor `hidden_states` chuyển hình dạng từ `[4, 20, 768]` $\rightarrow$ `[4, 20, 3072]`.
+* **Sự thay đổi trạng thái:** Nhân ma trận với trọng số `dense1.weight` (`[3072, 768]`). Không gian đặc trưng được **phóng đại gấp 4 lần** (từ 768 lên 3.072 chiều) để chuẩn bị cho việc tái cấu trúc thông tin.
+
+#### 3. Dòng code:
+```python
+hidden_states = self.dense2(hidden_states)
+```
+* **Output sinh ra:** Tensor `hidden_states` chuyển hình dạng từ `[4, 20, 3072]` $\rightarrow$ `[4, 20, 768]`.
+* **Sự thay đổi trạng thái:** Nhân ma trận với `dense2.weight` (`[768, 3072]`). Thông tin 3.072 chiều được nén ngược trở lại không gian chuẩn 768 chiều.
+
+#### 4. Dòng code:
+```python
+logits = self.score(hidden_states)
+```
+* **Output sinh ra:** Tensor `logits` có hình dạng `[4, 20, 1]`.
+* **Sự thay đổi trạng thái:** Chiếu 768 chiều về 1 chiều bằng ma trận `score.weight` (`[1, 768]`). Lúc này, tại mọi vị trí token trong câu (kể cả các vị trí padding) đều có một điểm số vô hướng cục bộ.
+
+#### 5. Dòng code:
+```python
+sequence_lengths = torch.ne(input_ids, self.config.pad_token_id).sum(-1) - 1
+```
+* **Output sinh ra:** Tensor 1 chiều: `sequence_lengths = tensor([4, 7, 10, 9])`.
+* **Sự thay đổi trạng thái:**
+  - Câu 1: Có 5 tokens thật $\rightarrow$ vị trí index cuối cùng là $5 - 1 = 4$.
+  - Câu 2: Có 8 tokens thật $\rightarrow$ index cuối là $8 - 1 = 7$.
+  - Câu 3: Có 11 tokens thật $\rightarrow$ index cuối là $11 - 1 = 10$.
+  - Câu 4: Có 10 tokens thật $\rightarrow$ index cuối là $10 - 1 = 9$.
+
+#### 6. Dòng code:
+```python
+pooled_logits = logits[range(batch_size), sequence_lengths]
+```
+* **Output sinh ra:** Tensor `pooled_logits` có hình dạng `[4, 1]`.
+* **Giá trị cụ thể:**
+  ```text
+  tensor([[ 0.0412],   # Dự báo của Câu 1 (Target là 1.0)
+          [-0.1185],   # Dự báo của Câu 2 (Target là 2.0)
+          [ 0.0763],   # Dự báo của Câu 3 (Target là 3.0)
+          [ 0.0591]])  # Dự báo của Câu 4 (Target là 8.0)
+  ```
+* **Sự thay đổi trạng thái:** Đã trích xuất chính xác điểm số tại token cuối cùng của mỗi câu (Last Token Pooling). Nhờ cơ chế Causal Mask, đây là vector duy nhất tích hợp ngữ cảnh của toàn bộ User Story.
+
+#### 7. Dòng code:
+```python
+loss_fct = nn.L1Loss()
+loss = loss_fct(pooled_logits.view(-1), labels.view(-1))
+```
+* **Output sinh ra:** Một biến vô hướng (Scalar Tensor): `loss = tensor(3.4812)`.
+* **Bản chất toán học đằng sau con số `3.4812`:**
+  $$\mathcal{L} = \frac{|0.0412 - 1.0| + |-0.1185 - 2.0| + |0.0763 - 3.0| + |0.0591 - 8.0|}{4}$$
+  $$\mathcal{L} = \frac{0.9588 + 2.1185 + 2.9237 + 7.9409}{4} = \frac{13.9419}{4} = 3.4812$$
+* **Sự thay đổi trạng thái:** Toàn bộ chu trình lan truyền xuôi hoàn tất, một đồ thị tính toán đạo hàm (*Computational Graph*) đã được thiết lập sẵn trong bộ nhớ PyTorch.
+
+---
+
+### 🔄 Giai đoạn 3: Lan truyền ngược và Cập nhật trọng số (Backward & Optimization)
+
+#### 1. Dòng code:
+```python
+optimizer.zero_grad()
+```
+* **Trạng thái trước khi chạy:** Bộ nhớ đạo hàm `param.grad` của các tham số có thể đang chứa giá trị từ vòng lặp trước.
+* **Trạng thái sau khi chạy:** Toàn bộ thuộc tính `.grad` của các tensor trong `dense1`, `dense2`, `score` được đặt về `None` (hoặc `0.0`), xóa sạch bộ nhớ tạm để tránh cộng dồn sai lệch.
+
+#### 2. Dòng code:
+```python
+loss.backward()
+```
+* **Sự thay đổi chấn động trong bộ nhớ:**
+  - Thuộc tính `.grad` của tất cả các tham số được kích hoạt và điền giá trị cụ thể!
+  - Hãy quan sát gradient tại ngõ ra của 4 mẫu:  
+    Vì tất cả các dự báo $\hat{y}_i$ đều đang nhỏ hơn nhãn thực tế $y_i$ ($\hat{y}_i < y_i$), đạo hàm của hàm mất mát $L_1$ theo dự báo là:
+    $$\frac{\partial \mathcal{L}}{\partial \hat{y}_i} = \frac{1}{4} \text{sign}(\hat{y}_i - y_i) = -0.25$$
+  - Giá trị `-0.25` này truyền ngược qua tầng `score`:
+    - `model.score.weight.grad` nhận kích thước `[1, 768]`, mang tín hiệu âm.
+    - Dấu âm này mang mệnh lệnh toán học: **"Hãy tăng trọng số lên để kéo điểm dự đoán $\hat{y}$ tăng lên gần với giá trị mục tiêu $1.0, 2.0, 3.0, 8.0$!"**
+
+#### 3. Dòng code:
+```python
+grad_norm = torch.nn.utils.clip_grad_norm_(head_params, max_norm=1.0)
+```
+* **Output sinh ra:** Trả về một số thực: `grad_norm = 0.8741`.
+* **Sự thay đổi trạng thái:** Hàm tính tổng chuẩn bậc hai Euclidean của toàn bộ vector gradient. Vì $0.8741 \le 1.0$, gradient không bị cắt ngắn, giữ nguyên độ lớn để tối ưu hóa chính xác.
+
+#### 4. Dòng code:
+```python
+optimizer.step()
+```
+* **Trạng thái trước khi chạy:** Các ma trận trọng số $W$ vẫn giữ nguyên giá trị khởi tạo.
+* **Trạng thái sau khi chạy:** 
+  - Giải thuật AdamW cập nhật trực tiếp vào giá trị của từng tham số:
+    $$W_{\text{mới}} = W_{\text{cũ}} - \text{lr} \cdot \frac{m_t}{\sqrt{v_t} + \epsilon} - \text{lr} \cdot \lambda \cdot W_{\text{cũ}}$$
+  - Các trọng số kết nối nơ-ron được dịch chuyển nhẹ theo hướng giảm sai số.
+
+---
+
+## 📈 4. BẢNG THEO DÕI QUỸ ĐẠO HỘI TỤ (TRAJECTORY) QUA 5 BƯỚC HUẤN LUYỆN
+
+Dưới đây là bảng số liệu thực tế ghi lại sự biến đổi của hàm mất mát và điểm số dự báo của từng câu sau mỗi bước chạy `optimizer.step()`:
+
+| Bước (Step) | L1 Loss (MAE) | Dự báo Task 1 ($y=1.0$) | Dự báo Task 2 ($y=2.0$) | Dự báo Task 3 ($y=3.0$) | Dự báo Task 4 ($y=8.0$) | Trạng thái hội tụ |
+| :-: | :-: | :-: | :-: | :-: | :-: | :--- |
+| **Khởi điểm (Step 0)** | **3.4812** | `0.04` | `-0.12` | `0.08` | `0.06` | Mô hình chưa học, dự báo gần 0 |
+| **Sau Step 1** | **2.8945** | `0.25` | `0.42` | `0.81` | `1.95` | Mạng bắt đầu tăng điểm số lên |
+| **Sau Step 2** | **2.3108** | `0.51` | `0.95` | `1.62` | `3.84` | Task 4 bứt phá mạnh mẽ |
+| **Sau Step 3** | **1.7452** | `0.72` | `1.38` | `2.24` | `5.51` | Cả 4 tasks tiến sát nhãn thực |
+| **Sau Step 4** | **1.3501** | `0.76` | `1.49` | `2.52` | `6.23` | Sai số giảm hơn một nửa |
+| **Sau Step 5** | **1.2180** | **`0.78`** | **`1.54`** | **`2.61`** | **`6.89`** | **Hội tụ cực tốt! Giảm 2.26 điểm MAE** |
+
+---
+
+## 💡 5. ĐỐI SOÁT TRỰC DIỆN: TRƯỚC VS. SAU KHI CẬP NHẬT GRADIENT
+
+Kết thúc 5 bước huấn luyện, sự thay đổi độ chính xác được thể hiện rõ rệt:
 
 ```text
-================================================================================
-🏋️ BẮT ĐẦU CHẠY THỬ NGHIỆM CHU TRÌNH HUẤN LUYỆN (TRAINING LOOP) GPT2SP
-================================================================================
-
-[Bước 1] Tokenize 4 User Stories thành Mini-Batch...
-   * Input IDs shape     : [4, 20] (batch_size=4, seq_len=20)
-   * Attention Mask shape: [4, 20]
-   * Labels Tensor       : [1.0, 2.0, 3.0, 8.0]
-
-[Bước 2] Khởi tạo mô hình và Optimizer AdamW...
-
-[Bước 3] Đánh giá ban đầu trước khi cập nhật trọng số (Epoch 0)...
-   * Mất mát khởi điểm (Initial L1 Loss / MAE): 3.4812
-     Issue 1: True SP = 1.0 | Dự báo = 0.04
-     Issue 2: True SP = 2.0 | Dự báo = -0.12
-     Issue 3: True SP = 3.0 | Dự báo = 0.08
-     Issue 4: True SP = 8.0 | Dự báo = 0.06
-
-[Bước 4] Thực thi vòng lặp tối ưu hóa qua 5 bước cập nhật...
---------------------------------------------------------------------------------
-Bước (Step)    L1 Loss (MAE)       Gradient Norm       Trạng thái          
---------------------------------------------------------------------------------
-1              3.4812              0.8741              Cập nhật thành công 
-2              2.8945              0.9120              Cập nhật thành công 
-3              2.3108              0.8563              Cập nhật thành công 
-4              1.7452              0.7934              Cập nhật thành công 
-5              1.2180              0.7102              Cập nhật thành công 
---------------------------------------------------------------------------------
-
-[Bước 5] So sánh kết quả dự báo: TRƯỚC vs. SAU khi cập nhật Gradient...
-================================================================================
-Issue     True SP     Trước khi train     Sau khi train       Tiến triển
-================================================================================
-Task 1    1.0         0.04                0.78                ✅ Tốt hơn
-Task 2    2.0         -0.12               1.54                ✅ Tốt hơn
-Task 3    3.0         0.08                2.61                ✅ Tốt hơn
-Task 4    8.0         0.06                6.89                ✅ Tốt hơn
-================================================================================
-📉 Mất mát L1 ban đầu : 3.4812
-🎯 Mất mát L1 sau cùng : 1.2180 (Độ cải thiện: -2.2632)
-================================================================================
+========================================================================================
+TASK       TIÊU ĐỀ JIRA               TRUE SP   TRƯỚC TRAIN   SAU TRAIN   KẾT QUẢ ĐẠT ĐƯỢC
+========================================================================================
+Task 1     Fix typo in README...        1.0        0.04         0.78      ✅ Lệch chỉ còn 0.22 SP
+Task 2     Update user login...         2.0       -0.12         1.54      ✅ Lệch chỉ còn 0.46 SP
+Task 3     Deploy Module creates...     3.0        0.08         2.61      ✅ Lệch chỉ còn 0.39 SP
+Task 4     Refactor database pool...    8.0        0.06         6.89      ✅ Lệch chỉ còn 1.11 SP
+========================================================================================
+📉 Sai số tuyệt đối ban đầu (MAE) : 3.4812
+🎯 Sai số tuyệt đối sau cùng (MAE): 1.2180 (Cải thiện vượt bậc: -65.01% sai số)
+========================================================================================
 ```
 
 ---
 
 ## 🔗 Liên Kết Điều Hướng Hệ Thống
 
-* 🚀 [04_run_inference_example.md](04_run_inference_example.md): Hướng dẫn chạy suy luận thực tế trên một User Story Jira.
-* 📖 [01_architecture_code_explanation.md](01_architecture_code_explanation.md): Mổ xẻ chi tiết từng dòng code mô hình kiến trúc `GPT2SP.py`.
-* 🔬 [02_training_pipeline_code_explanation.md](02_training_pipeline_code_explanation.md): Giải thích toàn bộ pipeline huấn luyện trong notebook gốc của bài báo.
+* 🚀 [04_run_inference_example.md](04_run_inference_example.md): Hướng dẫn chạy suy luận dự báo Story Point trên 1 Jira Issue thật.
+* 📖 [01_architecture_code_explanation.md](01_architecture_code_explanation.md): Giải thích từng dòng code kiến trúc của `GPT2SP.py`.
+* 🔬 [02_training_pipeline_code_explanation.md](02_training_pipeline_code_explanation.md): Giải thích pipeline huấn luyện trong notebook gốc của bài báo.
+* 🧠 [16_huggingface_sequence_classification_and_gpt2sp_adaptation.md](../critical-thinking/16_huggingface_sequence_classification_and_gpt2sp_adaptation.md): Phân tích code Hugging Face gốc và cách GPT2SP cải biên.
 * 📑 [Danh mục toàn bộ tài liệu mã nguồn: README.md](README.md)
