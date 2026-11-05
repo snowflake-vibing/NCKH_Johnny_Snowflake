@@ -254,8 +254,18 @@ loss = loss_fct(pooled_logits.view(-1), labels.view(-1))
 ```python
 optimizer.zero_grad()
 ```
-* **Trạng thái trước khi chạy:** Bộ nhớ đạo hàm `param.grad` của các tham số có thể đang chứa giá trị từ vòng lặp trước.
-* **Trạng thái sau khi chạy:** Toàn bộ thuộc tính `.grad` của các tensor trong `dense1`, `dense2`, `score` được đặt về `None` (hoặc `0.0`), xóa sạch bộ nhớ tạm để tránh cộng dồn sai lệch.
+* **"Các tham số" ở đây cụ thể gồm những gì?**
+  Trong kịch bản huấn luyện này, `optimizer` được gán nhiệm vụ quản lý biến `head_params`, bao gồm chính xác **3 ma trận Tensor trọng số** (vì cả 3 tầng đều khai báo `bias=False` nên không có vector bias):
+  1. `model.dense1.weight`: Kích thước `[3072, 768]` $\rightarrow$ gồm **2.359.296** tham số (số thực float32).
+  2. `model.dense2.weight`: Kích thước `[768, 3072]` $\rightarrow$ gồm **2.359.296** tham số.
+  3. `model.score.weight`: Kích thước `[1, 768]` $\rightarrow$ gồm **768** tham số.
+  👉 **Tổng cộng:** `optimizer` đang theo dõi đúng **4.719.360** tham số (khoảng 4,72 triệu trọng số). *(Trong huấn luyện thực tế toàn diện Full Fine-Tuning của bài báo gốc, `optimizer` quản lý toàn bộ 117 triệu tham số của cả 12 khối GPT-2).*
+
+* **Trạng thái trước khi chạy `zero_grad()`:**
+  Trong PyTorch, mỗi tham số `param` là một tensor lưu trọng số thực tế trong thuộc tính `param.data`. Đi kèm với nó là thuộc tính `param.grad` (chứa đạo hàm riêng $\frac{\partial \mathcal{L}}{\partial W}$). Trước khi gọi lệnh này, thuộc tính `param.grad` của 4,72 triệu trọng số trên đang chứa các giá trị đạo hàm tích lũy từ bước lặp (Step) trước đó.
+
+* **Trạng thái sau khi chạy `zero_grad()`:**
+  PyTorch quét qua toàn bộ 3 ma trận trọng số trên và đặt thuộc tính `.grad` về `None` (hoặc ma trận số `0.0`), xóa sạch bộ nhớ tạm. Điều này ngăn chặn việc gradient của bước mới bị cộng dồn đè lên gradient cũ của bước trước.
 
 #### 2. Dòng code:
 ```python
