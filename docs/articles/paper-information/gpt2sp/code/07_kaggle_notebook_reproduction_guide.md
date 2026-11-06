@@ -356,6 +356,54 @@ Sau khi dán xong 8 Cells trên vào Kaggle Notebook, bạn thực hiện quy tr
 
 ---
 
+## 💾 6. CÂU HỎI LỚN: TRÊN KAGGLE CÓ CẦN LƯU CHECKPOINTS KHÔNG VÀ LƯU NHƯ THẾ NÀO?
+
+Một thắc mắc thực tế rất hay gặp: *"Trên Kaggle ta có cần lưu checkpoint mô hình (`weights`) không, và nếu có thì lưu ở đâu để không bị mất khi phiên làm việc kết thúc?"*
+
+Câu trả lời phụ thuộc vào **mục đích của tác vụ**:
+
+### 6.1. Trường hợp 1: Khi chỉ chạy suy luận thẩm định (Inference Only - Kịch bản hiện tại)
+* **Câu trả lời:** **KHÔNG CẦN LƯU LẠI CHECKPOINT!**
+* **Lý do:** Ở bước này, chúng ta đang nạp một checkpoint đã được huấn luyện sẵn của tác giả từ Hugging Face Hub (`MickyMike/0-GPT2SP-springxd`). Mô hình chỉ đọc dữ liệu và dự đoán (không có lan truyền ngược hay cập nhật trọng số). 
+* Checkpoint gốc đã được lưu vĩnh viễn trên máy chủ Hugging Face. Do đó, trên Kaggle ta **chỉ cần lưu kết quả dự báo đầu ra** (file `springxd_reproduction_evidence.csv` và ảnh biểu đồ) làm bằng chứng kiểm chứng.
+
+---
+
+### 6.2. Trường hợp 2: Khi huấn luyện lại mô hình mới (Training / Fine-Tuning)
+* **Câu trả lời:** **BẮT BUỘC PHẢI LƯU CHECKPOINT!**
+* **Lý do:** Kaggle giới hạn một phiên làm việc (Session) tối đa 12 tiếng và sẽ tự động xóa sạch ổ đĩa tạm khi bạn tắt phiên. Nếu đang huấn luyện một mô hình mới (ví dụ: huấn luyện trên dữ liệu sạch không rò rỉ của Nhóm 3) mà không lưu checkpoint thì toàn bộ công sức sẽ mất trắng.
+
+#### 📌 Cách lưu Checkpoint chuẩn trong Kaggle Notebook:
+Mọi file hoặc thư mục được lưu vào đường dẫn **`/kaggle/working/`** đều sẽ được Kaggle bảo toàn vĩnh viễn và hiển thị tại tab **Output** sau khi phiên chạy kết thúc:
+
+```python
+# LỆNH LƯU CHECKPOINT SAU KHI TRAIN XONG (HOẶC KHI ĐẠT BEST VAL LOSS)
+output_dir = "/kaggle/working/best_gpt2sp_checkpoint"
+
+# 1. Lưu trọng số mô hình và cấu hình kiến trúc
+model.save_pretrained(output_dir)
+
+# 2. Lưu bộ từ điển BPE của Tokenizer
+tokenizer.save_pretrained(output_dir)
+
+print(f"✅ Đã lưu checkpoint an toàn vào: {output_dir}")
+```
+
+#### 🚀 3 Chiến lược giữ Checkpoint vĩnh viễn trên Cloud:
+1. **Cách 1: Tải trực tiếp về máy tính (Download from Output):**
+   - Sau khi bấm `Save & Run All`, vào tab **Output** trên giao diện Kaggle $\rightarrow$ Bấm nút 3 chấm bên cạnh thư mục checkpoint $\rightarrow$ Chọn **Download** (sẽ tải về file `.zip` chứa `model.safetensors` và `config.json`).
+2. **Cách 2: Đóng gói thành Kaggle Dataset riêng (Kaggle Dataset Versioning):**
+   - Ngay tại tab **Output**, Kaggle có nút **`+ New Dataset`**. Bạn bấm vào đó để biến thư mục checkpoint vừa train thành một **Kaggle Dataset riêng**.
+   - Các notebook khác sau này chỉ cần bấm `+ Add Input` là có thể nạp lại checkpoint này trong 1 giây mà không cần tốn thời gian train lại!
+3. **Cách 3: Đẩy thẳng lên Hugging Face Hub (Chuyên nghiệp nhất):**
+   ```python
+   from huggingface_hub import login
+   login(token="hf_your_access_token") # Đăng nhập tài khoản Hugging Face
+   model.push_to_hub("JohnnySnowflake/GPT2SP-SpringXD-Clean")
+   ```
+
+---
+
 ## 🔗 Liên Kết Điều Hướng Hệ Thống
 
 * 🔬 [06_end_to_end_reproduction_guide_github_to_metrics.md](06_end_to_end_reproduction_guide_github_to_metrics.md): Lý thuyết phương pháp luận tái lập từ GitHub.
