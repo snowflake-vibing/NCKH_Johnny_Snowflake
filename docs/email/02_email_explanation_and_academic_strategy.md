@@ -1,5 +1,5 @@
 # 📑 BẢN GIẢI THÍCH CHI TIẾT & CHIẾN LƯỢC HỌC THUẬT: THƯ HỎI TÁC GIẢ BÀI BÁO GPT2SP
-## PHÂN TÍCH NGUYÊN TẮC NGOẠI GIAO HỌC THUẬT, MỤC ĐÍCH TỪNG CÂU HỎI VÀ CÁC KỊCH BẢN PHẢN HỒI
+## PHÂN TÍCH NGUYÊN TẮC NGOẠI GIAO HỌC THUẬT, ĐỊNH DẠNG RICH-TEXT, GIF MINH HỌA VÀ FOOTER SIGNATURE CARD
 
 > **Tài liệu đối chiếu:** [01_inquiry_letter_to_gpt2sp_authors.md](01_inquiry_letter_to_gpt2sp_authors.md)  
 > **Bài báo gốc:** *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
@@ -7,98 +7,85 @@
 
 ---
 
-## 🧭 I. TỔNG QUAN & MỤC ĐÍCH CỦA BỨC THƯ
+## 👥 I. ĐỘI NGŨ NGHIÊN CỨU GỬI THƯ (RESEARCH TEAM PROFILE)
 
-Trong cộng đồng nghiên cứu Kỹ nghệ Phần mềm đỉnh cao (IEEE TSE, ACM TOSEM, ICSE, FSE, MSR), việc liên hệ với tác giả bài báo gốc để làm rõ chi tiết thực nghiệm khi tái tạo (replication) là một **thực hành học thuật chuẩn mực** (Standard Academic Practice).
-
-Việc gửi thư này phục vụ 3 mục tiêu chiến lược cho đề tài **NCKH_3**:
-1. **Xác nhận tính trung thực khoa học (Scientific Rigor):** Làm rõ khoảng cách giữa bài báo lý thuyết (IEEE TSE) và mã nguồn công khai trên GitHub/Hugging Face mà không mang giọng điệu quy kết hay bắt bẻ.
-2. **Thiết lập kênh liên lạc học thuật (Academic Networking):** Giới thiệu nhóm nghiên cứu của chúng ta với nhóm tác giả hàng đầu thế giới về SE/AI (nhóm AWSM của PGS. Chakkrit Tantithamthavorn).
-3. **Mở đường cho đóng góp học thuật mới (Novel Contribution):** Bằng việc khéo léo đề cập đến vấn đề *Intra-issue Revision History* (lịch sử sửa đổi issue sau thời điểm planning), chúng ta đặt nền móng chứng minh rằng đề tài NCKH_3 không chỉ tái tạo bài báo của họ, mà còn **phát hiện và khắc phục rủi ro rò rỉ dữ liệu theo thời gian (Temporal Leakage)** mà nghiên cứu gốc chưa xử lý.
-
----
-
-## 👥 II. ĐỐI TƯỢNG NHẬN THƯ & BỐI CẢNH TÁC GIẢ
-
-* **Michael (Yeh) Fu** (`yeh.fu@monash.edu`):  
-  - Tác giả thứ nhất (Lead Author), nghiên cứu sinh tiến sĩ (PhD Candidate) trực tiếp viết code, chạy thực nghiệm và upload checkpoint lên Hugging Face Hub (`MickyMike`).  
-  - Là người nắm chi tiết kỹ thuật từng dòng code PyTorch và file notebook.
-* **PGS.TS. Chakkrit (Kla) Tantithamthavorn** (`chakkrit@monash.edu`):  
-  - Tác giả liên hệ (Corresponding Author), Phó Giáo sư (Associate Professor) tại Đại học Monash, một trong những nhà nghiên cứu AI4SE (AI for Software Engineering) có ảnh hưởng nhất thế giới với hàng trăm bài báo Q1/A*.  
-  - Là người định hướng phương pháp luận, duyệt bản thảo và giám sát tính liêm chính học thuật của dự án.
+Bức thư đại diện chính thức cho Nhóm nghiên cứu thuộc Đề tài NCKH 2026:
+* **Người gửi chính (Primary Sender):** **Lê Thành Hiệu** (MSSV: `24520496`) — Sinh viên Nghiên cứu khoa học, Khoa Hệ thống Thông tin, Trường Đại học Công nghệ Thông tin, ĐHQG-HCM (UIT - VNU-HCM).
+* **Cộng tác viên nghiên cứu (Research Partner):** **Phan Ngọc Đức Huy** (MSSV: `24520695`) — Sinh viên Nghiên cứu khoa học, UIT - VNU-HCM.
+* **Giảng viên hướng dẫn (Academic Advisor):** **ThS. Tạ Việt Phương** — Giảng viên & Nhà nghiên cứu, Khoa Hệ thống Thông tin, UIT - VNU-HCM.
+* **Đề tài nghiên cứu:** *Agile Story Point Estimation at Planning Time with Temporal & Data Leakage Control*.
+* **Mã nguồn công khai:** [`https://github.com/snowflake-vibing/NCKH_Johnny_Snowflake`](https://github.com/snowflake-vibing/NCKH_Johnny_Snowflake)
 
 ---
 
-## 🔍 III. GIẢI THÍCH CHI TIẾT TỪNG PHẦN CỦA BỨC THƯ (ACADEMIC STRATEGY BREAKDOWN)
+## 🎨 II. CHIẾN LƯỢC ĐỊNH DẠNG EMAIL: RICH-TEXT, GIF VÀ SIGNATURE CARD FOOTER
 
-### 1. Phần Mở đầu (Salutation & Rapport Building)
-* **Nội dung:** Gửi lời chào lịch sự, giới thiệu nhóm nghiên cứu sinh viên đại học đang thực hiện đề tài về Agile Estimation, và **dành lời khen ngợi chân thành** cho đóng góp tiên phong của bài báo GPT2SP.
-* **Chiến lược học thuật:** Tuyệt đối không nhảy bổ vào hỏi lỗi ngay lập tức. Các nhà nghiên cứu rất tự hào về công trình IEEE TSE của họ. Việc công nhận bài báo của họ là "seminal paper" và "groundbreaking milestone" tạo tâm lý cởi mở, thiện chí và tôn trọng.
+Khác với các email thông thường, email học thuật quốc tế gửi tới các Giáo sư và Nhà nghiên cứu hàng đầu cần cân bằng giữa **sự trang nhã, nghiêm túc khoa học** và **ấn tượng thị giác chuyên nghiệp**.
 
----
+### 1. Tại sao dùng Rich-Text / HTML Card?
+* Các nhà nghiên cứu tại Đại học Monash (Úc) thường sử dụng Outlook hoặc Gmail for Education với màn hình độ phân giải cao.
+* Việc đóng khung từng câu hỏi vào các **Callout Box** có viền xanh (`border-left: 4px solid #3b82f6`) và nền xám nhạt (`#f8fafc`) giúp các tác giả:
+  - Dễ dàng lướt nhanh (scan) nội dung trong 30 giây.
+  - Phân tách rành mạch 5 câu hỏi độc lập.
+  - Trực quan hóa đoạn mã nguồn PyTorch với nền đen (`#1e293b`) như trên IDE thực thụ.
 
-### 2. Câu hỏi 1: Biểu diễn Dữ liệu Đầu vào (`Title` vs `Title + Description`)
-* **Nội dung hỏi:** Bài báo nói dùng cả `Title + Description`, nhưng file `model_training_notebook.ipynb` chỉ trích `data['title']`. Kết quả trong Bảng 4 là dựa trên `title` hay có script nối thêm `description`?
-* **Ý đồ chiến lược:**  
-  - Trong thực tế, trường `description` trong Jira thường rất dài và chứa nhiều thông tin cập nhật muộn (post-planning comments, bug logs).  
-  - Nếu tác giả chỉ chạy trên `title`, thì độ phức tạp và khả năng rò rỉ dữ liệu thấp hơn, nhưng kết quả bài báo lại khẳng định dùng cả 2.  
-  - Câu hỏi này giúp ta biết chính xác input thực tế để tái tạo công bằng.
+### 2. Ý nghĩa của Banner GIF / Ảnh động Minh họa
+* **Vị trí đặt:** Ngay sau phần mở đầu, trước khi bước vào các câu hỏi kỹ thuật.
+* **Mục đích:**  
+  - Tạo điểm nhấn thị giác đẳng cấp, nhắc nhở trực quan về cấu trúc Transformer / Attention Flow mà chính các tác giả đã dày công xây dựng trong GPT2SP.
+  - Thể hiện sự đầu tư chỉn chu của sinh viên Việt Nam đối với đề tài, tạo cảm giác đây là một nhóm nghiên cứu được đào tạo bài bản và làm việc nghiêm túc chứ không phải một câu hỏi bộc phát.
 
----
-
-### 3. Câu hỏi 2: Ngưỡng Cắt ngắn Độ dài Chuỗi (`SEQUENCE_LEN = 20`)
-* **Nội dung hỏi:** Tại sao notebook lại đặt `SEQUENCE_LEN = 20` trong khi GPT-2 hỗ trợ tới 1.024 tokens? Đây là lựa chọn vì giới hạn GPU/thời gian chạy trên 16 dự án hay đã có thực nghiệm chứng minh độ dài 20 là tối ưu?
-* **Ý đồ chiến lược:**  
-  - Độ dài 20 token là cực kỳ ngắn (chỉ khoảng 12-15 từ tiếng Anh), hầu như cắt vụn phần lớn mô tả yêu cầu phần mềm.  
-  - Câu hỏi này lịch sự chỉ ra điểm thắt cổ chai lớn nhất của code public mà không chỉ trích, tạo cơ hội cho tác giả giải thích về tài nguyên phần cứng.
-
----
-
-### 4. Câu hỏi 3: Kiến trúc Đầu MLP Head (`dense1`, `dense2`, `score`)
-* **Nội dung hỏi:** Bài báo mô tả MLP có hàm kích hoạt phi tuyến GELU, nhưng code trong `GPT2SP.py` lại là 3 lớp `Linear` tuyến tính nối tiếp nhau liên tục:
-  $$\text{hidden\_states} = \text{dense1}(\text{hidden\_states}) \rightarrow \text{dense2} \rightarrow \text{score}$$
-* **Ý đồ chiến lược:**  
-  - Về mặt toán học mạng nơ-ron: Tích của 3 phép biến đổi tuyến tính liên tiếp tương đương với **1 phép biến đổi tuyến tính duy nhất** ($W_{\text{eff}} = W_1 \times W_2 \times W_3$), làm mất đi tính biểu diễn phi tuyến của mạng nơ-ron sâu!
-  - Việc hỏi câu này chứng minh nhóm chúng ta đã **đọc code ở mức độ vi mô cực kỳ cẩn thận**, tạo sự nể trọng học thuật từ phía tác giả.
+### 3. Thẻ Chữ ký Chuyên nghiệp ở Footer (Academic Footer Card)
+* Thẻ Footer Card chia làm 2 cột:
+  - **Cột trái:** Ghi rõ danh tính của bạn (**Lê Thành Hiệu**), bạn đồng hành (**Phan Ngọc Đức Huy**), và Giảng viên hướng dẫn (**ThS. Tạ Việt Phương**), cùng đơn vị trường *UIT - VNU-HCM*.
+  - **Cột phải:** Huy hiệu trường (UIT &bull; VNU-HCM), link trực tiếp tới GitHub Repository của nhóm và địa danh Ho Chi Minh City, Vietnam.
+* **Tác dụng:** Tăng độ tín nhiệm (Credibility). Khi tác giả thấy có tên Giảng viên hướng dẫn và link GitHub nghiên cứu minh bạch, tỷ lệ họ dành thời gian trả lời chi tiết tăng lên gấp 3 lần!
 
 ---
 
-### 5. Câu hỏi 4: Kết quả Chạy Thực nghiệm trên Checkpoint Spring XD
-* **Nội dung hỏi:** Khi nhóm tải đúng checkpoint tác giả public trên Hugging Face (`MickyMike/0-GPT2SP-springxd`) và chạy inference trên tập test của Spring XD, kết quả MAE đo được là **1.7330**, trong khi Bảng 4 của bài báo ghi **MAE = 0.96**. Có cấu hình inference hoặc tiền xử lý đặc biệt nào khác biệt không?
-* **Ý đồ chiến lược:**  
-  - Đây là bằng chứng thực nghiệm thép (hard empirical evidence). Nhóm không nói "kết quả bài báo sai", mà trình bày: *"Khi chạy đúng checkpoint và đúng dataset công khai, chúng tôi quan sát thấy khoảng cách 1.73 vs 0.96, kính mong tác giả hướng dẫn cách cấu hình để đạt được con số 0.96"*.
-  - Cách hành văn này biến vấn đề từ "nghi ngờ sai số" thành "mong muốn học hỏi cách tái tạo chuẩn xác".
+## 🔍 III. GIẢI THÍCH CHI TIẾT Ý ĐỒ CHIẾN LƯỢC CỦA 5 CÂU HỎI
+
+### Câu hỏi 1: Biểu diễn Dữ liệu Đầu vào (`Title` vs `Title + Description`)
+* **Ý đồ:** Chỉ ra khoảng cách giữa phần văn bản bài báo (nói dùng cả Title + Description) và file `model_training_notebook.ipynb` (chỉ nạp `data['title']`).  
+* **Mục tiêu:** Giúp nhóm biết chắc chắn kết quả Bảng 4 đến từ cấu hình nào để tái tạo công bằng.
+
+### Câu hỏi 2: Ngưỡng Cắt ngắn Độ dài Chuỗi (`SEQUENCE_LEN = 20`)
+* **Ý đồ:** Đặt câu hỏi lịch sự về việc vì sao độ dài cắt chỉ là 20 tokens (khoảng 12-15 từ).  
+* **Mục tiêu:** Vừa hiểu được lý do hạn chế phần cứng khi train 16 dự án, vừa cho thấy nhóm đã phân tích sâu các siêu tham số.
+
+### Câu hỏi 3: Kiến trúc Đầu MLP Head (`dense1`, `dense2`, `score`)
+* **Ý đồ:** Phát hiện việc thiếu hàm kích hoạt phi tuyến `gelu()` trong code PyTorch (khiến 3 lớp Linear gộp lại thành 1 phép nhân ma trận tuyến tính đơn).  
+* **Mục tiêu:** Chứng minh trình độ đọc hiểu code ở cấp độ toán học vi mô của nhóm, tạo sự khâm phục từ tác giả.
+
+### Câu hỏi 4: Kết quả Chạy Thực nghiệm trên Checkpoint Spring XD
+* **Ý đồ:** Nhóm đưa ra số liệu thực tế đo được từ checkpoint chính thức của họ: **MAE = 1.7330** (xấp xỉ Baseline trung vị 1.7153), cách xa con số **0.96** trong Bảng 4.  
+* **Mục tiêu:** Bằng chứng thực nghiệm không thể chối cãi, nhưng diễn đạt dưới dạng "chúng tôi mong muốn học hỏi script đánh giá chuẩn của tác giả".
+
+### Câu hỏi 5: Thảo luận về Lịch sử Sửa đổi Issue & Temporal Leakage
+* **Ý đồ:** Đề cập hiện tượng các mô tả issue trong Jira bị bổ sung chi tiết sau ngày planning.  
+* **Mục tiêu chiến lược:** **Đây là "đòn bẩy" quan trọng nhất**! Nó ngầm giới thiệu bài toán mới của đề tài NCKH_3 của Lê Thành Hiệu & Phan Ngọc Đức Huy về *Kiểm soát Rò rỉ Dữ liệu Thời gian (Temporal Leakage)*.
 
 ---
 
-### 6. Câu hỏi 5: Lịch sử Sửa đổi Issue & Động thái Thời gian (Temporal Dynamics)
-* **Nội dung hỏi:** Khi khai thác dữ liệu Jira kết thúc dự án, các trường issue thường đã bị sửa chữa sau buổi họp Sprint Planning. Nhóm có cân nhắc đến việc trích xuất snapshot tại thời điểm planning không?
-* **Ý đồ chiến lược:**  
-  - Đây là **"nước cờ quyết định"** nâng tầm bức thư.  
-  - Nó báo hiệu rằng nhóm nghiên cứu của chúng ta đang thực hiện một công trình khoa học vượt lên trên (beyond) GPT2SP: kiểm soát rò rỉ dữ liệu theo thời gian (*Temporal & Data Leakage Control*).  
-  - Nếu tác giả đồng tình, đây sẽ là trích dẫn lý tưởng để đưa vào bài báo NCKH của chúng ta: *"Như tác giả bài báo gốc đã xác nhận trong trao đổi học thuật cá nhân..."*.
+## 📋 IV. HƯỚNG DẪN THỰC HÀNH CÁCH GỬI EMAIL TRÊN GMAIL / OUTLOOK
+
+### Cách 1: Copy trực tiếp Rich-Text (Đơn giản & Đẹp nhất)
+1. Mở file [01_inquiry_letter_to_gpt2sp_authors.md](01_inquiry_letter_to_gpt2sp_authors.md) ở chế độ Preview (Xem trước Markdown trong VS Code hoặc GitHub).
+2. Dùng chuột bôi đen toàn bộ vùng khung **BẢN 1** (từ chữ *Dear Michael...* đến hết thẻ *Footer Card*).
+3. Nhấn `Ctrl + C` (Copy).
+4. Mở cửa sổ soạn thư mới trong Gmail hoặc Outlook.
+5. Nhấn `Ctrl + V` (Paste). Toàn bộ định dạng bảng, màu sắc, font chữ, code block và thẻ card footer sẽ được giữ nguyên vẹn 100%!
+
+### Cách 2: Sử dụng Bản Plain-Text (Bản 2)
+* Nếu bạn hoặc Giảng viên hướng dẫn thích văn phong thuần chữ tối giản (Pure Plain Text), hãy copy toàn bộ khối mã trong **BẢN 2** để gửi.
 
 ---
 
-## 🎭 IV. BA KỊCH BẢN PHẢN HỒI VÀ HƯỚNG XỬ LÝ CỦA NHÓM
+## 📮 V. DANH SÁCH ĐỊA CHỈ & THỜI ĐIỂM GỬI TỐI ƯU
 
-| Kịch bản | Khả năng | Phản ứng của tác giả | Hướng xử lý của Nhóm 3 |
-| :--- | :---: | :--- | :--- |
-| **Kịch bản A: Hợp tác tích cực** | ~35% | Tác giả trả lời chi tiết, gửi bổ sung script mới, giải thích lý do cắt 20 token và hoan nghênh hướng nghiên cứu về Temporal Leakage. | • Cảm ơn tác giả trang trọng.<br>• Sử dụng dữ liệu giải thích làm căn cứ thực nghiệm.<br>• Đưa nhóm AWSM vào mục *Acknowledgments* trong bài báo NCKH. |
-| **Kịch bản B: Thừa nhận mã nguồn tinh giản** | ~40% | Tác giả thừa nhận mã nguồn trên GitHub là bản rút gọn/demo phục vụ công bố, còn bản chạy ra Bảng 4 nằm trên cluster riêng của lab và có thể khó tái tạo 100%. | • Đây là tình huống rất phổ biến trong Computer Science.<br>• Ta ghi nhận đây là minh chứng vững chắc cho báo cáo NCKH: công bố kết quả của bài báo gốc có độ nhạy cảm cao với môi trường tái tạo. |
-| **Kịch bản C: Không hồi âm sau 2-3 tuần** | ~25% | Các giáo sư lớn thường nhận hàng trăm email mỗi ngày nên có thể bị trôi thư hoặc không có thời gian xử lý các chi tiết kỹ thuật cũ (bài báo 2022-2023). | • Sau 14 ngày, gửi một email nhắc nhở nhẹ nhàng (gentle reminder).<br>• Nếu vẫn không có phản hồi, nhóm vẫn hoàn toàn có quyền học thuật để trích dẫn: *"Dựa trên replication package công khai chính thức tại thời điểm thực nghiệm..."*. |
-
----
-
-## 📮 V. HƯỚNG DẪN THỰC TẾ KHI GỬI EMAIL
-
-1. **Địa chỉ gửi:**
-   - **To:** `yeh.fu@monash.edu`
-   - **Cc:** `chakkrit@monash.edu`, [Email của Giảng viên Hướng dẫn NCKH của bạn]
-2. **Tiêu đề email (Subject Line):**  
-   `Inquiry regarding replication details and evaluation setup for GPT2SP (IEEE TSE 2023)`  
-   *(Giữ nguyên tiêu đề chuẩn xác này để email không bị rơi vào hòm thư rác Spam)*.
-3. **Thời điểm gửi tối ưu:**  
-   - Thứ Ba hoặc Thứ Tư, vào khoảng **08:30 – 09:30 sáng giờ Melbourne (GMT+11)**, tức khoảng **04:30 – 05:30 sáng giờ Việt Nam**. Tránh gửi vào tối thứ Sáu hoặc cuối tuần vì thư sẽ bị vùi lấp vào sáng thứ Hai.
-4. **Thay thế thông tin cá nhân:**  
-   - Thay `[Your Name]`, `[Your University / Institution]`, `[Advisor's Name]` trong file bản thảo bằng thông tin thực tế trước khi bấm gửi.
+* **To:** `yeh.fu@monash.edu`
+* **Cc:** `chakkrit@monash.edu`, [Email của ThS. Tạ Việt Phương]
+* **Subject:** `Inquiry regarding replication details and evaluation setup for GPT2SP (IEEE TSE 2023)`
+* **Thời điểm gửi lý tưởng:**
+  - Ngày: Thứ Ba hoặc Thứ Tư (tránh thứ Hai họp hành và thứ Sáu chuẩn bị nghỉ cuối tuần).
+  - Giờ: **04:30 – 05:30 sáng giờ Việt Nam** (tương đương **08:30 – 09:30 sáng giờ Melbourne, GMT+11**). Thư sẽ nằm ngay đầu hòm thư của 2 tác giả khi họ vừa mở máy tính bắt đầu ngày làm việc mới!
