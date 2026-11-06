@@ -8,7 +8,7 @@
 
 ## 🧭 CẤU TRÚC HỆ THỐNG TÀI LIỆU TRONG THƯ MỤC `code/`
 
-Thư mục này được chia thành 6 tài liệu chuyên sâu, phục vụ đầy đủ từ việc lưu trữ mã nguồn thô đến mổ xẻ phương pháp luận, phản biện khoa học, và các kịch bản chạy code thực tế:
+Thư mục này được chia thành 7 tài liệu chuyên sâu, phục vụ đầy đủ từ việc lưu trữ mã nguồn thô đến mổ xẻ phương pháp luận, phản biện khoa học, các kịch bản chạy code thực tế, và quy trình tái lập thực nghiệm lấy bằng chứng khoa học:
 
 | Thứ tự | Tên Tập Tin | Nội Dung Cốt Lõi | Chương Đối Ứng Trong Bài Báo |
 | :---: | :--- | :--- | :--- |
@@ -18,6 +18,7 @@ Thư mục này được chia thành 6 tài liệu chuyên sâu, phục vụ đ�
 | **03** | [`03_code_vs_paper_discrepancies.md`](03_code_vs_paper_discrepancies.md) | **Mổ xẻ 4 điểm sai lệch cốt tử giữa Code thực tế và Bài báo**<br>• Phát hiện bài báo ghi dùng `Title + Description` nhưng code chỉ nạp `Title`.<br>• Phát hiện `SEQUENCE_LEN` bị ép cụt ngủn xuống 20 tokens.<br>• Lý giải bí mật tốc độ huấn luyện 14 giây.<br>• Lỗi tính MAE do nhóm nghiên cứu UCL vạch trần.<br>• Bằng chứng tái lập thực tế trên Spring XD: Checkpoint tác giả chỉ đạt MAE 1.7330 (thua Median Baseline 1.7153). | **Section 9: Threats to Validity** & **Phản biện NCKH Nhóm 3** |
 | **04** | [`04_run_inference_example.md`](04_run_inference_example.md) | **Hướng dẫn chạy ví dụ suy luận thực tế trong code (`Inference`)**<br>• Mã nguồn Python hoàn chỉnh chạy dự báo trên Jira issue XD-3751.<br>• Bảng theo dõi biến đổi hình dạng Tensor qua từng tầng.<br>• Cơ chế ánh xạ Euclidean sang dãy số Fibonacci Scrum.<br>• Mô phỏng terminal output và mở rộng cho suy luận theo lô (Batch Inference). | **Section 3.3 & Section 5** |
 | **05** | [`05_run_training_example.md`](05_run_training_example.md) | **Hướng dẫn chạy ví dụ huấn luyện thực tế trong code (`Training Loop`)**<br>• Mã nguồn Python hoàn chỉnh mô phỏng chu trình học máy.<br>• Lan truyền xuôi, tính $L_1$ Loss, lan truyền ngược (`backward`) và AdamW.<br>• Bảng so sánh kết quả dự báo trước vs sau khi cập nhật Gradient.<br>• Phân tích toán học tính kháng ngoại lai của $L_1$ Loss. | **Section 3.4 & Section 4** |
+| **06** | [`06_end_to_end_reproduction_guide_github_to_metrics.md`](06_end_to_end_reproduction_guide_github_to_metrics.md) | **Hướng dẫn tái lập thực nghiệm từ GitHub đến thông số đầu ra làm bằng chứng**<br>• Quy trình 5 bước từ repo `awsm-research/gpt2sp` đến checkpoint Hugging Face.<br>• Phân chia Chronological Split 60/20/20 trên 3.526 issues của Spring XD.<br>• Script Python hoàn chỉnh tính MAE, MdAE, SA, và kiểm định Wilcoxon Signed-Rank Test.<br>• Xuất file CSV bằng chứng chi tiết 706 mẫu test làm minh chứng khoa học. | **Section 4 & Section 5 & Đề tài NCKH** |
 
 ---
 
