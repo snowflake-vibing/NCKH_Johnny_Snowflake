@@ -8,7 +8,7 @@
 
 ## 🧭 CẤU TRÚC HỆ THỐNG TÀI LIỆU TRONG THƯ MỤC `code/`
 
-Thư mục này được chia thành 7 tài liệu chuyên sâu, phục vụ đầy đủ từ việc lưu trữ mã nguồn thô đến mổ xẻ phương pháp luận, phản biện khoa học, các kịch bản chạy code thực tế, và quy trình tái lập thực nghiệm lấy bằng chứng khoa học:
+Thư mục này được chia thành 8 tài liệu chuyên sâu, phục vụ đầy đủ từ việc lưu trữ mã nguồn thô đến mổ xẻ phương pháp luận, phản biện khoa học, các kịch bản chạy code thực tế, quy trình tái lập thực nghiệm và sổ tay hướng dẫn thực thi trên Kaggle Cloud:
 
 | Thứ tự | Tên Tập Tin | Nội Dung Cốt Lõi | Chương Đối Ứng Trong Bài Báo |
 | :---: | :--- | :--- | :--- |
@@ -19,6 +19,7 @@ Thư mục này được chia thành 7 tài liệu chuyên sâu, phục vụ đ�
 | **04** | [`04_run_inference_example.md`](04_run_inference_example.md) | **Hướng dẫn chạy ví dụ suy luận thực tế trong code (`Inference`)**<br>• Mã nguồn Python hoàn chỉnh chạy dự báo trên Jira issue XD-3751.<br>• Bảng theo dõi biến đổi hình dạng Tensor qua từng tầng.<br>• Cơ chế ánh xạ Euclidean sang dãy số Fibonacci Scrum.<br>• Mô phỏng terminal output và mở rộng cho suy luận theo lô (Batch Inference). | **Section 3.3 & Section 5** |
 | **05** | [`05_run_training_example.md`](05_run_training_example.md) | **Hướng dẫn chạy ví dụ huấn luyện thực tế trong code (`Training Loop`)**<br>• Mã nguồn Python hoàn chỉnh mô phỏng chu trình học máy.<br>• Lan truyền xuôi, tính $L_1$ Loss, lan truyền ngược (`backward`) và AdamW.<br>• Bảng so sánh kết quả dự báo trước vs sau khi cập nhật Gradient.<br>• Phân tích toán học tính kháng ngoại lai của $L_1$ Loss. | **Section 3.4 & Section 4** |
 | **06** | [`06_end_to_end_reproduction_guide_github_to_metrics.md`](06_end_to_end_reproduction_guide_github_to_metrics.md) | **Hướng dẫn tái lập thực nghiệm từ GitHub đến thông số đầu ra làm bằng chứng**<br>• Quy trình 5 bước từ repo `awsm-research/gpt2sp` đến checkpoint Hugging Face.<br>• Phân chia Chronological Split 60/20/20 trên 3.526 issues của Spring XD.<br>• Script Python hoàn chỉnh tính MAE, MdAE, SA, và kiểm định Wilcoxon Signed-Rank Test.<br>• Xuất file CSV bằng chứng chi tiết 706 mẫu test làm minh chứng khoa học. | **Section 4 & Section 5 & Đề tài NCKH** |
+| **07** | [`07_kaggle_notebook_reproduction_guide.md`](07_kaggle_notebook_reproduction_guide.md) | **Sổ tay hướng dẫn thực thi trên Kaggle Notebooks từ A đến Z**<br>• Thao tác tạo Notebook, bật GPU T4 x2, và kích hoạt Internet On.<br>• Cung cấp đầy đủ 8 Cells mã nguồn có thể copy-paste trực tiếp lên Kaggle.<br>• Tự động tải dataset và checkpoint về máy chủ đám mây của Google.<br>• Quy trình chạy ngầm (Save & Run All) và tải file CSV/ảnh biểu đồ bằng chứng về máy. | **Thực thi Cloud & Bằng chứng NCKH** |
 
 ---
 
