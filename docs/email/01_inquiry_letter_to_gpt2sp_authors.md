@@ -11,7 +11,7 @@
 
 ---
 
-## 📌 THÔNG TIN NHÓM NGHIÊN CỨU GỬI THƯ (SENDER PROFILE)
+## 📌 THÔNG TIN NHÓM NGHIÊN CỨU GỬI THƯ (RESEARCH TEAM PROFILE)
 
 * **Người gửi chính (Primary Sender):** **Lê Thành Hiệu** (MSSV: `24520496`) — Student Researcher, Faculty of Information Systems, University of Information Technology, VNU-HCM.
 * **Cộng sự cùng thực hiện (Co-Investigator / Partner):** **Phan Ngọc Đức Huy** (MSSV: `24520695`) — Student Researcher, UIT, VNU-HCM.
@@ -21,9 +21,9 @@
 
 ---
 
-## 📑 BẢN 1: BẢN THẢO EMAIL ĐỊNH DẠNG RICH-TEXT / HTML (CÓ GIF & FOOTER CARD)
+## 📑 BẢN 1: BẢN THẢO EMAIL ĐỊNH DẠNG RICH-TEXT / HTML (CÓ "HAVE A NICE DAY" GIF & FOOTER CARD)
 
-*(Bạn có thể mở file này trên trình duyệt hoặc copy trực tiếp khối hiển thị bên dưới dán thẳng vào soạn thảo của Gmail / Outlook để giữ trọn vẹn phong cách thẻ card và ảnh GIF)*.
+*(Bạn chỉ cần bôi đen toàn bộ nội dung trong khung viền dưới đây, nhấn `Ctrl + C` và dán thẳng `Ctrl + V` vào khung soạn thư của Gmail hoặc Outlook để giữ trọn vẹn kiểu dáng chữ ký, logo UIT, icon menu và ảnh GIF động)*.
 
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.65; color: #1e293b; max-width: 760px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 28px; background-color: #ffffff; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
 
@@ -46,14 +46,6 @@
   <p style="font-size: 15px;">
     We have been following your pioneering research in AI for Software Engineering with tremendous admiration. Your seminal IEEE TSE 2023 article, <i>"GPT2SP: A Transformer-Based Agile Story Point Estimation Approach"</i>, has been a central pillar of inspiration for our work, demonstrating how deep pre-trained language models significantly surpass legacy word-level architectures for Agile effort estimation.
   </p>
-
-  <!-- GIF Animation Banner: Transformer Attention Dynamics -->
-  <div style="margin: 24px 0; text-align: center; background: #0f172a; padding: 16px; border-radius: 8px;">
-    <img src="https://raw.githubusercontent.com/awsm-research/gpt2sp/main/figures/overview.png" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=700&auto=format&fit=crop&q=80';" alt="Transformer Architecture & Agile Estimation Dynamics" style="max-width: 100%; height: auto; border-radius: 6px;" />
-    <div style="color: #94a3b8; font-size: 12px; margin-top: 8px; font-style: italic;">
-      Illustration: Exploring Self-Attention Mechanisms and Deep Sequence Modeling in Agile Story Point Estimation
-    </div>
-  </div>
 
   <p style="font-size: 15px;">
     As part of our research project investigating <b>reproducibility and temporal aspects of deep learning in Agile Sprint Planning</b>, we are currently replicating your experimental workflow on open-source Jira datasets—specifically the <b>Spring XD</b> benchmark—using both your official replication repository (<a href="https://github.com/awsm-research/gpt2sp" style="color: #2563eb; text-decoration: underline;"><code>awsm-research/gpt2sp</code></a>) and the pre-trained checkpoints published on Hugging Face Hub (<a href="https://huggingface.co/MickyMike/0-GPT2SP-springxd" style="color: #2563eb; text-decoration: underline;"><code>MickyMike/0-GPT2SP-springxd</code></a>).
@@ -125,41 +117,74 @@
     Thank you very much once again for your inspiring contributions to Software Engineering research!
   </p>
 
+  <!-- Friendly "Have a nice day" GIF -->
+  <div style="margin: 24px 0 20px 0; text-align: center;">
+    <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/have_a_nice_day.gif" alt="Have a nice day!" style="max-width: 320px; height: auto; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04);" />
+  </div>
+
   <p style="font-size: 15px; margin-bottom: 24px;">Warmest regards,</p>
 
-  <!-- ========================================== -->
-  <!-- FOOTER CARD: RESEARCHER & INSTITUTION CARD -->
-  <!-- ========================================== -->
-  <div style="border-top: 2px dashed #cbd5e1; padding-top: 20px; margin-top: 24px;">
-    <table style="width: 100%; border-collapse: collapse;">
+  <!-- ======================================================= -->
+  <!-- FOOTER CARD: UIT LOGO (LEFT) | INFO (MID) | MENU (RIGHT) -->
+  <!-- ======================================================= -->
+  <div style="border-top: 2px solid #e2e8f0; padding-top: 20px; margin-top: 20px; background-color: #f8fafc; border-radius: 10px; padding: 18px 20px;">
+    <table style="width: 100%; border-collapse: collapse; border: none;">
       <tr>
-        <td style="vertical-align: top; width: 68%;">
+        <!-- CỘT BÊN TRÁI: LOGO UIT -->
+        <td style="vertical-align: middle; width: 18%; text-align: center; padding-right: 16px; border-right: 2px solid #e2e8f0;">
+          <a href="https://www.uit.edu.vn" target="_blank" style="text-decoration: none;">
+            <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/uit_logo.png" alt="UIT Logo" style="width: 82px; height: auto; max-height: 80px; display: block; margin: 0 auto;" />
+          </a>
+          <div style="font-size: 11px; font-weight: 700; color: #1e3a8a; margin-top: 6px; letter-spacing: 0.04em;">
+            UIT &bull; VNU-HCM
+          </div>
+        </td>
+
+        <!-- CỘT Ở GIỮA: THÔNG TIN TÁC GIẢ & NHÓM NGHIÊN CỨU -->
+        <td style="vertical-align: middle; width: 56%; padding: 0 18px;">
           <div style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 2px;">
             Le Thanh Hieu
           </div>
           <div style="font-size: 13px; color: #2563eb; font-weight: 600; margin-bottom: 6px;">
             Undergraduate Student Researcher &bull; ID: <code>24520496</code>
           </div>
-          <div style="font-size: 13px; color: #475569; line-height: 1.5;">
+          <div style="font-size: 12px; color: #475569; line-height: 1.55;">
             <b>Research Partner:</b> Phan Ngoc Duc Huy (ID: <code>24520695</code>)<br/>
             <b>Academic Advisor:</b> Mr. Ta Viet Phuong (Lecturer & Researcher)<br/>
-            <b>Laboratory:</b> Software Engineering & Data Science Lab<br/>
-            <b>Affiliation:</b> Faculty of Information Systems<br/>
-            <b>Institution:</b> University of Information Technology, VNU-HCM (UIT - VNU-HCM)
+            <b>Faculty:</b> Faculty of Information Systems<br/>
+            <b>Institution:</b> University of Information Technology, VNU-HCM<br/>
+            <b>Location:</b> Ho Chi Minh City, Vietnam
           </div>
         </td>
-        <td style="vertical-align: top; width: 32%; text-align: right; border-left: 1px solid #e2e8f0; padding-left: 16px;">
-          <div style="margin-bottom: 8px;">
-            <span style="display: inline-block; background-color: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; border: 1px solid #bfdbfe;">
-              UIT &bull; VNU-HCM
-            </span>
+
+        <!-- CỘT BÊN PHẢI: MENU LOGO (GITHUB, LINKEDIN, FACEBOOK) -->
+        <td style="vertical-align: middle; width: 26%; text-align: left; padding-left: 16px; border-left: 2px solid #e2e8f0;">
+          <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 10px; letter-spacing: 0.05em;">
+            Connect with us
           </div>
-          <div style="font-size: 12px; color: #64748b; line-height: 1.6;">
-            <b>Project:</b> Agile Story Point Estimation<br/>
-            <a href="https://github.com/snowflake-vibing/NCKH_Johnny_Snowflake" style="color: #2563eb; text-decoration: none; font-weight: 600;">
-              🔗 GitHub Repository
-            </a><br/>
-            Ho Chi Minh City, Vietnam
+
+          <!-- Menu Item: GitHub -->
+          <div style="margin-bottom: 8px;">
+            <a href="https://github.com/snowflake-vibing/NCKH_Johnny_Snowflake" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; color: #0f172a; font-size: 12px; font-weight: 600;">
+              <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/github_icon.png" alt="GitHub" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; border-radius: 50%;" />
+              <span>GitHub Repo</span>
+            </a>
+          </div>
+
+          <!-- Menu Item: LinkedIn -->
+          <div style="margin-bottom: 8px;">
+            <a href="https://www.linkedin.com" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; color: #0a66c2; font-size: 12px; font-weight: 600;">
+              <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/linkedin_icon.png" alt="LinkedIn" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; border-radius: 4px;" />
+              <span>LinkedIn</span>
+            </a>
+          </div>
+
+          <!-- Menu Item: Facebook -->
+          <div>
+            <a href="https://www.facebook.com" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; color: #1877f2; font-size: 12px; font-weight: 600;">
+              <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/facebook_icon.png" alt="Facebook" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; border-radius: 50%;" />
+              <span>Facebook</span>
+            </a>
           </div>
         </td>
       </tr>
@@ -214,6 +239,8 @@ Thank you very much once again for your inspiring contributions to the software 
 
 Warmest regards,
 
+[Have a nice day! Wishing you a wonderful & inspiring day ahead!]
+
 --
 Le Thanh Hieu (Student ID: 24520496)
 Undergraduate Student Researcher & Co-Investigator
@@ -221,5 +248,6 @@ Research Partner: Phan Ngoc Duc Huy (Student ID: 24520695)
 Research Advisor: Mr. Ta Viet Phuong (Lecturer & Researcher)
 Faculty of Information Systems, University of Information Technology, VNU-HCM
 Project Repository: https://github.com/snowflake-vibing/NCKH_Johnny_Snowflake
+LinkedIn: https://www.linkedin.com | Facebook: https://www.facebook.com
 Ho Chi Minh City, Vietnam
 ```

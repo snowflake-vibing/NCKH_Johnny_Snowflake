@@ -1,5 +1,5 @@
 # 📑 BẢN GIẢI THÍCH CHI TIẾT & CHIẾN LƯỢC HỌC THUẬT: THƯ HỎI TÁC GIẢ BÀI BÁO GPT2SP
-## PHÂN TÍCH NGUYÊN TẮC NGOẠI GIAO HỌC THUẬT, ĐỊNH DẠNG RICH-TEXT, GIF MINH HỌA VÀ FOOTER SIGNATURE CARD
+## PHÂN TÍCH NGUYÊN TẮC NGOẠI GIAO HỌC THUẬT, THIẾT KẾ THẺ CHỮ KÝ 3 PHẦN VÀ GIF "HAVE A NICE DAY"
 
 > **Tài liệu đối chiếu:** [01_inquiry_letter_to_gpt2sp_authors.md](01_inquiry_letter_to_gpt2sp_authors.md)  
 > **Bài báo gốc:** *GPT2SP: A Transformer-Based Agile Story Point Estimation Approach* (IEEE TSE 2023).  
@@ -18,74 +18,67 @@ Bức thư đại diện chính thức cho Nhóm nghiên cứu thuộc Đề tà
 
 ---
 
-## 🎨 II. CHIẾN LƯỢC ĐỊNH DẠNG EMAIL: RICH-TEXT, GIF VÀ SIGNATURE CARD FOOTER
+## 🎨 II. Ý NGHĨA THIẾT KẾ: GIF "HAVE A NICE DAY" VÀ FOOTER SIGNATURE CARD 3 CỘT
 
-Khác với các email thông thường, email học thuật quốc tế gửi tới các Giáo sư và Nhà nghiên cứu hàng đầu cần cân bằng giữa **sự trang nhã, nghiêm túc khoa học** và **ấn tượng thị giác chuyên nghiệp**.
+Việc gửi email học thuật đến các giáo sư quốc tế đòi hỏi sự chuẩn mực cao, song một chút tinh tế và thân thiện ở phần kết sẽ tạo cảm giác ấm áp, gần gũi và khác biệt hoàn toàn so với những bức thư khô khan thông thường.
 
-### 1. Tại sao dùng Rich-Text / HTML Card?
-* Các nhà nghiên cứu tại Đại học Monash (Úc) thường sử dụng Outlook hoặc Gmail for Education với màn hình độ phân giải cao.
-* Việc đóng khung từng câu hỏi vào các **Callout Box** có viền xanh (`border-left: 4px solid #3b82f6`) và nền xám nhạt (`#f8fafc`) giúp các tác giả:
-  - Dễ dàng lướt nhanh (scan) nội dung trong 30 giây.
-  - Phân tách rành mạch 5 câu hỏi độc lập.
-  - Trực quan hóa đoạn mã nguồn PyTorch với nền đen (`#1e293b`) như trên IDE thực thụ.
+### 1. Vị trí & Tác dụng của GIF "Have a nice day!"
+* **Vị trí đặt:** Đặt ở **dưới cùng của nội dung email**, ngay trước lời chào kết (*Warmest regards*).
+* **Nội dung:** Ảnh động nhẹ nhàng mang thông điệp *"Have a nice day! Wishing you a wonderful & inspiring day ahead!"* cùng biểu tượng mặt trời tỏa nắng thân thiện.
+* **Tác dụng tâm lý học:**  
+  - Làm dịu đi tính kỹ thuật căng thẳng của 5 câu hỏi phản biện phía trên.
+  - Mang lại nụ cười và năng lượng tích cực cho 2 tác giả khi đọc thư vào buổi sáng, thể hiện sự kính trọng và tính nhân văn của sinh viên Việt Nam.
+  - File GIF chỉ nặng **15.8 KB**, được lưu trữ trực tiếp trên GitHub repository của nhóm nên tốc độ tải tức thì, không làm chậm email và không bị bộ lọc spam chặn.
 
-### 2. Ý nghĩa của Banner GIF / Ảnh động Minh họa
-* **Vị trí đặt:** Ngay sau phần mở đầu, trước khi bước vào các câu hỏi kỹ thuật.
-* **Mục đích:**  
-  - Tạo điểm nhấn thị giác đẳng cấp, nhắc nhở trực quan về cấu trúc Transformer / Attention Flow mà chính các tác giả đã dày công xây dựng trong GPT2SP.
-  - Thể hiện sự đầu tư chỉn chu của sinh viên Việt Nam đối với đề tài, tạo cảm giác đây là một nhóm nghiên cứu được đào tạo bài bản và làm việc nghiêm túc chứ không phải một câu hỏi bộc phát.
+### 2. Thiết kế Thẻ Chữ ký Chuyên nghiệp ở Footer (3 Phân Vùng)
+Bảng chữ ký footer được thiết kế bằng bảng HTML tương thích tuyệt đối với mọi ứng dụng email (Gmail, Outlook, Apple Mail):
 
-### 3. Thẻ Chữ ký Chuyên nghiệp ở Footer (Academic Footer Card)
-* Thẻ Footer Card chia làm 2 cột:
-  - **Cột trái:** Ghi rõ danh tính của bạn (**Lê Thành Hiệu**), bạn đồng hành (**Phan Ngọc Đức Huy**), và Giảng viên hướng dẫn (**ThS. Tạ Việt Phương**), cùng đơn vị trường *UIT - VNU-HCM*.
-  - **Cột phải:** Huy hiệu trường (UIT &bull; VNU-HCM), link trực tiếp tới GitHub Repository của nhóm và địa danh Ho Chi Minh City, Vietnam.
-* **Tác dụng:** Tăng độ tín nhiệm (Credibility). Khi tác giả thấy có tên Giảng viên hướng dẫn và link GitHub nghiên cứu minh bạch, tỷ lệ họ dành thời gian trả lời chi tiết tăng lên gấp 3 lần!
+```text
+┌─────────────────┬──────────────────────────────────────┬─────────────────┐
+│                 │  Le Thanh Hieu                       │ CONNECT WITH US │
+│    [LOGO UIT]   │  Undergraduate Student Researcher    │  🐙 GitHub Repo │
+│   UIT • VNU-HCM │  Partner: Phan Ngoc Duc Huy          │  💼 LinkedIn    │
+│                 │  Advisor: Mr. Ta Viet Phuong         │  👥 Facebook    │
+│                 │  Faculty of Information Systems      │                 │
+└─────────────────┴──────────────────────────────────────┴─────────────────┘
+```
 
----
-
-## 🔍 III. GIẢI THÍCH CHI TIẾT Ý ĐỒ CHIẾN LƯỢC CỦA 5 CÂU HỎI
-
-### Câu hỏi 1: Biểu diễn Dữ liệu Đầu vào (`Title` vs `Title + Description`)
-* **Ý đồ:** Chỉ ra khoảng cách giữa phần văn bản bài báo (nói dùng cả Title + Description) và file `model_training_notebook.ipynb` (chỉ nạp `data['title']`).  
-* **Mục tiêu:** Giúp nhóm biết chắc chắn kết quả Bảng 4 đến từ cấu hình nào để tái tạo công bằng.
-
-### Câu hỏi 2: Ngưỡng Cắt ngắn Độ dài Chuỗi (`SEQUENCE_LEN = 20`)
-* **Ý đồ:** Đặt câu hỏi lịch sự về việc vì sao độ dài cắt chỉ là 20 tokens (khoảng 12-15 từ).  
-* **Mục tiêu:** Vừa hiểu được lý do hạn chế phần cứng khi train 16 dự án, vừa cho thấy nhóm đã phân tích sâu các siêu tham số.
-
-### Câu hỏi 3: Kiến trúc Đầu MLP Head (`dense1`, `dense2`, `score`)
-* **Ý đồ:** Phát hiện việc thiếu hàm kích hoạt phi tuyến `gelu()` trong code PyTorch (khiến 3 lớp Linear gộp lại thành 1 phép nhân ma trận tuyến tính đơn).  
-* **Mục tiêu:** Chứng minh trình độ đọc hiểu code ở cấp độ toán học vi mô của nhóm, tạo sự khâm phục từ tác giả.
-
-### Câu hỏi 4: Kết quả Chạy Thực nghiệm trên Checkpoint Spring XD
-* **Ý đồ:** Nhóm đưa ra số liệu thực tế đo được từ checkpoint chính thức của họ: **MAE = 1.7330** (xấp xỉ Baseline trung vị 1.7153), cách xa con số **0.96** trong Bảng 4.  
-* **Mục tiêu:** Bằng chứng thực nghiệm không thể chối cãi, nhưng diễn đạt dưới dạng "chúng tôi mong muốn học hỏi script đánh giá chuẩn của tác giả".
-
-### Câu hỏi 5: Thảo luận về Lịch sử Sửa đổi Issue & Temporal Leakage
-* **Ý đồ:** Đề cập hiện tượng các mô tả issue trong Jira bị bổ sung chi tiết sau ngày planning.  
-* **Mục tiêu chiến lược:** **Đây là "đòn bẩy" quan trọng nhất**! Nó ngầm giới thiệu bài toán mới của đề tài NCKH_3 của Lê Thành Hiệu & Phan Ngọc Đức Huy về *Kiểm soát Rò rỉ Dữ liệu Thời gian (Temporal Leakage)*.
+1. **Cột bên trái — Logo UIT:**  
+   - Logo chính thức của Trường Đại học Công nghệ Thông tin, ĐHQG-HCM (`uit_logo.png`), viền nét trong suốt.
+   - Thể hiện tính chính danh và danh tiếng học thuật của nhà trường.
+2. **Cột ở giữa — Thông tin chi tiết của Nhóm:**  
+   - Tên người gửi chính (**Lê Thành Hiệu** - `24520496`).
+   - Tên bạn đồng hành (**Phan Ngọc Đức Huy** - `24520695`).
+   - Tên Giảng viên hướng dẫn (**ThS. Tạ Việt Phương**), Khoa Hệ thống Thông tin.
+3. **Cột bên phải — Menu Mạng Xã hội & Nghiên cứu (Connect with us):**  
+   - **GitHub Repo:** Link thẳng tới repository nghiên cứu mở NCKH_Johnny_Snowflake.
+   - **LinkedIn & Facebook:** Giúp tác giả Michael Fu hoặc PGS. Chakkrit có thể dễ dàng bấm vào xem trang cá nhân, kết nối mạng lưới học thuật lâu dài.
 
 ---
 
-## 📋 IV. HƯỚNG DẪN THỰC HÀNH CÁCH GỬI EMAIL TRÊN GMAIL / OUTLOOK
+## 🔍 III. Ý ĐỒ CHIẾN LƯỢC CỦA 5 CÂU HỎI KỸ THUẬT
 
-### Cách 1: Copy trực tiếp Rich-Text (Đơn giản & Đẹp nhất)
-1. Mở file [01_inquiry_letter_to_gpt2sp_authors.md](01_inquiry_letter_to_gpt2sp_authors.md) ở chế độ Preview (Xem trước Markdown trong VS Code hoặc GitHub).
-2. Dùng chuột bôi đen toàn bộ vùng khung **BẢN 1** (từ chữ *Dear Michael...* đến hết thẻ *Footer Card*).
-3. Nhấn `Ctrl + C` (Copy).
-4. Mở cửa sổ soạn thư mới trong Gmail hoặc Outlook.
-5. Nhấn `Ctrl + V` (Paste). Toàn bộ định dạng bảng, màu sắc, font chữ, code block và thẻ card footer sẽ được giữ nguyên vẹn 100%!
-
-### Cách 2: Sử dụng Bản Plain-Text (Bản 2)
-* Nếu bạn hoặc Giảng viên hướng dẫn thích văn phong thuần chữ tối giản (Pure Plain Text), hãy copy toàn bộ khối mã trong **BẢN 2** để gửi.
+1. **Câu 1 (`Title` vs `Title + Description`):** Làm rõ dữ liệu đầu vào thực sự dùng trong Bảng 4 của bài báo.
+2. **Câu 2 (`SEQUENCE_LEN = 20`):** Đặt câu hỏi vì sao cắt ngắn chỉ 20 token để tìm hiểu về giới hạn GPU và tài nguyên.
+3. **Câu 3 (Thiếu GELU trong MLP Head):** Chỉ ra việc 3 lớp Linear nối tiếp nhau bị triệt tiêu tính phi tuyến, chứng minh nhóm đọc hiểu code ở tầng toán học sâu sắc.
+4. **Câu 4 (MAE 1.7330 vs 0.96 trên Spring XD):** Trình bày bằng chứng đối chứng thực nghiệm trên checkpoint chính thức của tác giả, hỏi về script đánh giá chuẩn.
+5. **Câu 5 (Temporal Leakage & Intra-issue Revision):** **Bàn đạp chiến lược quan trọng nhất**, mở đường giới thiệu đề tài NCKH_3 về kiểm soát rò rỉ dữ liệu sau planning.
 
 ---
 
-## 📮 V. DANH SÁCH ĐỊA CHỈ & THỜI ĐIỂM GỬI TỐI ƯU
+## 📋 IV. HƯỚNG DẪN THỰC HÀNH KHI GỬI THƯ
 
-* **To:** `yeh.fu@monash.edu`
-* **Cc:** `chakkrit@monash.edu`, [Email của ThS. Tạ Việt Phương]
-* **Subject:** `Inquiry regarding replication details and evaluation setup for GPT2SP (IEEE TSE 2023)`
-* **Thời điểm gửi lý tưởng:**
-  - Ngày: Thứ Ba hoặc Thứ Tư (tránh thứ Hai họp hành và thứ Sáu chuẩn bị nghỉ cuối tuần).
-  - Giờ: **04:30 – 05:30 sáng giờ Việt Nam** (tương đương **08:30 – 09:30 sáng giờ Melbourne, GMT+11**). Thư sẽ nằm ngay đầu hòm thư của 2 tác giả khi họ vừa mở máy tính bắt đầu ngày làm việc mới!
+### 1. Cách thay link cá nhân (LinkedIn & Facebook) của bạn
+Trong file [01_inquiry_letter_to_gpt2sp_authors.md](01_inquiry_letter_to_gpt2sp_authors.md), bạn chỉ cần thay đường dẫn:
+* `https://www.linkedin.com` $\rightarrow$ `https://www.linkedin.com/in/ten-linkedin-cua-hieu`
+* `https://www.facebook.com` $\rightarrow$ `https://www.facebook.com/ten-facebook-cua-hieu`
+
+### 2. Cách dán vào Gmail / Outlook
+1. Mở file [01_inquiry_letter_to_gpt2sp_authors.md](01_inquiry_letter_to_gpt2sp_authors.md) ở chế độ Preview.
+2. Bôi đen từ đầu đến hết thẻ Footer Card của **BẢN 1**.
+3. Nhấn `Ctrl + C` $\rightarrow$ mở khung soạn thư Gmail / Outlook $\rightarrow$ nhấn `Ctrl + V`.
+4. Điền:
+   - **To:** `yeh.fu@monash.edu`
+   - **Cc:** `chakkrit@monash.edu`, [Email của ThS. Tạ Việt Phương]
+   - **Subject:** `Inquiry regarding replication details and evaluation setup for GPT2SP (IEEE TSE 2023)`
+5. Gửi vào sáng sớm thứ Ba hoặc thứ Tư (khoảng 04:30 – 05:30 sáng giờ Việt Nam, tức 08:30 – 09:30 sáng giờ Melbourne) để thư luôn nằm ở vị trí đầu tiên trong hòm thư của 2 tác giả!
