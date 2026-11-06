@@ -165,17 +165,17 @@
 
           <!-- Menu Item: GitHub -->
           <div style="margin-bottom: 8px;">
-            <a href="https://github.com/snowflake-vibing/NCKH_Johnny_Snowflake" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; color: #0f172a; font-size: 12px; font-weight: 600;">
+            <a href="https://github.com/snowflake-vibing" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; color: #0f172a; font-size: 12px; font-weight: 600;">
               <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/github_icon.png" alt="GitHub" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; border-radius: 50%;" />
-              <span>GitHub Repo</span>
+              <span>GitHub Profile</span>
             </a>
           </div>
 
           <!-- Menu Item: LinkedIn -->
           <div style="margin-bottom: 8px;">
-            <a href="https://www.linkedin.com" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; color: #0a66c2; font-size: 12px; font-weight: 600;">
+            <a href="https://www.linkedin.com/in/th%C3%A0nh-hi%E1%BB%87u-84b99634b/" target="_blank" style="text-decoration: none; display: inline-flex; align-items: center; color: #0a66c2; font-size: 12px; font-weight: 600;">
               <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/linkedin_icon.png" alt="LinkedIn" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; border-radius: 4px;" />
-              <span>LinkedIn</span>
+              <span>LinkedIn Profile</span>
             </a>
           </div>
 
@@ -248,6 +248,7 @@ Research Partner: Phan Ngoc Duc Huy (Student ID: 24520695)
 Research Advisor: Mr. Ta Viet Phuong (Lecturer & Researcher)
 Faculty of Information Systems, University of Information Technology, VNU-HCM
 Project Repository: https://github.com/snowflake-vibing/NCKH_Johnny_Snowflake
-LinkedIn: https://www.linkedin.com | Facebook: https://www.facebook.com
+GitHub: https://github.com/snowflake-vibing
+LinkedIn: https://www.linkedin.com/in/th%C3%A0nh-hi%E1%BB%87u-84b99634b/
 Ho Chi Minh City, Vietnam
 ```

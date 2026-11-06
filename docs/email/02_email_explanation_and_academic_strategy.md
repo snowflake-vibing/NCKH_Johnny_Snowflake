@@ -68,10 +68,12 @@ Bảng chữ ký footer được thiết kế bằng bảng HTML tương thích 
 
 ## 📋 IV. HƯỚNG DẪN THỰC HÀNH KHI GỬI THƯ
 
-### 1. Cách thay link cá nhân (LinkedIn & Facebook) của bạn
-Trong file [01_inquiry_letter_to_gpt2sp_authors.md](01_inquiry_letter_to_gpt2sp_authors.md), bạn chỉ cần thay đường dẫn:
-* `https://www.linkedin.com` $\rightarrow$ `https://www.linkedin.com/in/ten-linkedin-cua-hieu`
-* `https://www.facebook.com` $\rightarrow$ `https://www.facebook.com/ten-facebook-cua-hieu`
+### 1. Thông tin liên kết cá nhân của Lê Thành Hiệu (Đã cập nhật tự động)
+Trong file [01_inquiry_letter_to_gpt2sp_authors.md](01_inquiry_letter_to_gpt2sp_authors.md), các liên kết mạng xã hội và nghiên cứu đã được cấu hình chuẩn xác:
+* **GitHub Profile:** `https://github.com/snowflake-vibing`
+* **LinkedIn Profile:** `https://www.linkedin.com/in/th%C3%A0nh-hi%E1%BB%87u-84b99634b/`
+* **Facebook Profile:** `https://www.facebook.com` *(Bạn có thể điền thêm username Facebook cá nhân nếu muốn)*
+* **Project Repository:** `https://github.com/snowflake-vibing/NCKH_Johnny_Snowflake`
 
 ### 2. Cách dán vào Gmail / Outlook
 1. Mở file [01_inquiry_letter_to_gpt2sp_authors.md](01_inquiry_letter_to_gpt2sp_authors.md) ở chế độ Preview.
