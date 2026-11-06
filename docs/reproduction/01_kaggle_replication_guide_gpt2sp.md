@@ -193,48 +193,48 @@ Tính toán sai số đối chứng với **Median Effort Baseline** và kiểm 
 
 ```python
 # ==============================================================================
-# CELL 4: TÍNH TOÁN MAE, MdAE & WILCOXON SIGNED-RANK TEST
+# CELL 4: EVALUATION METRICS (MAE, MdAE) & STATISTICAL TESTING (WILCOXON)
 # ==============================================================================
 from scipy.stats import wilcoxon
 
-# 1. Baseline Trung vị (Median Effort): Dự đoán mọi issue bằng trung vị tập Train
+# 1. Median Effort Baseline: predict all test issues with train set median
 median_baseline_val = train_df['storypoint'].median()
 baseline_preds = np.full_like(true_sp, fill_value=median_baseline_val)
 
-# 2. Tính vector sai số tuyệt đối
+# 2. Compute absolute errors
 errors_gpt2sp = np.abs(true_sp - gpt2sp_preds)
 errors_baseline = np.abs(true_sp - baseline_preds)
 
-# 3. Các chỉ số đo lường
+# 3. Compute evaluation metrics
 mae_gpt2sp = np.mean(errors_gpt2sp)
 mdae_gpt2sp = np.median(errors_gpt2sp)
 
 mae_baseline = np.mean(errors_baseline)
 mdae_baseline = np.median(errors_baseline)
 
-# 4. Kiểm định giả thuyết thống kê Wilcoxon
+# 4. Two-sided Wilcoxon Signed-Rank Test
 w_stat, p_val = wilcoxon(errors_gpt2sp, errors_baseline)
 
-# 5. Xuất bảng tổng hợp kết quả
+# 5. Build summary table in pure academic English
 results_df = pd.DataFrame({
-    'Phương pháp / Mô hình': [
-        'Median Effort Baseline (Chuẩn quy chiếu)', 
-        'GPT2SP (Checkpoint MickyMike trên Kaggle)', 
-        'GPT2SP (Công bố tại Bảng 4 IEEE TSE 2023)'
+    'Method / Model': [
+        'Median Effort Baseline', 
+        'GPT2SP (Official MickyMike Checkpoint on Kaggle)', 
+        'GPT2SP (Published in IEEE TSE Table 4)'
     ],
     'MAE': [f"{mae_baseline:.4f}", f"{mae_gpt2sp:.4f}", "0.9600"],
     'MdAE': [f"{mdae_baseline:.4f}", f"{mdae_gpt2sp:.4f}", "N/A"],
-    'Wilcoxon p-value vs Baseline': ['—', f"{p_val:.4e}", "p < 0.05"]
+    'Wilcoxon p-value vs Baseline': ['N/A', f"{p_val:.4e}", "p < 0.05"]
 })
 
 print("="*80)
-print("📊 BẢNG TỔNG HỢP KẾT QUẢ TÁI LẬP THỰC NGHIỆM TRÊN SPRING XD")
+print("EMPIRICAL BENCHMARK SUMMARY ON SPRING XD")
 print("="*80)
 display(results_df)
 
-# Lưu kết quả ra file csv trong thư mục working của Kaggle
-results_df.to_csv('/kaggle/working/replication_springxd_results.csv', index=False)
-print("📁 Đã lưu file: /kaggle/working/replication_springxd_results.csv")
+# Save to CSV with utf-8-sig encoding for perfect Excel display
+results_df.to_csv('/kaggle/working/replication_springxd_results.csv', index=False, encoding='utf-8-sig')
+print("📁 Saved output to: /kaggle/working/replication_springxd_results.csv")
 ```
 
 ---
