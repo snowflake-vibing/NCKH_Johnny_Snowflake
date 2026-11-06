@@ -82,33 +82,32 @@ print("✅ Đã thiết lập môi trường và nạp repo awsm-research/gpt2sp
 
 ```python
 # ==============================================================================
-# CELL 2: NẠP DATASET SPRING XD VÀ CHIA TẬP CHRONOLOGICAL (60/20/20)
+# CELL 2: NẠP DATASET SPRING XD VÀ PHÂN CHIA THEO SPLIT_MARK CỦA TÁC GIẢ
 # ==============================================================================
+import os
 import pandas as pd
 import numpy as np
 
-# Nạp file spring-xd.csv chính thức từ thư mục dataset của repo
-dataset_path = '/kaggle/working/gpt2sp/dataset/spring-xd.csv'
+# Đường dẫn file sau khi clone repo (kèm link raw GitHub dự phòng)
+local_path = '/kaggle/working/gpt2sp/sp_dataset/marked_data/springxd.csv'
+fallback_url = 'https://raw.githubusercontent.com/awsm-research/gpt2sp/main/sp_dataset/marked_data/springxd.csv'
+
+dataset_path = local_path if os.path.exists(local_path) else fallback_url
 df = pd.read_csv(dataset_path)
 
 print(f"Tổng số User Stories / Issues của dự án Spring XD: {len(df)}")
 print("3 mẫu đầu tiên:")
-display(df[['issuekey', 'title', 'storypoint']].head(3))
+display(df[['issuekey', 'title', 'storypoint', 'split_mark']].head(3))
 
-# Phân chia 60% Train - 20% Val - 20% Test theo đúng thứ tự thời gian
-n_total = len(df)
-n_train = int(n_total * 0.6)       # 2.115 mẫu
-n_val = int(n_total * 0.2)         # 705 mẫu
-n_test = n_total - n_train - n_val  # 706 mẫu
+# Phân chia chuẩn xác theo cột 'split_mark' mà chính tác giả đã gắn nhãn trong dataset:
+train_df = df[df['split_mark'] == 'train'].copy().reset_index(drop=True)
+val_df = df[df['split_mark'] == 'val'].copy().reset_index(drop=True)
+test_df = df[df['split_mark'] == 'test'].copy().reset_index(drop=True)
 
-train_df = df.iloc[:n_train].copy().reset_index(drop=True)
-val_df = df.iloc[n_train:n_train+n_val].copy().reset_index(drop=True)
-test_df = df.iloc[n_train+n_val:].copy().reset_index(drop=True)
-
-print(f"\n✅ Đã phân chia dữ liệu Chronological:")
-print(f" • Tập Huấn luyện (Train): {len(train_df)} issues ({len(train_df)/n_total*100:.1f}%)")
-print(f" • Tập Kiểm tra phát triển (Validation): {len(val_df)} issues ({len(val_df)/n_total*100:.1f}%)")
-print(f" • Tập Kiểm thử độc lập (Test): {len(test_df)} issues ({len(test_df)/n_total*100:.1f}%)")
+print(f"\n✅ Đã phân chia dữ liệu Chronological chuẩn mực theo tác giả:")
+print(f" • Tập Huấn luyện (Train): {len(train_df)} issues ({len(train_df)/len(df)*100:.1f}%)")
+print(f" • Tập Kiểm tra phát triển (Validation): {len(val_df)} issues ({len(val_df)/len(df)*100:.1f}%)")
+print(f" • Tập Kiểm thử độc lập (Test): {len(test_df)} issues ({len(test_df)/len(df)*100:.1f}%)")
 ```
 
 ---
