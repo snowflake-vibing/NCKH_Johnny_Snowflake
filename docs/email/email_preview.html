@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academic Inquiry Letter to GPT2SP Authors - Preview</title>
+<style>
+  body {
+    background-color: #f1f5f9;
+    padding: 30px 10px;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<!-- KHUNG THƯ HOÀN CHỈNH - CÓ THỂ BẤM CTRL + A RỒI CTRL + C DÁN TRỰC TIẾP VÀO GMAIL -->
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.65; color: #1e293b; max-width: 760px; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 12px; padding: 32px; background-color: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+
+  <!-- Email Header -->
+  <div style="border-bottom: 2px solid #2563eb; padding-bottom: 16px; margin-bottom: 24px;">
+    <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #2563eb; font-weight: 700;">Academic Research Correspondence</div>
+    <h2 style="margin: 8px 0 4px 0; color: #0f172a; font-size: 20px; font-weight: 700;">Inquiry regarding replication details and evaluation setup for GPT2SP (IEEE TSE 2023)</h2>
+    <div style="font-size: 13px; color: #64748b;"><b>To:</b> Michael Fu &lt;yeh.fu@monash.edu&gt; &bull; <b>Cc:</b> Dr. Chakkrit Tantithamthavorn &lt;chakkrit@monash.edu&gt;</div>
+  </div>
+
+  <!-- Salutation -->
+  <p style="font-size: 15px; margin-top: 0;">Dear Michael and Dr. Tantithamthavorn,</p>
+
+  <p style="font-size: 15px;">I hope this email finds you well and having a productive academic semester.</p>
+
+  <p style="font-size: 15px;">
+    My name is <strong>Le Thanh Hieu</strong>, writing on behalf of our student research group alongside my colleague <strong>Phan Ngoc Duc Huy</strong> at the <em>Faculty of Information Systems, University of Information Technology, Vietnam National University Ho Chi Minh City (UIT - VNU-HCM)</em>.
+  </p>
+
+  <p style="font-size: 15px;">
+    We have been following your pioneering research in AI for Software Engineering with tremendous admiration. Your seminal IEEE TSE 2023 article, <em>"GPT2SP: A Transformer-Based Agile Story Point Estimation Approach"</em>, has been a central pillar of inspiration for our work, demonstrating how deep pre-trained language models significantly surpass legacy word-level architectures for Agile effort estimation.
+  </p>
+
+  <p style="font-size: 15px;">
+    As part of our research project investigating <strong>reproducibility and temporal aspects of deep learning in Agile Sprint Planning</strong>, we are currently replicating your experimental workflow on open-source Jira datasets—specifically the <strong>Spring XD</strong> benchmark—using both your official replication repository (<a href="https://github.com/awsm-research/gpt2sp" style="color: #2563eb; text-decoration: underline;"><code>awsm-research/gpt2sp</code></a>) and the pre-trained checkpoints published on Hugging Face Hub (<a href="https://huggingface.co/MickyMike/0-GPT2SP-springxd" style="color: #2563eb; text-decoration: underline;"><code>MickyMike/0-GPT2SP-springxd</code></a>).
+  </p>
+
+  <p style="font-size: 15px;">
+    While aligning our reproduction harness with your published metrics, we noted a few technical aspects where your kind guidance would be invaluable to ensure our benchmarking remains rigorous and completely faithful to your original methodology:
+  </p>
+
+  <!-- Point 1 -->
+  <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 14px 18px; margin: 16px 0; border-radius: 0 8px 8px 0;">
+    <h4 style="margin: 0 0 6px 0; font-size: 15px; color: #1e3a8a;">1. Input Text Representation (<code>Title</code> vs. <code>Title + Description</code>)</h4>
+    <p style="margin: 0; font-size: 14px; color: #334155;">
+      In Section 3.1 (<em>Context Extraction</em>) and Section 4.1 (<em>Experimental Setup</em>), the paper describes utilizing both the issue Title and Description. In the released Jupyter notebook (<code>model_training_notebook.ipynb</code>, function <code>prepare_dataframe</code>), the mapping is defined as:
+    </p>
+    <div style="background-color: #1e293b; color: #f8fafc; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 13px; margin: 8px 0;">
+      d = {'text': (data['title']).tolist(), 'label': data['storypoint']}
+    </div>
+    <p style="margin: 0; font-size: 14px; color: #334155;">
+      Could you kindly clarify whether the results in Table 4 were computed solely using the <code>title</code> field, or if an auxiliary preprocessing routine concatenated both fields before tokenization?
+    </p>
+  </div>
+
+  <!-- Point 2 -->
+  <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 14px 18px; margin: 16px 0; border-radius: 0 8px 8px 0;">
+    <h4 style="margin: 0 0 6px 0; font-size: 15px; color: #1e3a8a;">2. Sequence Length Truncation Parameter (<code>SEQUENCE_LEN = 20</code>)</h4>
+    <p style="margin: 0; font-size: 14px; color: #334155;">
+      In the replication notebook, the truncation threshold is set to <code>SEQUENCE_LEN = 20</code>. Since standard GPT-2 accommodates contextual windows of up to 1,024 tokens, we would love to understand whether the 20-token boundary was an intentional hyperparameter balancing GPU efficiency across the 16 cross-project benchmarks, or whether broader context windows (e.g., 128 or 512 tokens) were evaluated in your broader empirical suite.
+    </p>
+  </div>
+
+  <!-- Point 3 -->
+  <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 14px 18px; margin: 16px 0; border-radius: 0 8px 8px 0;">
+    <h4 style="margin: 0 0 6px 0; font-size: 15px; color: #1e3a8a;">3. MLP Regressor Head Architecture & Non-Linear Activation</h4>
+    <p style="margin: 0; font-size: 14px; color: #334155;">
+      Section 3.3 describes a Multi-Layer Perceptron (MLP) regressor head incorporating GELU non-linear activations. In <code>GPT2SP.py</code>:
+    </p>
+    <div style="background-color: #1e293b; color: #f8fafc; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 13px; margin: 8px 0;">
+      hidden_states = self.dense1(hidden_states)<br/>
+      hidden_states = self.dense2(hidden_states)<br/>
+      logits = self.score(hidden_states)
+    </div>
+    <p style="margin: 0; font-size: 14px; color: #334155;">
+      The tensors pass sequentially through <code>dense1</code> and <code>dense2</code> without an explicit functional call to <code>F.gelu()</code>. Could you clarify whether non-linearity was injected through a custom submodule configuration, or whether this represents a linear bottleneck variant adopted in the repository?
+    </p>
+  </div>
+
+  <!-- Point 4 -->
+  <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 14px 18px; margin: 16px 0; border-radius: 0 8px 8px 0;">
+    <h4 style="margin: 0 0 6px 0; font-size: 15px; color: #1e3a8a;">4. Empirical Benchmark Alignment on Spring XD</h4>
+    <p style="margin: 0; font-size: 14px; color: #334155;">
+      When evaluating your official checkpoint (<code>MickyMike/0-GPT2SP-springxd</code>) across the 706 chronological test issues of Spring XD (with <code>max_length = 20</code>, pad token ID <code>50257</code>), our test harness yields an MAE of approximately <b>1.7330</b> to <b>3.3090</b> (alongside a training-set Median Effort Baseline MAE of <b>1.7153</b>). Because Table 4 reports an impressive MAE of <b>0.96</b>, we suspect we might be missing a specific post-processing step, rounding rule, or evaluation harness convention. Any insight into the exact evaluation script would be enormously appreciated.
+    </p>
+  </div>
+
+  <!-- Point 5 -->
+  <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 14px 18px; margin: 16px 0; border-radius: 0 8px 8px 0;">
+    <h4 style="margin: 0 0 6px 0; font-size: 15px; color: #1e3a8a;">5. Methodological Perspectives on Intra-Issue Revision History</h4>
+    <p style="margin: 0; font-size: 14px; color: #334155;">
+      Finally, as our research specifically investigates temporal leakage control at planning time (observing that Jira descriptions frequently accumulate implementation details, stack traces, and comments long after the estimation event), we would love to know your perspective on how future Transformer architectures should best filter or reconstruct historical state snapshots in industrial Agile workflows.
+    </p>
+  </div>
+
+  <p style="font-size: 15px;">
+    We completely appreciate how busy your schedule is and would be deeply grateful for any advice, references, or updated scripts you could share. We are glad to provide our full replication repository, environment specs, and logs if that would assist.
+  </p>
+
+  <p style="font-size: 15px;">
+    Thank you very much once again for your inspiring contributions to Software Engineering research!
+  </p>
+
+  <!-- Friendly "Have a nice day" GIF -->
+  <div style="margin: 24px 0 20px 0; text-align: center;">
+    <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/have_a_nice_day.gif" alt="Have a nice day!" style="max-width: 320px; height: auto; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04);" />
+  </div>
+
+  <p style="font-size: 15px; margin-bottom: 24px;">Warmest regards,</p>
+
+  <!-- FOOTER CARD CHUYÊN NGHIỆP: LOGO UIT (TRÁI) | THÔNG TIN (GIỮA) | MENU (PHẢI) -->
+  <table style="width: 100%; border-collapse: collapse; border: 1px solid #cbd5e1; border-radius: 10px; background-color: #f8fafc; padding: 0; margin-top: 20px; overflow: hidden;">
+    <tr>
+      <!-- CỘT TRÁI: LOGO UIT -->
+      <td style="vertical-align: middle; width: 20%; text-align: center; padding: 16px; border-right: 1px solid #e2e8f0; background-color: #ffffff;">
+        <a href="https://www.uit.edu.vn" target="_blank" style="text-decoration: none; display: block;">
+          <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/uit_logo.png" alt="UIT Logo" style="width: 85px; height: auto; display: block; margin: 0 auto;" />
+        </a>
+        <div style="font-size: 11px; font-weight: 700; color: #1e3a8a; margin-top: 8px; letter-spacing: 0.04em;">UIT &bull; VNU-HCM</div>
+      </td>
+
+      <!-- CỘT GIỮA: THÔNG TIN LÊ THÀNH HIỆU & PHAN NGỌC ĐỨC HUY -->
+      <td style="vertical-align: middle; width: 54%; padding: 16px 20px;">
+        <div style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 2px;">Le Thanh Hieu</div>
+        <div style="font-size: 13px; color: #2563eb; font-weight: 600; margin-bottom: 6px;">Undergraduate Student Researcher &bull; ID: <code>24520496</code></div>
+        <div style="font-size: 12px; color: #475569; line-height: 1.55;">
+          <b>Co-Author:</b> Phan Ngoc Duc Huy (ID: <code>24520695</code>)<br/>
+          <b>Department:</b> Faculty of Information Systems<br/>
+          <b>Institution:</b> University of Information Technology, VNU-HCM<br/>
+          <b>Location:</b> Ho Chi Minh City, Vietnam
+        </div>
+      </td>
+
+      <!-- CỘT PHẢI: MENU MẠNG XÃ HỘI -->
+      <td style="vertical-align: middle; width: 26%; text-align: left; padding: 16px; border-left: 1px solid #e2e8f0; background-color: #ffffff;">
+        <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 10px; letter-spacing: 0.05em;">Connect with us</div>
+        
+        <div style="margin-bottom: 8px;">
+          <a href="https://github.com/snowflake-vibing" target="_blank" style="text-decoration: none; color: #0f172a; font-size: 12px; font-weight: 600; display: block;">
+            <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/github_icon.png" alt="GitHub" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; border-radius: 50%;" />
+            <span>GitHub Profile</span>
+          </a>
+        </div>
+
+        <div style="margin-bottom: 8px;">
+          <a href="https://www.linkedin.com/in/th%C3%A0nh-hi%E1%BB%87u-84b99634b/" target="_blank" style="text-decoration: none; color: #0a66c2; font-size: 12px; font-weight: 600; display: block;">
+            <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/linkedin_icon.png" alt="LinkedIn" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; border-radius: 4px;" />
+            <span>LinkedIn Profile</span>
+          </a>
+        </div>
+
+        <div>
+          <a href="https://www.facebook.com" target="_blank" style="text-decoration: none; color: #1877f2; font-size: 12px; font-weight: 600; display: block;">
+            <img src="https://raw.githubusercontent.com/snowflake-vibing/NCKH_Johnny_Snowflake/main/docs/email/assets/facebook_icon.png" alt="Facebook" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; border-radius: 50%;" />
+            <span>Facebook</span>
+          </a>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+</div>
+
+</body>
+</html>
