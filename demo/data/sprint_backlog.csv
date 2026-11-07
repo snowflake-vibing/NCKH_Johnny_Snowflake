@@ -1,0 +1,7 @@
+issue_key,title,project,predicted_sp,fibonacci_sp,start_date,target_date,assignee,status,keywords
+XD-2914,NullPointerException in DataWeave parser module under nested header,Spring XD,4.82,5.0,2026-11-02,2026-11-03,Lê Thành Hiệu,Done,"NullPointerException, DataWeave, parser"
+XD-1882,Complex expression execution failure on stream header,Spring XD,5.10,5.0,2026-11-04,2026-11-05,Phan Ngọc Đức Huy,In Progress,"ExpressionExecution, complex, header"
+XD-3751,ExpressionExecutionException when element that expects a DW starts with space,Spring XD,3.25,3.0,2026-11-06,2026-11-07,Lê Thành Hiệu,In Progress,"ExpressionExecutionException, DW, space"
+XD-1042,Update documentation for batch job configuration,Spring XD,1.15,1.0,2026-11-09,2026-11-09,Phan Ngọc Đức Huy,To Do,"documentation, batch"
+XD-2219,Add redis connection timeout retry mechanism,Spring XD,2.30,2.0,2026-11-10,2026-11-11,Lê Thành Hiệu,To Do,"timeout, redis, retry"
+XD-4012,NullPointerException in ExpressionExecution when parsing complex DataWeave header,Spring XD,4.82,5.0,2026-11-12,2026-11-13,Lê Thành Hiệu,To Do,"NullPointerException, ExpressionExecution, complex"
