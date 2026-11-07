@@ -27,12 +27,6 @@
 
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.65; color: #1e293b; max-width: 760px; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 12px; padding: 28px; background-color: #ffffff; box-shadow: 0 4px 16px rgba(0,0,0,0.05);">
 
-<div style="border-bottom: 2px solid #2563eb; padding-bottom: 16px; margin-bottom: 24px;">
-<div style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #2563eb; font-weight: 700;">Academic Research Correspondence</div>
-<h2 style="margin: 8px 0 4px 0; color: #0f172a; font-size: 20px; font-weight: 700;">Inquiry regarding replication details and evaluation setup for GPT2SP (IEEE TSE 2023)</h2>
-<div style="font-size: 13px; color: #64748b;"><b>To:</b> Michael Fu &lt;yeh.fu@monash.edu&gt; &bull; <b>Cc:</b> Dr. Chakkrit Tantithamthavorn &lt;chakkrit@monash.edu&gt;</div>
-</div>
-
 <p style="font-size: 15px; margin-top: 0;">Dear Michael and Dr. Tantithamthavorn,</p>
 
 <p style="font-size: 15px;">I hope this email finds you well and having a productive academic semester.</p>
@@ -113,16 +107,10 @@
 <span>GitHub Profile</span>
 </a>
 </div>
-<div style="margin-bottom: 8px;">
+<div>
 <a href="https://www.linkedin.com/in/th%C3%A0nh-hi%E1%BB%87u-84b99634b/" target="_blank" style="text-decoration: none; color: #0a66c2; font-size: 12px; font-weight: 600; display: block;">
 <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; border-radius: 4px; border: none;" />
 <span>LinkedIn Profile</span>
-</a>
-</div>
-<div>
-<a href="https://www.facebook.com" target="_blank" style="text-decoration: none; color: #1877f2; font-size: 12px; font-weight: 600; display: block;">
-<img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" alt="Facebook" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; border-radius: 50%; border: none;" />
-<span>Facebook</span>
 </a>
 </div>
 </td>
