@@ -78,10 +78,10 @@
 
 <p style="font-size: 15px;">Thank you very much once again for your inspiring contributions to Software Engineering research!</p>
 
-<!-- ANIMATED GIF "HAVE A NICE DAY" (TENOR CDN - 32 FRAMES ANIMATION) -->
+<!-- ANIMATED MEME GIF "CAT THUMBS UP" (LEGENDARY MEME - TENOR CDN) -->
 <div style="margin: 24px auto 18px auto; text-align: center;">
-<img src="https://media.tenor.com/GHAo4o8aJewAAAAM/haveaniceday-have-a-nice-day.gif" alt="Have a nice day!" style="width: 170px; height: auto; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.08); display: block; margin: 0 auto;" />
-<div style="font-size: 13px; color: #64748b; margin-top: 8px; font-style: italic;">Wishing you a wonderful & inspiring week ahead! ✨</div>
+<img src="https://media.tenor.com/TsVXIAMBZXoAAAAM/cat-thumbs-up-thumbs-up.gif" alt="Cat Thumbs Up Meme" style="width: 155px; height: auto; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.1); display: block; margin: 0 auto;" />
+<div style="font-size: 13px; color: #475569; margin-top: 8px; font-weight: 500;">Wishing you a wonderful week ahead! 👍✨</div>
 </div>
 
 <p style="font-size: 15px; margin-bottom: 24px;">Warmest regards,</p>
