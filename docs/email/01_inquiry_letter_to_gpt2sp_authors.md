@@ -29,7 +29,7 @@
 
 <p style="font-size: 15px; margin-top: 0;">Dear Michael and Dr. Tantithamthavorn,</p>
 
-<p style="font-size: 15px;">I hope this email finds you well and having a productive academic semester.</p>
+<p style="font-size: 15px;">I hope this email finds you well.</p>
 
 <p style="font-size: 15px;">My name is <strong>Le Thanh Hieu</strong>, writing on behalf of our student research group alongside my colleague <strong>Phan Ngoc Duc Huy</strong> at the <em>Faculty of Information Systems, University of Information Technology, Vietnam National University Ho Chi Minh City (UIT - VNU-HCM)</em>.</p>
 
@@ -128,11 +128,11 @@
 2. Bạn chỉ cần **nhấp đúp mở file `email_preview.html` bằng Google Chrome hoặc Microsoft Edge**.
 3. Nhấn tổ hợp phím **`Ctrl + A`** (chọn tất cả) $\rightarrow$ **`Ctrl + C`** (sao chép).
 4. Mở **Gmail** $\rightarrow$ bấm **Soạn thư (Compose)** $\rightarrow$ nhấp chuột vào khung soạn thư và nhấn **`Ctrl + V`**.
-5. Toàn bộ card viền, logo UIT, icon menu, hộp câu hỏi và GIF mặt trời "Have a nice day" sẽ hiển thị nguyên vẹn, lung linh 100%!
+5. Toàn bộ card viền, logo UIT, icon menu, hộp câu hỏi và meme GIF Cat Thumbs Up sẽ hiển thị nguyên vẹn, chuẩn xác 100%!
 
 ### 🎯 Cách 2: Copy từ bản Preview Markdown trong VS Code
 1. Nhấn **`Ctrl + Shift + V`** để mở tab Preview file này trong VS Code.
-2. Dùng chuột bôi đen từ dòng chữ `Academic Research Correspondence` đến hết mép dưới của thẻ Chữ ký `Connect with us`.
+2. Dùng chuột bôi đen từ dòng chữ `Dear Michael and Dr. Tantithamthavorn,` đến hết mép dưới của thẻ Chữ ký `Connect with us`.
 3. Nhấn **`Ctrl + C`** $\rightarrow$ mở Gmail và nhấn **`Ctrl + V`**.
 
 ### 📮 Thông tin gửi thư:
