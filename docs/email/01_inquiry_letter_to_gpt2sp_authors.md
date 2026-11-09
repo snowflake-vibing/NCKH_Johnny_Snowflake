@@ -27,7 +27,7 @@
 
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.65; color: #1e293b; max-width: 760px; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 12px; padding: 28px; background-color: #ffffff; box-shadow: 0 4px 16px rgba(0,0,0,0.05);">
 
-<p style="font-size: 15px; margin-top: 0;">Dear Michael and Dr. Tantithamthavorn,</p>
+<p style="font-size: 15px; margin-top: 0;">Dear Dr. Michael Fu and Dr. Chakkrit Tantithamthavorn,</p>
 
 <p style="font-size: 15px;">I hope this email finds you well.</p>
 
@@ -132,10 +132,10 @@
 
 ### 🎯 Cách 2: Copy từ bản Preview Markdown trong VS Code
 1. Nhấn **`Ctrl + Shift + V`** để mở tab Preview file này trong VS Code.
-2. Dùng chuột bôi đen từ dòng chữ `Dear Michael and Dr. Tantithamthavorn,` đến hết mép dưới của thẻ Chữ ký `Connect with us`.
+2. Dùng chuột bôi đen từ dòng chữ `Dear Dr. Michael Fu and Dr. Chakkrit Tantithamthavorn,` đến hết mép dưới của thẻ Chữ ký `Connect with us`.
 3. Nhấn **`Ctrl + C`** $\rightarrow$ mở Gmail và nhấn **`Ctrl + V`**.
 
 ### 📮 Thông tin gửi thư:
-* **To:** `yeh.fu@monash.edu`
+* **To:** `michael.fu@unimelb.edu.au`, `yeh.fu@monash.edu`
 * **Cc:** `chakkrit@monash.edu`
 * **Subject:** `Inquiry regarding replication details and evaluation setup for GPT2SP (IEEE TSE 2023)`
