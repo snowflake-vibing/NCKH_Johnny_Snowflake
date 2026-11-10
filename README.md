@@ -157,7 +157,12 @@ flowchart LR
 │   │   ├── candidate_khan_2025_comparative_learning.md
 │   │   ├── candidate_tawosi_2022_replication.md
 │   │   └── reproduction-score.md # Đánh giá 3 ứng viên theo thang điểm 100
-│   ├── notes/                # Biên bản họp nhóm & ghi chú định hướng
+│   ├── notes/                # Biên bản họp nhóm & kế hoạch hành động tuần
+│   │   └── weekly_tasks_plan.md # Kế hoạch 3 nhiệm vụ tuần này (GPT2SP 3 setting, Porru RQ3, Wilcoxon/A12/Holm)
+│   ├── reproduction/         # Cẩm nang thực nghiệm tái lập & bóc tách giả thuyết trên Kaggle
+│   │   ├── 01_kaggle_replication_guide_gpt2sp.md # Hướng dẫn chạy inference & fine-tune Spring XD
+│   │   ├── 02_empirical_discrepancy_and_ablation_plan.md # Kế hoạch chuyển hóa độ lệch thành đóng góp khoa học
+│   │   └── 03_grounded_ablation_experiments_guide.md # Code kiểm chứng 4 giả thuyết có cơ sở từ bài báo gốc
 │   └── reports/              # Báo cáo đề tài NCKH chính thức
 ├── notebooks/                # Jupyter Notebooks phục vụ phân tích & thực nghiệm
 │   └── EDA_TAWOS.ipynb       # EDA tổng quan trên toàn bộ CSDL TAWOS v1.1
