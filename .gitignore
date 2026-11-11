@@ -129,3 +129,8 @@ $RECYCLE.BIN/
 docs/glossary/
 /glossary/
 !docs/articles/paper-information/glossary/
+
+# ==============================================================================
+# 8. KAGGLE OUTPUT CỤC BỘ
+# ==============================================================================
+kaggle/output/
