@@ -88,7 +88,12 @@ class GPT2SP(GPT2PreTrainedModel):
         self.dense2 = nn.Linear(4 * config.n_embd, config.n_embd, bias=False)
         self.score = nn.Linear(config.n_embd, self.num_labels, bias=False)
 
-        self.init_weights()
+        # Tương thích 100% với Transformers mới nhất (v4.45+ / Python 3.13)
+        self.all_tied_weights_keys = {}
+        if hasattr(self, "post_init"):
+            self.post_init()
+        else:
+            self.init_weights()
 
     def forward(self, input_ids=None, attention_mask=None):
         transformer_outputs = self.transformer(input_ids=input_ids, attention_mask=attention_mask)
