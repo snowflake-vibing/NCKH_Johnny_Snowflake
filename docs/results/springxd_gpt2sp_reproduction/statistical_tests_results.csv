@@ -1,0 +1,4 @@
+﻿Comparison,Mean_Diff (MAE1 - MAE2),Wilcoxon_W,Raw_p_value,Vargha_Delaney_A12,Effect_Size,Holm_Threshold,Significant_After_Holm,p_value
+GPT2SP Setting 2 vs Median Baseline,0.1046,104227.5,0.00014925495345988494,0.5284,Negligible,0.016666666666666666,True,1.4925e-04
+GPT2SP Setting 2 vs Setting 1,0.0869,113066.0,0.030627431017827472,0.5388,Negligible,0.025,False,0.0306
+GPT2SP Setting 1 vs Median Baseline,0.0177,124136.0,0.9046317864918215,0.5062,Negligible,0.05,False,0.9046
