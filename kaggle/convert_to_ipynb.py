@@ -90,6 +90,7 @@ if df_clean is None:
     df_clean = df_raw.copy()
     df_clean['Clean_Title'] = df_clean['title']
     df_clean['Clean_Description'] = df_clean['description'].fillna('')
+    df_clean['Issue_Key'] = df_clean['issuekey']
 
 # Lấy tập Test và Train theo split_mark của tác giả (Chronological 60/20/20)
 test_raw = df_raw[df_raw['split_mark'] == 'test'].copy().reset_index(drop=True)
@@ -185,11 +186,15 @@ texts_s2 = (test_raw["title"].astype(str) + " " + desc_filled).tolist()
 preds_s2 = run_inference_tqdm(texts_s2, max_len=128, batch_size=64, desc="Setting 2: Full Context (len=128)")
 
 # Setting 3: Clean Planning-Time Snapshot (Nhóm 3 Leakage-Free)
-merged_test = pd.merge(test_raw[['issuekey', 'storypoint']], df_clean[['Issue_Key', 'Clean_Title', 'Clean_Description']], 
-                       left_on='issuekey', right_on='Issue_Key', how='left')
-merged_test['Clean_Title'] = merged_test['Clean_Title'].fillna(test_raw['title'])
-merged_test['Clean_Description'] = merged_test['Clean_Description'].fillna('')
-texts_s3 = (merged_test['Clean_Title'].astype(str) + " " + merged_test['Clean_Description'].astype(str)).tolist()
+clean_key = 'Issue_Key' if 'Issue_Key' in df_clean.columns else 'issuekey'
+clean_t = 'Clean_Title' if 'Clean_Title' in df_clean.columns else 'title'
+clean_d = 'Clean_Description' if 'Clean_Description' in df_clean.columns else 'description'
+
+merged_test = pd.merge(test_raw[['issuekey', 'storypoint']], df_clean[[clean_key, clean_t, clean_d]], 
+                       left_on='issuekey', right_on=clean_key, how='left')
+merged_test['Clean_Title_Final'] = merged_test[clean_t].fillna(test_raw['title'])
+merged_test['Clean_Desc_Final'] = merged_test[clean_d].fillna('')
+texts_s3 = (merged_test['Clean_Title_Final'].astype(str) + " " + merged_test['Clean_Desc_Final'].astype(str)).tolist()
 preds_s3 = run_inference_tqdm(texts_s3, max_len=128, batch_size=64, desc="Setting 3: Clean Snapshot (len=128)")
 
 # Tính toán sai số và điểm Standardized Accuracy (SA)
