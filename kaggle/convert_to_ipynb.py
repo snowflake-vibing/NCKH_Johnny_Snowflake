@@ -106,51 +106,22 @@ mae_median = float(np.mean(abs_errors_median))
 mdae_median = float(np.median(abs_errors_median))
 print(f"🎯 Median Effort Baseline: MAE = {mae_median:.4f} | MdAE = {mdae_median:.4f}")"""),
 
-    ('code', """# [Cell 3] Định nghĩa Kiến trúc Mô hình Chuẩn 07 (GPT2PreTrainedModel) & Nạp Checkpoint
-print("[2/5] Đang nạp Checkpoint tác giả theo chuẩn tài liệu 07...")
+    ('code', """# [Cell 3] Nạp Checkpoint tác giả từ Hugging Face
+print("[2/5] Đang nạp Checkpoint tác giả từ Hugging Face...")
 
-class GPT2SP(GPT2PreTrainedModel):
-    _keys_to_ignore_on_load_missing = [r"h\.\d+\.attn\.masked_bias", r"lm_head\.weight"]
-
-    def __init__(self, config):
-        super().__init__(config)
-        self.num_labels = config.num_labels
-        self.transformer = GPT2Model(config)
-        
-        # MLP Regressor Head: 768 -> 3072 -> 768 -> 1
-        self.dense1 = nn.Linear(config.n_embd, 4 * config.n_embd, bias=False)
-        self.dense2 = nn.Linear(4 * config.n_embd, config.n_embd, bias=False)
-        self.score = nn.Linear(config.n_embd, self.num_labels, bias=False)
-
-        # Tương thích 100% với Transformers mới nhất (v4.45+ / Python 3.13)
-        self.all_tied_weights_keys = {}
-        if hasattr(self, "post_init"):
-            self.post_init()
-        else:
-            self.init_weights()
-
-    def forward(self, input_ids=None, attention_mask=None):
-        transformer_outputs = self.transformer(input_ids=input_ids, attention_mask=attention_mask)
-        hidden_states = transformer_outputs[0]
-
-        # Lan truyền qua MLP Head
-        hidden_states = self.dense1(hidden_states)
-        hidden_states = self.dense2(hidden_states)
-        logits = self.score(hidden_states)
-
-        # Last Token Pooling chuẩn xác
-        batch_size = input_ids.shape[0]
-        sequence_lengths = torch.ne(input_ids, self.config.pad_token_id).sum(-1) - 1
-        pooled_logits = logits[range(batch_size), sequence_lengths]
-
-        return pooled_logits
+from transformers import GPT2ForSequenceClassification, GPT2Tokenizer, GPT2Config
 
 MODEL_CHECKPOINT = "MickyMike/0-GPT2SP-springxd"
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.pad_token = tokenizer.eos_token # ID 50257
 
-config = GPT2Config.from_pretrained("gpt2", num_labels=1, pad_token_id=tokenizer.pad_token_id)
-model = GPT2SP.from_pretrained(MODEL_CHECKPOINT, config=config)
+# Dùng trực tiếp GPT2ForSequenceClassification chính hãng của Hugging Face
+# Khớp 100% với config checkpoint gốc (architectures: ["GPT2ForSequenceClassification"])
+model = GPT2ForSequenceClassification.from_pretrained(
+    MODEL_CHECKPOINT, 
+    num_labels=1, 
+    pad_token_id=tokenizer.pad_token_id
+)
 model.to(device)
 model.eval()
 print(f"✅ Nạp Checkpoint {MODEL_CHECKPOINT} lên GPU thành công!")
@@ -171,8 +142,9 @@ def run_inference_tqdm(texts, max_len=20, batch_size=64, desc="Suy luận"):
             input_ids = encoding["input_ids"].to(device)
             attention_mask = encoding["attention_mask"].to(device)
             
-            preds = model(input_ids=input_ids, attention_mask=attention_mask)
-            all_preds.extend(preds.view(-1).cpu().numpy().tolist())
+            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+            logits = outputs.logits.view(-1).cpu().numpy().tolist()
+            all_preds.extend(logits)
     return np.array(all_preds, dtype=np.float32)"""),
 
     ('code', """# [Cell 4] Thực thi Suy luận trên 3 Settings Thực nghiệm (S1, S2, S3)
