@@ -75,20 +75,45 @@ print(f"🎯 Median Effort Baseline: MAE = {mae_median:.4f} | MdAE = {mdae_media
 # ------------------------------------------------------------------------------
 print("\n[2/5] Đang nạp Checkpoint tác giả từ Hugging Face...")
 
+from huggingface_hub import hf_hub_download
+
+class GPT2SP(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+        self.transformer = GPT2Model(config)
+        # MLP Head của tác giả (768 -> 3072 -> 768 -> 1)
+        self.dense1 = nn.Linear(config.n_embd, 4 * config.n_embd, bias=False)
+        self.dense2 = nn.Linear(4 * config.n_embd, config.n_embd, bias=False)
+        self.score = nn.Linear(config.n_embd, 1, bias=False)
+
+    def forward(self, input_ids=None, attention_mask=None):
+        transformer_outputs = self.transformer(input_ids=input_ids, attention_mask=attention_mask)
+        hidden_states = transformer_outputs[0]
+        hidden_states = self.dense1(hidden_states)
+        hidden_states = self.dense2(hidden_states)
+        logits = self.score(hidden_states)
+
+        # Last Token Pooling chuẩn xác
+        batch_size = input_ids.shape[0]
+        sequence_lengths = torch.ne(input_ids, self.config.pad_token_id).sum(-1) - 1
+        return logits[range(batch_size), sequence_lengths].view(-1)
+
 MODEL_CHECKPOINT = "MickyMike/0-GPT2SP-springxd"
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 tokenizer.pad_token = tokenizer.eos_token # ID 50257
 
-# Dùng trực tiếp GPT2ForSequenceClassification chính hãng của Hugging Face
-# Khớp 100% với config checkpoint gốc (architectures: ["GPT2ForSequenceClassification"])
-model = GPT2ForSequenceClassification.from_pretrained(
-    MODEL_CHECKPOINT, 
-    num_labels=1, 
-    pad_token_id=tokenizer.pad_token_id
-)
+config = GPT2Config.from_pretrained("gpt2", num_labels=1, pad_token_id=tokenizer.pad_token_id)
+model = GPT2SP(config)
+
+# Tải weights trực tiếp và nạp trọn vẹn 100% trọng số (bao gồm cả dense1 và dense2)
+weights_file = hf_hub_download(repo_id=MODEL_CHECKPOINT, filename="pytorch_model.bin")
+state_dict = torch.load(weights_file, map_location="cpu")
+missing, unexpected = model.load_state_dict(state_dict, strict=False)
+
 model.to(device)
 model.eval()
-print(f"✅ Nạp Checkpoint {MODEL_CHECKPOINT} lên GPU thành công!")
+print(f"✅ Nạp Checkpoint {MODEL_CHECKPOINT} lên GPU thành công 100% (dense1 & dense2 đã nạp đầy đủ)!")
 
 # Hàm suy luận chuẩn với thanh tiến trình tqdm
 def run_inference_tqdm(texts, max_len=20, batch_size=64, desc="Suy luận"):
@@ -106,9 +131,8 @@ def run_inference_tqdm(texts, max_len=20, batch_size=64, desc="Suy luận"):
             input_ids = encoding["input_ids"].to(device)
             attention_mask = encoding["attention_mask"].to(device)
             
-            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
-            logits = outputs.logits.view(-1).cpu().numpy().tolist()
-            all_preds.extend(logits)
+            preds = model(input_ids=input_ids, attention_mask=attention_mask)
+            all_preds.extend(preds.cpu().numpy().tolist())
     return np.array(all_preds, dtype=np.float32)
 
 # ------------------------------------------------------------------------------
