@@ -1,0 +1,8 @@
+﻿Metric / Property,Value,Scientific Implication for WSESE
+Tổng số issues có Story Point trong Spring XD,"3,542",Toàn bộ mẫu thực nghiệm đối chứng
+Số issues giữ lại sau khi áp dụng bộ lọc Porru et al. (2016),"2,987",Tập dữ liệu tĩnh theo phong cách truyền thống
+Tỷ lệ giữ lại của Porru et al. (%),84.33%,Porru loại bỏ các mẫu thiếu mô tả hoặc ngoại lai
+Số issues bị sửa Description sau ngày Planning (Temporal Leakage),566,BẰNG CHỨNG RÒ RỈ: Final snapshot chứa thông tin viết sau planning!
+Tỷ lệ issues rò rỉ Description sau Planning (%),15.98%,Nguy cơ thổi phồng độ chính xác ảo của mô hình
+Số issues bị sửa Title sau ngày Planning (%),17.02%,Title cũng bị sửa đổi chi tiết hơn trong quá trình code
+Số issues bị điều chỉnh Story Point sau buổi Planning (%),11.35%,Ground-truth shift: Điểm thực tế bị thay đổi trong Sprint

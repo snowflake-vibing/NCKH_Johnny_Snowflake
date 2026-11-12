@@ -1,0 +1,4 @@
+﻿Cut-off Boundary,Available Information at Cut-off,Temporal Leakage Status,Median Days from Creation
+Creation Date (Issue Created),Chỉ có Title và Description ban đầu của người tạo issue,"0% Leakage (Quá sớm, có thể thiếu bối cảnh kỹ thuật thảo luận)",0.0 days
+Real Estimation Date (SP First Assigned - Planning Meeting),"Title, Description, Issue Type, Priority tại buổi họp Planning",0% Leakage (Chuẩn xác nhất cho bối cảnh thực tế Agile Planning),0.0 days
+Post-Planning Sprint Activity (Final Snapshot),"Bao gồm cả commit logs, stack trace, comments phát sinh sau sprint",16.0% Text Leakage & 11.3% Ground Truth Shift (Rò rỉ tương lai),At issue resolution (Days to Months)

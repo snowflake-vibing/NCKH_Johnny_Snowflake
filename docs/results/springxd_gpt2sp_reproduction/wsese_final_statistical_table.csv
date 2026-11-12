@@ -1,0 +1,6 @@
+﻿Comparison Pair,Mean Diff (MAE_1 - MAE_2),Wilcoxon Stat,Raw p-value,Vargha-Delaney A12,Effect Size,Holm Alpha,Statistically Significant?,Formatted p-value
+GPT2SP Setting 2 (Full Context) vs Median Effort Baseline,0.1046,104227.5,0.00014925495345988494,0.5284,Negligible,0.01,True,1.4925e-04
+GPT2SP Setting 3 (Planning-Time Snapshot) vs Median Effort Baseline,0.1046,104227.5,0.00014925495345988494,0.5284,Negligible,0.0125,True,1.4925e-04
+GPT2SP Setting 2 (Full Context) vs GPT2SP Setting 1 (Title only),0.0869,113066.0,0.030627431017827472,0.5388,Negligible,0.016666666666666666,False,0.0306
+GPT2SP Setting 1 (Title only) vs Median Effort Baseline,0.0177,124136.0,0.9046317864918215,0.5062,Negligible,0.025,False,0.9046
+GPT2SP Setting 3 (Planning-Time) vs GPT2SP Setting 2 (Full Context),0.0,0.0,1.0,0.5,Negligible,0.05,False,1.0000
