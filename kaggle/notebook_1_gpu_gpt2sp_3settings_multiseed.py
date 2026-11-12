@@ -272,4 +272,60 @@ display(seed_summary[['Configuration', 'Formatted (Mean +- Std)']])
 seed_out = os.path.join(output_dir, 'multiseed_results.csv')
 seed_summary.to_csv(seed_out, index=False, encoding='utf-8-sig')
 print(f"💾 Đã lưu: {seed_out}")
+
+# ------------------------------------------------------------------------------
+# 6. KIỂM ĐỊNH Ý NGHĨA THỐNG KÊ (WILCOXON, A12, HOLM CORRECTION)
+# ------------------------------------------------------------------------------
+print("\n[6/6] Đang thực hiện kiểm định thống kê chuẩn học thuật...")
+from scipy.stats import wilcoxon
+
+def vargha_delaney_a12(m, n):
+    m, n = np.asarray(m), np.asarray(n)
+    r = 0.0
+    for x in m:
+        r += np.sum(x > n) + 0.5 * np.sum(x == n)
+    return float(r / (len(m) * len(n)))
+
+def interpret_a12(a):
+    d = abs(a - 0.5)
+    if d < 0.06: return "Negligible"
+    elif d < 0.14: return "Small"
+    elif d < 0.21: return "Medium"
+    else: return "Large"
+
+pairs = [
+    ("Setting 1 vs Median Baseline", err_s1, abs_errors_median),
+    ("Setting 2 vs Median Baseline", err_s2, abs_errors_median),
+    ("Setting 3 vs Median Baseline", err_s3, abs_errors_median),
+    ("Setting 2 vs Setting 1", err_s2, err_s1),
+    ("Setting 3 vs Setting 2", err_s3, err_s2),
+]
+
+stat_records = []
+for name, err_a, err_b in pairs:
+    if np.all(err_a == err_b):
+        stat, p_val = 0.0, 1.0
+    else:
+        stat, p_val = wilcoxon(err_a, err_b, alternative='two-sided')
+    a12 = vargha_delaney_a12(err_a, err_b)
+    stat_records.append({
+        'Comparison': name,
+        'Wilcoxon_W': stat,
+        'p_value_raw': p_val,
+        'A12': round(a12, 4),
+        'Effect_Size': interpret_a12(a12)
+    })
+
+stat_df = pd.DataFrame(stat_records)
+stat_df = stat_df.sort_values('p_value_raw').reset_index(drop=True)
+m_len = len(stat_df)
+stat_df['Holm_Threshold'] = [0.05 / (m_len - i) for i in range(m_len)]
+stat_df['Significant_After_Holm'] = stat_df['p_value_raw'] < stat_df['Holm_Threshold']
+stat_df['p_value'] = stat_df['p_value_raw'].apply(lambda p: f"{p:.4e}" if p < 0.001 else f"{p:.4f}")
+
+display(stat_df[['Comparison', 'p_value', 'A12', 'Effect_Size', 'Significant_After_Holm']])
+
+stat_out = os.path.join(output_dir, 'statistical_tests_results.csv')
+stat_df.to_csv(stat_out, index=False, encoding='utf-8-sig')
+print(f"💾 Đã lưu kết quả kiểm định thống kê: {stat_out}")
 print("\n🎉 HOÀN THÀNH NOTEBOOK 1 CHUẨN 07 THÀNH CÔNG RỰC RỠ!")

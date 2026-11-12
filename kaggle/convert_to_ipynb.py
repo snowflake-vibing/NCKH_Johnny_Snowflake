@@ -332,7 +332,10 @@ pairs = [
 
 stat_records = []
 for name, err_a, err_b in pairs:
-    stat, p_val = wilcoxon(err_a, err_b, alternative='two-sided')
+    if np.all(err_a == err_b):
+        stat, p_val = 0.0, 1.0
+    else:
+        stat, p_val = wilcoxon(err_a, err_b, alternative='two-sided')
     a12 = vargha_delaney_a12(err_a, err_b)
     stat_records.append({
         'Comparison': name,
