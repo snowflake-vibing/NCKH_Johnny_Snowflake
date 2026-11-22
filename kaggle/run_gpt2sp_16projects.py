@@ -94,7 +94,7 @@ def infer_texts(
     device: torch.device,
 ) -> np.ndarray:
     """Run batched forward pass without gradients."""
-    encoded = tokenizer.batch_encode_plus(
+    encoded = tokenizer(
         texts,
         truncation=True,
         max_length=max_length,

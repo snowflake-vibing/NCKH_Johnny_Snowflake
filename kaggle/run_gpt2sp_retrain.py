@@ -146,7 +146,7 @@ def prepare_setting_data(
 def make_loader(
     tokenizer, texts: List[str], labels: np.ndarray, max_len: int, batch_size: int, shuffle: bool
 ) -> DataLoader:
-    enc = tokenizer.batch_encode_plus(
+    enc = tokenizer(
         texts,
         truncation=True,
         max_length=max_len,

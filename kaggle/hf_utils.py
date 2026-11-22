@@ -6,7 +6,7 @@ import os
 import subprocess
 import time
 from typing import Any, Dict, Optional
-from huggingface_hub import HfApi
+from huggingface_hub import HfApi, hf_hub_download
 
 
 def resolve_hf_token(explicit_token: Optional[str] = None) -> Optional[str]:
@@ -100,20 +100,31 @@ class HFExperimentLogger:
         self.api = api
         self.username = username
         self.results_repo_id = self._qualify_repo(results_repo_name)
-        self.api.create_repo(
-            repo_id=self.results_repo_id,
-            repo_type="dataset",
-            private=self.private,
-            exist_ok=True,
-        )
-        if checkpoints_repo_name:
-            self.checkpoints_repo_id = self._qualify_repo(checkpoints_repo_name)
+        try:
             self.api.create_repo(
-                repo_id=self.checkpoints_repo_id,
-                repo_type="model",
+                repo_id=self.results_repo_id,
+                repo_type="dataset",
                 private=self.private,
                 exist_ok=True,
             )
+            if checkpoints_repo_name:
+                self.checkpoints_repo_id = self._qualify_repo(checkpoints_repo_name)
+                self.api.create_repo(
+                    repo_id=self.checkpoints_repo_id,
+                    repo_type="model",
+                    private=self.private,
+                    exist_ok=True,
+                )
+        except Exception as exc:
+            print(
+                f"⚠️ Failed to create/access Hugging Face repo ({exc}). "
+                "Please ensure HF_TOKEN/hf_token has WRITE permission. "
+                "Continuing locally without HF upload."
+            )
+            self.enabled = False
+            self.results_repo_id = None
+            self.checkpoints_repo_id = None
+            return
 
         self.enabled = True
         print(f"🔐 Authenticated to Hugging Face as: {self.username}")
@@ -159,11 +170,12 @@ class HFExperimentLogger:
         path_in_repo = self._prefixed(rel_path)
         os.makedirs(local_dest_dir, exist_ok=True)
         try:
-            return self.api.hf_hub_download(
+            return hf_hub_download(
                 repo_id=self.results_repo_id,
                 filename=path_in_repo,
                 repo_type="dataset",
                 local_dir=local_dest_dir,
+                token=self.token,
             )
         except Exception as exc:
             print(f"⚠️ Failed to download {path_in_repo} from HF for resume: {exc}")
