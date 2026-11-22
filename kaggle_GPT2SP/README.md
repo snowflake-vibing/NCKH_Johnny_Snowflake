@@ -147,6 +147,8 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
 ### Bước 2: Chỉnh tham số ở Cell 1 của `kaggle_runner.ipynb` và bấm Run All
 * `GIT_BRANCH`: tên branch chứa code (mặc định `"main"`).
 * `EXPERIMENT`: chọn `"gpt2sp_16projects"` hoặc `"gpt2sp_retrain"`.
+* `HF_RESULTS_REPO`: `"NCKH_GPT2SP"` *(HF Dataset Repo lưu `.csv`, `.png`, `run_metadata.json`)*.
+* `HF_CHECKPOINTS_REPO`: `"nckh3-gpt2sp-checkpoints"` *(HF Model Repo lưu weights khi chạy `gpt2sp_retrain`)*.
 * `EXTRA_ARGS` (tùy chọn):
   * Test nhanh 2 dự án: `"--projects springxd,bamboo"`
   * Đánh giá GPT2SP với Full Context: `"--include-description --max-length 128"`
@@ -161,3 +163,81 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
 python kaggle_GPT2SP/run_gpt2sp_16projects.py --projects springxd --no-hf-push
 python kaggle_GPT2SP/run_gpt2sp_retrain.py --project springxd --setting planning_clean --epochs 3 --no-hf-push
 ```
+
+---
+
+## 📦 6. Giải Thích Các File Output Trên Hugging Face (`Snowflake06/NCKH_GPT2SP`)
+
+Toàn bộ kết quả thực nghiệm của **GPT2SP** được công khai tại:  
+🔗 **HF Dataset Repo:** [`https://huggingface.co/datasets/Snowflake06/NCKH_GPT2SP`](https://huggingface.co/datasets/Snowflake06/NCKH_GPT2SP)
+
+### 6.1. Cấu trúc thư mục thực tế cho Chiến lược 1 (`gpt2sp_16proj_seed0_title_len20/`)
+
+Lần chạy đầy đủ 16 dự án trên Kaggle (`Tesla T4`, `PyTorch 2.11.0+cu130`, `Transformers 5.20.2`, commit `6270d5ad`) đã đẩy lên tổng cộng **20 file kết quả** (cùng `.gitattributes` gốc của HF Hub) trong thư mục [`gpt2sp_16proj_seed0_title_len20/`](https://huggingface.co/datasets/Snowflake06/NCKH_GPT2SP/tree/main/gpt2sp_16proj_seed0_title_len20):
+
+```text
+Snowflake06/NCKH_GPT2SP/
+├── .gitattributes
+└── gpt2sp_16proj_seed0_title_len20/
+    ├── gpt2sp_16_projects_summary.csv             # Bảng tổng hợp 16 dự án (16 dòng x 18 cột)
+    ├── gpt2sp_16_projects_statistical_tests.csv   # Kiểm định Wilcoxon & A12 toàn cục (2 dòng x 6 cột)
+    ├── gpt2sp_16_projects_benchmark_audit.png     # Biểu đồ 2 panel 300 DPI đối chiếu MAE & SA
+    ├── run_metadata.json                          # Nhật ký tái lập phiên bản, phần cứng & tham số CLI
+    └── predictions/                               # Dự báo chi tiết từng Jira issue của 16 dự án
+        ├── appceleratorstudio_predictions.csv
+        ├── aptanastudio_predictions.csv
+        ├── ... (tổng 16 file *_predictions.csv)
+        └── usergrid_predictions.csv
+```
+
+### 6.2. Ý nghĩa chi tiết từng file & từng cột
+
+#### 1. `gpt2sp_16_projects_summary.csv` (16 dòng $\times$ 18 cột)
+Bảng tổng hợp định lượng từng dự án so sánh **Table 4 bài báo gốc**, **Official HF Checkpoints (`MickyMike/0-GPT2SP-*`)**, và **Baseline thực tế tính từ tập `train`**:
+
+| Nhóm cột | Tên cột | Ý nghĩa chi tiết |
+| :--- | :--- | :--- |
+| **Định danh & Quy mô** | `Project`, `Abbr`, `Name`, `N_Test` | Tên khóa dự án, mã viết tắt (`AS`, `XD`...), tên đầy đủ và số lượng Jira issue trong tập `test` (20% cuối theo thời gian) |
+| **Kết quả GPT2SP** | `GPT2SP_Reported_MAE`, `GPT2SP_Actual_MAE`, `GPT2SP_Actual_MdAE`, `Reproduction_Gap` | MAE công bố trong Table 4 bài báo, MAE/MdAE chạy thật từ checkpoint trên HF, và độ lệch `Reproduction_Gap = Actual_MAE - Reported_MAE` |
+| **Baselines thật (`train`)** | `Real_Median_MAE`, `Real_Median_MdAE`, `Real_Mean_MAE` | MAE/MdAE khi luôn đoán bằng `median(y_train)` và MAE khi đoán bằng `mean(y_train)` (không rò rỉ `val`/`test`) |
+| **So sánh & Đối chứng** | `SA_vs_Median (%)`, `DeepSE_Reported_MAE` | Standardized Accuracy $\text{SA} = (1 - \text{Actual\_MAE} / \text{Real\_Median\_MAE}) \times 100\%$ (`> 0%` tốt hơn Median, `< 0%` thua Median); kèm MAE Deep-SE ghi trong `within_proj_data.csv` |
+| **Kiểm định thống kê** | `Wilcoxon_W_vs_Med`, `Wilcoxon_p_vs_Med`, `Wilcoxon_p_Holm`, `A12_vs_Med`, `Verdict` | Thống kê Wilcoxon ghép cặp giữa `Error_GPT2SP` và `Error_Median` từng issue, $p$-value gốc & sau hiệu chỉnh **Holm-Bonferroni**, effect size Vargha-Delaney $\hat{A}_{12}$ (`> 0.5` mô hình thắng), và nhãn kết luận (`BEATS_MEDIAN` / `LOSES_TO_MEDIAN`) |
+
+> **Kết quả ghi nhận trên bảng thật:** **9/16 dự án** bị gắn nhãn `LOSES_TO_MEDIAN`, độ chênh trung bình `Mean Reproduction_Gap = +1.1335 SP`, và `Mean SA vs Median = +0.07%`.
+
+#### 2. `gpt2sp_16_projects_statistical_tests.csv` (2 dòng $\times$ 6 cột)
+Chứa kết quả 2 phép kiểm định **Wilcoxon Signed-Rank Test toàn cục** ở cấp độ 16 dự án (`Comparison`, `N_Projects`, `Mean_Diff`, `Wilcoxon_W`, `p_value`, `A12`):
+* **`Actual_Checkpoint_MAE vs Paper_Reported_MAE`** (`N_Projects=16`, `Mean_Diff=+1.1335`, `W=0.0`, `p=0.000031`, `A12=NaN`): Xác nhận 16/16 checkpoints chính thức đều cho MAE thực tế cao hơn Table 4 có ý nghĩa thống kê, khớp tỷ lệ `~1.80x` do lỗi chia `total_data_point` ([PR #2](https://github.com/awsm-research/gpt2sp/pull/2)).
+* **`Actual_Checkpoint_MAE vs Real_Median_MAE`** (`N_Projects=16`, `Mean_Diff=-0.0277`, `W=67.0`, `p=0.979950`, `A12=0.5078`): Khẳng định trên toàn cục 16 dự án, official checkpoints của GPT2SP **tương đương về mặt thống kê với dự đoán bằng Median tập train** ($p = 0.98$, $\hat{A}_{12} \approx 0.50$).
+
+#### 3. `predictions/<project>_predictions.csv` (16 file $\times$ 8 cột)
+Dữ liệu dự báo mức từng Jira issue trên tập test (ví dụ `springxd_predictions.csv` gồm **706 dòng**), phục vụ hậu kiểm phân phối sai số và kiểm định từng issue:
+* `issuekey`: Mã Jira issue (vd `XD-3016`).
+* `Ground_Truth_SP`: Giá trị Story Point thực tế trong CSV gốc.
+* `Pred_GPT2SP`: Giá trị Story Point dự báo từ official checkpoint.
+* `Pred_Median_Baseline`, `Pred_Mean_Baseline`: Giá trị dự báo hằng số theo `median(y_train)` và `mean(y_train)`.
+* `Error_GPT2SP`, `Error_Median`, `Error_Mean`: Sai số tuyệt đối $|y - \hat{y}|$ tương ứng cho từng issue.
+
+#### 4. `gpt2sp_16_projects_benchmark_audit.png`
+Biểu đồ 2 panel độ phân giải 300 DPI sinh bởi [`save_audit_plot`](run_gpt2sp_16projects.py#L240-L310):
+* **Panel (A):** Biểu đồ cột nhóm 3 cột theo 16 dự án so sánh `Paper Reported MAE` (xanh dương) vs. `Actual Checkpoint MAE` (đỏ) vs. `Real Median Baseline MAE` (xanh lá).
+* **Panel (B):** Biểu đồ cột `Standardized Accuracy SA (%) vs. Median` (cột xanh lá khi mô hình tốt hơn Median `SA > 0%`, cột đỏ khi thua Median `SA <= 0%`).
+
+#### 5. `run_metadata.json`
+Hồ sơ tái lập chuẩn ResearchOps (không bao giờ lưu token/secret):
+* `timestamp_utc`, `git_branch` (`"main"`), `git_commit` (`"6270d5ad0033574978941258aea2ccdf53279345"`), `run_prefix`.
+* Thông tin phần cứng & môi trường: `device` (`"cuda"`), `gpu_name` (`"Tesla T4"`), `torch_version` (`"2.11.0+cu130"`), `transformers_version` (`"5.20.2"`).
+* Toàn bộ tham số `args` đã chạy và tóm tắt `extra_info` (`elapsed_sec: 152.51`, `n_projects: 16`, `projects_losing_to_median: 9`, `mean_reproduction_gap: 1.1335`, `mean_sa_vs_median: 0.07`).
+
+---
+
+### 6.3. Cấu trúc output khi chạy Chiến lược 2 (`run_gpt2sp_retrain.py`)
+
+Khi huấn luyện lại GPT2SP theo từng nhánh (`title_20`, `full_128`, `planning_clean`), pipeline tự đẩy song song vào hai kho HF:
+* **Dataset Repo (`Snowflake06/NCKH_GPT2SP/gpt2sp_retrain_<project>_<setting>/`):**
+  * `retrain_summary.csv`: Tổng hợp MAE/MdAE, Median Baseline, $SA$, Wilcoxon, $\hat{A}_{12}$ theo từng random seed.
+  * `run_metadata.json`: Cấu hình nhánh dữ liệu, seed, môi trường GPU và commit Git.
+  * `seed_<seed>/training_history.csv` & `seed_<seed>/loss_curve.png`: Đường cong `train_mae_loss` và `val_mae` qua 20 epochs.
+  * `seed_<seed>/test_predictions.csv`: Dự báo chi tiết từng issue trên tập test từ checkpoint có `val_mae` tốt nhất.
+* **Model Repo (`Snowflake06/nckh3-gpt2sp-checkpoints/gpt2sp_retrain_<project>_<setting>/seed_<seed>/`):**
+  * `pytorch_model.bin` & `config.json`: Trọng số checkpoint tốt nhất theo từng setting & seed để tái suy luận về sau.
