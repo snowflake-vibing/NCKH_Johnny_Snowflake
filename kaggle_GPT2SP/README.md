@@ -1,9 +1,11 @@
-# 🚀 Kaggle Modular Runner (GitHub ➔ Kaggle ➔ Hugging Face Hub)
+# 🚀 Kaggle Modular Runner for GPT2SP (GitHub ➔ Kaggle ➔ Hugging Face Hub)
 
-Thư mục `kaggle/` được tổ chức theo kiến trúc **Thin Runner + Modular Python Scripts** phục vụ đề tài Nghiên cứu Khoa học:  
+Thư mục `kaggle_GPT2SP/` được tổ chức theo kiến trúc **Thin Runner + Modular Python Scripts** phục vụ đề tài Nghiên cứu Khoa học:  
 **"Agile Story Point Estimation at Planning Time with Temporal & Data Leakage Control"** *(WSESE / ICSE 2026)*.
 
-Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle, vừa **giải trình minh bạch nguồn gốc khoa học và kỹ thuật (Code Provenance & Traceability)** của từng dòng mã nguồn: đoạn nào kế thừa nguyên bản từ bài báo/repository của tác giả gốc, đoạn nào hiệu chỉnh kỹ thuật để tương thích phần cứng/thư viện, và đoạn nào là hạ tầng ResearchOps của Nhóm 3.
+Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GPT2SP**, vừa **giải trình minh bạch nguồn gốc khoa học và kỹ thuật (Code Provenance & Traceability)** của từng dòng mã nguồn: đoạn nào kế thừa nguyên bản từ bài báo/repository của tác giả gốc, đoạn nào hiệu chỉnh kỹ thuật để tương thích phần cứng/thư viện, và đoạn nào là hạ tầng ResearchOps của Nhóm 3.
+
+> 💡 **Lưu ý điều hướng:** Toàn bộ kịch bản tái lập và kiểm định **Deep-SE (Choetkiertikul et al., IEEE TSE 2019)** được tách riêng sang thư mục [`../kaggle_DeepSE/`](../kaggle_DeepSE/).
 
 ---
 
@@ -21,7 +23,7 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle, vừa *
 
 ---
 
-## 📂 2. Danh Sách File Trong `kaggle/`
+## 📂 2. Danh Sách File Trong `kaggle_GPT2SP/`
 
 | File | Vai trò |
 | :--- | :--- |
@@ -31,10 +33,11 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle, vừa *
 | [hf_utils.py](hf_utils.py) | Đọc Kaggle Secrets (`HF_TOKEN`/`hf_token`), tự tạo HF repo, upload cuốn chiếu, auto-resume & ghi `run_metadata.json` |
 | [run_gpt2sp_16projects.py](run_gpt2sp_16projects.py) | **Chiến lược 1:** Tái lập suy luận trên 16 dự án từ official HF checkpoints (`MickyMike/0-GPT2SP-*`) |
 | [run_gpt2sp_retrain.py](run_gpt2sp_retrain.py) | **Chiến lược 2:** Huấn luyện lại GPT2SP từ đầu (`title_20`, `full_128`, `planning_clean`) & đẩy checkpoint lên HF |
-| [run_deepse_audit.py](run_deepse_audit.py) | Thẩm định Baseline Inflation (Table II) và phép cộng `+1.0` trong `create_model.py` của Deep-SE trên 16 dự án |
-| [kaggle_runner.ipynb](kaggle_runner.ipynb) | Thin Runner Notebook trên Kaggle (6 Markdown + 5 Code cells: cấu hình, auth HF Secrets, clone branch, run, xem tóm tắt) |
+| [kaggle_runner.ipynb](kaggle_runner.ipynb) | Thin Runner Notebook trên Kaggle cho GPT2SP (6 Markdown + 5 Code cells: cấu hình, auth HF Secrets, clone branch, run, xem tóm tắt) |
 | [requirements.txt](requirements.txt) | Danh sách thư viện phụ thuộc tối thiểu (`numpy`, `pandas`, `scipy`, `matplotlib`, `torch`, `transformers>=4.36.0`, `huggingface_hub>=0.20.0`, `tqdm`) |
-| [README.md](README.md) | Tài liệu vận hành & truy vết nguồn gốc mã nguồn |
+| [README.md](README.md) | Tài liệu vận hành & truy vết nguồn gốc mã nguồn GPT2SP |
+
+> 👉 Kịch bản kiểm định & tái lập Deep-SE nằm tại [`../kaggle_DeepSE/README.md`](../kaggle_DeepSE/README.md).
 
 ---
 
@@ -61,7 +64,6 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle, vừa *
 #### 1. `config.py` — Dữ liệu & Số liệu đối chứng 16 dự án
 * **Nguồn dữ liệu CSV:**
   * `GPT2SP_DATA_BASE_URL` trỏ tới thư mục [`sp_dataset/marked_data/`](https://github.com/awsm-research/gpt2sp/tree/main/sp_dataset/marked_data) của `awsm-research/gpt2sp` (tải qua `load_gpt2sp_splits` dựa theo cột `split_mark` `train`/`val`/`test` tỷ lệ 60/20/20).
-  * `DEEPSE_DATA_BASE_URL` trỏ tới [`storypoint/IEEE TSE2018/Deep-SE/data/`](https://github.com/morakotch/datasets/tree/master/storypoint/IEEE%20TSE2018/Deep-SE/data) của `morakotch/datasets` (tải file `<project>.csv` và ma trận `<project>_3sets.txt` sinh từ `divide_data_sortdate.py` qua `load_deepse_splits`).
 * **Bảng tham chiếu `BENCHMARK_PROJECTS`:**
   * `reported_gpt2sp`, `reported_deepse_in_gpt2sp`, `rep_median`, `rep_mean`: Đối soát từ **Table 4** bài báo GPT2SP và file [`data_model_analysis/within_proj_data.csv`](https://github.com/awsm-research/gpt2sp/blob/main/data_model_analysis/within_proj_data.csv).
   * `reported_deepse`, `reported_deepse_sa`: Trích xuất từ **Table II (Trang 8)** bài báo Deep-SE (IEEE TSE 2019).
@@ -91,17 +93,7 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle, vừa *
   * **Micro-batching + Gradient Accumulation:** Batch động 30% (~635 mẫu với Spring XD) chạy được ở `seq_len=20` trên RTX 3090 (24GB) của tác giả nhưng sẽ gây tràn VRAM (OOM) ở `seq_len=128` trên Kaggle T4 (15GB). Script giữ nguyên effective batch size 30% nhưng chia micro-batch vật lý (32 hoặc 64) và cộng dồn gradient (`loss / accum_steps`).
   * **3 nhánh thực nghiệm (`--setting`):** `title_20` (theo code tác giả), `full_128` (theo văn bản bài báo), và `planning_clean` (đọc bộ dữ liệu sạch không rò rỉ tại `SP_Estimation_Date` từ [../docs/draft/springxd_cleaned_dataset.csv](../docs/draft/springxd_cleaned_dataset.csv) hoặc `data/clean/springxd_cleaned_dataset.csv`).
 
-#### 5. `run_deepse_audit.py` — Kiểm định Baseline Inflation & Code Bias của Deep-SE
-* **Lấy từ đâu:** Đối soát **Table II** bài báo Deep-SE (2019) và kiểm tra trực tiếp file [`Deep-SE/classification/create_model.py`](https://github.com/morakotch/datasets/blob/master/storypoint/IEEE%20TSE2018/Deep-SE/classification/create_model.py) (dòng 114–118):
-  ```python
-  # Trích xuất nguyên văn từ Deep-SE create_model.py:
-  y_pred_guess = numpy.ones(len(y_true)) + numpy.mean(self.train_label)
-  mae_guess = metrics.mean_absolute_error(y_true, y_pred_guess)
-  sa = (1 - (auc / mae_guess)) * 100
-  ```
-* Script tái tính đồng thời: `Real_Med_MAE`, `Real_Mean_MAE`, `Code_Plus1_Guess_MAE` (`1.0 + mean(y_train)`), mức độ thổi phồng baseline (`Med_Inflation`), và $SA$ trung thực so với $SA$ công bố trên cả 16 dự án.
-
-#### 6. `metrics.py`, `hf_utils.py`, `kaggle_runner.ipynb` — Kiểm định & ResearchOps của Nhóm 3
+#### 5. `metrics.py`, `hf_utils.py`, `kaggle_runner.ipynb` — Kiểm định & ResearchOps của Nhóm 3
 * `metrics.py`: Cài đặt công thức Standardized Accuracy (`compute_sa`), `safe_wilcoxon` (xử lý an toàn khi 2 vector sai số trùng nhau hoàn toàn), Vargha-Delaney $\hat{A}_{12}$ dạng vectorized rank-based (`vargha_delaney_a12`: $>0.5$ nghĩa là mô hình tốt hơn baseline), và hiệu chỉnh đa kiểm định step-down `holm_bonferroni`.
 * `hf_utils.py` & `kaggle_runner.ipynb`: Phần hạ tầng tự xây dựng để kết nối GitHub ➔ Kaggle ➔ Hugging Face Hub với Kaggle Secrets (`HF_TOKEN`/`hf_token`), auto-resume từng dự án, upload cuốn chiếu, và ghi vết phiên bản (`git_branch`, `git_commit`, phần cứng, phiên bản thư viện) vào `run_metadata.json` mà không bao giờ ghi lộ secret/token.
 
@@ -127,12 +119,12 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle, vừa *
    * **Label:** `hf_token` *(hoặc `HF_TOKEN` — code tự nhận diện cả hai)*.
    * **Value:** dán token vừa tạo và **bật tích xanh** cho notebook sử dụng.
 3. Ở cột phải Kaggle:
-   * **Accelerator:** `GPU T4 x 2` (cho `gpt2sp_16projects` và `gpt2sp_retrain`) hoặc `CPU` (cho `deepse_audit`).
+   * **Accelerator:** `GPU T4 x 2` (hoặc `GPU P100`) cho cả `gpt2sp_16projects` và `gpt2sp_retrain`.
    * **Internet:** gạt sang **ON**.
 
 ### Bước 2: Chỉnh tham số ở Cell 1 của `kaggle_runner.ipynb` và bấm Run All
-* `GIT_BRANCH`: tên branch chứa code (ví dụ `"exp/kaggle-hf-pipeline"`).
-* `EXPERIMENT`: chọn `"gpt2sp_16projects"`, `"gpt2sp_retrain"`, hoặc `"deepse_audit"`.
+* `GIT_BRANCH`: tên branch chứa code (mặc định `"main"`).
+* `EXPERIMENT`: chọn `"gpt2sp_16projects"` hoặc `"gpt2sp_retrain"`.
 * `EXTRA_ARGS` (tùy chọn):
   * Test nhanh 2 dự án: `"--projects springxd,bamboo"`
   * Đánh giá GPT2SP với Full Context: `"--include-description --max-length 128"`
@@ -144,7 +136,6 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle, vừa *
 ## 💻 5. Chạy Thử Cục Bộ (Không Đẩy Lên HF)
 
 ```bash
-python kaggle/run_gpt2sp_16projects.py --projects springxd --no-hf-push
-python kaggle/run_gpt2sp_retrain.py --project springxd --setting planning_clean --epochs 3 --no-hf-push
-python kaggle/run_deepse_audit.py --no-hf-push
+python kaggle_GPT2SP/run_gpt2sp_16projects.py --projects springxd --no-hf-push
+python kaggle_GPT2SP/run_gpt2sp_retrain.py --project springxd --setting planning_clean --epochs 3 --no-hf-push
 ```

@@ -164,8 +164,8 @@ flowchart LR
 │   │   ├── 02_empirical_discrepancy_and_ablation_plan.md # Kế hoạch chuyển hóa độ lệch thành đóng góp khoa học
 │   │   └── 03_grounded_ablation_experiments_guide.md # Code kiểm chứng 4 giả thuyết có cơ sở từ bài báo gốc
 │   └── reports/              # Báo cáo đề tài NCKH chính thức
-├── kaggle/                   # Framework GitHub -> Kaggle -> Hugging Face (Thin Runner & Modular Scripts)
-│   ├── README.md             # Hướng dẫn vận hành luồng GitHub -> Kaggle -> Hugging Face Hub
+├── kaggle_GPT2SP/            # Framework GitHub -> Kaggle -> Hugging Face cho GPT2SP
+│   ├── README.md             # Hướng dẫn vận hành & truy vết mã nguồn GPT2SP
 │   ├── requirements.txt      # Danh sách thư viện phụ thuộc tối thiểu
 │   ├── config.py             # Cấu hình trung tâm, bảng tham chiếu 16 dự án & helper tải dữ liệu
 │   ├── model.py              # Kiến trúc GPT2SP(nn.Module) thuần PyTorch & dọn cache HF
@@ -173,8 +173,18 @@ flowchart LR
 │   ├── hf_utils.py           # Đọc Kaggle Secrets (HF_TOKEN/hf_token), upload cuốn chiếu & auto-resume
 │   ├── run_gpt2sp_16projects.py # Chiến lược 1: Tái lập suy luận 16 dự án từ official HF checkpoints
 │   ├── run_gpt2sp_retrain.py    # Chiến lược 2: Huấn luyện lại GPT2SP từ đầu & đẩy checkpoint lên HF
+│   └── kaggle_runner.ipynb      # Thin Runner Notebook chạy GPT2SP trên Kaggle
+├── kaggle_DeepSE/            # Framework GitHub -> Kaggle -> Hugging Face cho Deep-SE
+│   ├── README.md             # Hướng dẫn vận hành & truy vết mã nguồn Deep-SE (Keras -> PyTorch)
+│   ├── requirements.txt      # Danh sách thư viện phụ thuộc tối thiểu (torch, h5py, scipy, ...)
+│   ├── config.py             # Cấu hình Table II, tải .csv/_3sets.txt/.pkl.gz/.dict.pkl.gz & tensor hóa
+│   ├── model.py              # Kiến trúc DeepSEModel(nn.Module) thuần PyTorch, nạp NCE HDF5 & train loop
+│   ├── metrics.py            # MAE, MdAE, SA, Wilcoxon Signed-Rank Test, Vargha-Delaney Â12, Holm-Bonferroni
+│   ├── hf_utils.py           # Đọc Kaggle Secrets (HF_TOKEN/hf_token), upload cuốn chiếu & auto-resume
 │   ├── run_deepse_audit.py      # Thẩm định Baseline Inflation & lỗi +1.0 của Deep-SE (16 dự án)
-│   └── kaggle_runner.ipynb      # Thin Runner Notebook chạy trên Kaggle (clone branch & push kết quả lên HF)
+│   ├── run_deepse_16projects.py # Chiến lược 1: Tái lập huấn luyện Deep-SE trên 16 dự án
+│   ├── run_deepse_retrain.py    # Chiến lược 2: Huấn luyện Deep-SE qua official_pkl / final_raw / planning_clean
+│   └── kaggle_runner.ipynb      # Thin Runner Notebook chạy Deep-SE trên Kaggle
 ├── notebooks/                # Jupyter Notebooks phục vụ phân tích & thực nghiệm
 │   └── EDA_TAWOS.ipynb       # EDA tổng quan trên toàn bộ CSDL TAWOS v1.1
 ├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn, model weights & glossary

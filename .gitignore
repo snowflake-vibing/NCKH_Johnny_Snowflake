@@ -135,6 +135,10 @@ docs/glossary/
 # ==============================================================================
 kaggle/output/
 kaggle/outputs/
+kaggle_GPT2SP/output/
+kaggle_GPT2SP/outputs/
+kaggle_DeepSE/output/
+kaggle_DeepSE/outputs/
 
 # Deep-SE cache
 **/deep_se_cache/

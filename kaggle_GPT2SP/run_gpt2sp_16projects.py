@@ -15,8 +15,8 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-# Allow running either from repo root (`python kaggle/run_gpt2sp_16projects.py`)
-# or inside kaggle/ (`python run_gpt2sp_16projects.py`).
+# Allow running either from repo root (`python kaggle_GPT2SP/run_gpt2sp_16projects.py`)
+# or inside kaggle_GPT2SP/ (`python run_gpt2sp_16projects.py`).
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from config import (

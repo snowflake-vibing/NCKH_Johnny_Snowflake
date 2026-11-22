@@ -10,10 +10,6 @@ GITHUB_REPO_URL = "https://github.com/snowflake-vibing/NCKH_Johnny_Snowflake.git
 GPT2SP_DATA_BASE_URL = (
     "https://raw.githubusercontent.com/awsm-research/gpt2sp/main/sp_dataset/marked_data/"
 )
-DEEPSE_DATA_BASE_URL = (
-    "https://raw.githubusercontent.com/morakotch/datasets/master/"
-    "storypoint/IEEE%20TSE2018/Deep-SE/data/"
-)
 
 DEFAULT_RESULTS_REPO_NAME = "nckh3-storypoint-results"
 DEFAULT_CHECKPOINTS_REPO_NAME = "nckh3-gpt2sp-checkpoints"
@@ -192,7 +188,7 @@ def resolve_output_dir(explicit_dir: str, default_subdir: str) -> str:
     elif os.path.exists("/kaggle/working"):
         out_dir = os.path.join("/kaggle/working", "outputs", default_subdir)
     else:
-        out_dir = os.path.join("kaggle", "outputs", default_subdir)
+        out_dir = os.path.join("kaggle_GPT2SP", "outputs", default_subdir)
     os.makedirs(out_dir, exist_ok=True)
     return out_dir
 
@@ -249,23 +245,6 @@ def load_gpt2sp_splits(project_name: str, cache_dir: str) -> Dict[str, pd.DataFr
         "train": df.iloc[:n_train].reset_index(drop=True),
         "val": df.iloc[n_train:n_val_end].reset_index(drop=True),
         "test": df.iloc[n_val_end:].reset_index(drop=True),
-        "all": df,
-    }
-
-
-def load_deepse_splits(project_name: str, cache_dir: str) -> Dict[str, pd.DataFrame]:
-    """Load raw CSV and _3sets.txt split matrix from morakotch/datasets."""
-    csv_path = os.path.join(cache_dir, f"{project_name}_deepse.csv")
-    sets_path = os.path.join(cache_dir, f"{project_name}_3sets.txt")
-    download_file_with_retry(f"{DEEPSE_DATA_BASE_URL}{project_name}.csv", csv_path)
-    download_file_with_retry(f"{DEEPSE_DATA_BASE_URL}{project_name}_3sets.txt", sets_path)
-
-    df = pd.read_csv(csv_path)
-    sets = pd.read_csv(sets_path, sep=r"\s+")
-    return {
-        "train": df.loc[sets["train"] == 1].reset_index(drop=True),
-        "val": df.loc[sets["valid"] == 1].reset_index(drop=True),
-        "test": df.loc[sets["test"] == 1].reset_index(drop=True),
         "all": df,
     }
 
