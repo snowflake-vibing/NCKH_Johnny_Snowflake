@@ -19,7 +19,7 @@ DEEPSE_BASE_URL = (
 DEEPSE_DATA_BASE_URL = DEEPSE_BASE_URL + "data/"
 DEEPSE_PRETRAIN_BASE_URL = DEEPSE_BASE_URL + "NCE/bestModels/"
 
-DEFAULT_RESULTS_REPO_NAME = "nckh3-storypoint-results"
+DEFAULT_RESULTS_REPO_NAME = "NCKH_DeepSE"
 DEFAULT_CHECKPOINTS_REPO_NAME = "nckh3-deepse-checkpoints"
 
 # Ground-truth values & repository mapping extracted from:

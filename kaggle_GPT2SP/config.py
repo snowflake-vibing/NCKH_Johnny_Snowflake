@@ -11,7 +11,7 @@ GPT2SP_DATA_BASE_URL = (
     "https://raw.githubusercontent.com/awsm-research/gpt2sp/main/sp_dataset/marked_data/"
 )
 
-DEFAULT_RESULTS_REPO_NAME = "nckh3-storypoint-results"
+DEFAULT_RESULTS_REPO_NAME = "NCKH_GPT2SP"
 DEFAULT_CHECKPOINTS_REPO_NAME = "nckh3-gpt2sp-checkpoints"
 
 # Ground-truth values extracted from:
