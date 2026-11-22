@@ -140,7 +140,7 @@ def main() -> None:
 
         real_mean_mae, _, _ = compute_mae_mdae(y_test, np.full(len(y_test), train_mean))
         real_med_mae, _, _ = compute_mae_mdae(y_test, np.full(len(y_test), train_med))
-        # Audit of create_model.py line 114: y_pred_guess = numpy.ones(...) + numpy.mean(train_label)
+        # Audit of create_model.py line 89: y_pred_guess = numpy.ones(...) + numpy.mean(train_label)
         biased_guess_mae, _, _ = compute_mae_mdae(y_test, np.full(len(y_test), 1.0 + train_mean))
 
         ld_rnn = meta["reported_deepse"]
