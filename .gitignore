@@ -134,3 +134,7 @@ docs/glossary/
 # 8. KAGGLE OUTPUT CỤC BỘ
 # ==============================================================================
 kaggle/output/
+kaggle/outputs/
+
+# Deep-SE cache
+**/deep_se_cache/

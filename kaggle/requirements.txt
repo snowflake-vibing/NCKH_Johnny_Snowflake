@@ -1,0 +1,8 @@
+numpy
+pandas
+scipy
+matplotlib
+torch
+transformers>=4.36.0
+huggingface_hub>=0.20.0
+tqdm

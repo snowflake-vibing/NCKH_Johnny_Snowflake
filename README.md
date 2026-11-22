@@ -164,11 +164,17 @@ flowchart LR
 │   │   ├── 02_empirical_discrepancy_and_ablation_plan.md # Kế hoạch chuyển hóa độ lệch thành đóng góp khoa học
 │   │   └── 03_grounded_ablation_experiments_guide.md # Code kiểm chứng 4 giả thuyết có cơ sở từ bài báo gốc
 │   └── reports/              # Báo cáo đề tài NCKH chính thức
-├── kaggle/                   # Toàn bộ mã nguồn & cẩm nang thực thi 4 bước trên Kaggle
-│   ├── 01_QUY_TRINH_4_BUOC_KAGGLE.md # Cẩm nang hướng dẫn chi tiết từng bước (Step-by-step)
-│   ├── notebook_1_gpu_gpt2sp_3settings_multiseed.py # Script GPU: 3 settings GPT2SP & 5 seeds
-│   ├── notebook_2_cpu_porru_rq3_sprint_sensitivity.py # Script CPU: RQ3 Porru filter & Sprint cut-off
-│   └── notebook_3_statistical_tests_wilcoxon_a12_holm.py # Script kiểm định Wilcoxon, Â12, Holm
+├── kaggle/                   # Framework GitHub -> Kaggle -> Hugging Face (Thin Runner & Modular Scripts)
+│   ├── README.md             # Hướng dẫn vận hành luồng GitHub -> Kaggle -> Hugging Face Hub
+│   ├── requirements.txt      # Danh sách thư viện phụ thuộc tối thiểu
+│   ├── config.py             # Cấu hình trung tâm, bảng tham chiếu 16 dự án & helper tải dữ liệu
+│   ├── model.py              # Kiến trúc GPT2SP(nn.Module) thuần PyTorch & dọn cache HF
+│   ├── metrics.py            # MAE, MdAE, SA, Wilcoxon Signed-Rank Test, Vargha-Delaney Â12, Holm-Bonferroni
+│   ├── hf_utils.py           # Đọc Kaggle Secrets (HF_TOKEN/hf_token), upload cuốn chiếu & auto-resume
+│   ├── run_gpt2sp_16projects.py # Chiến lược 1: Tái lập suy luận 16 dự án từ official HF checkpoints
+│   ├── run_gpt2sp_retrain.py    # Chiến lược 2: Huấn luyện lại GPT2SP từ đầu & đẩy checkpoint lên HF
+│   ├── run_deepse_audit.py      # Thẩm định Baseline Inflation & lỗi +1.0 của Deep-SE (16 dự án)
+│   └── kaggle_runner.ipynb      # Thin Runner Notebook chạy trên Kaggle (clone branch & push kết quả lên HF)
 ├── notebooks/                # Jupyter Notebooks phục vụ phân tích & thực nghiệm
 │   └── EDA_TAWOS.ipynb       # EDA tổng quan trên toàn bộ CSDL TAWOS v1.1
 ├── .gitignore                # Cấu hình loại trừ file rác, dữ liệu lớn, model weights & glossary
