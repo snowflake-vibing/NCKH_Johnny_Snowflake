@@ -5,8 +5,8 @@ import json
 import os
 import subprocess
 import time
-from typing import Any, Dict, Optional
-from huggingface_hub import HfApi, hf_hub_download
+from typing import Any, Dict, List, Optional, Tuple
+from huggingface_hub import CommitOperationAdd, HfApi, hf_hub_download
 
 
 def resolve_hf_token(explicit_token: Optional[str] = None) -> Optional[str]:
@@ -210,6 +210,32 @@ class HFExperimentLogger:
             path_in_repo,
         )
 
+    def upload_results_batch(
+        self, items: List[Tuple[str, str]], commit_message: str
+    ) -> bool:
+        """Upload multiple result files to the HF Dataset repo in one clean commit."""
+        if not self.enabled or self.api is None or not self.results_repo_id:
+            return False
+        ops = [
+            CommitOperationAdd(
+                path_in_repo=self._prefixed(rel),
+                path_or_fileobj=local,
+            )
+            for local, rel in items
+            if os.path.exists(local)
+        ]
+        if not ops:
+            return False
+        return self._retry(
+            lambda: self.api.create_commit(
+                repo_id=self.results_repo_id,
+                repo_type="dataset",
+                operations=ops,
+                commit_message=commit_message,
+            ),
+            commit_message,
+        )
+
     def upload_checkpoint_dir(
         self, local_dir: str, rel_path: str, commit_message: Optional[str] = None
     ) -> bool:
@@ -234,8 +260,9 @@ class HFExperimentLogger:
         local_dir: str,
         args_dict: Dict[str, Any],
         extra_info: Optional[Dict[str, Any]] = None,
+        upload: bool = True,
     ) -> str:
-        """Persist reproducibility metadata (never includes secrets) and push to HF."""
+        """Persist reproducibility metadata (never includes secrets) and optionally push to HF."""
         git_info = get_git_info()
         sanitized_args = {
             k: v for k, v in args_dict.items() if "token" not in k.lower() and "secret" not in k.lower()
@@ -271,8 +298,9 @@ class HFExperimentLogger:
             "args": sanitized_args,
             "extra_info": extra_info or {},
         }
-        meta_path = os.path.join(local_dir, "run_metadata.json")
+        meta_path = os.path.join(local_dir, "metadata.json")
         with open(meta_path, "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=2, ensure_ascii=False)
-        self.upload_result(meta_path, "run_metadata.json", "Upload run_metadata.json")
+        if upload:
+            self.upload_result(meta_path, "metadata.json", "Upload metadata.json")
         return meta_path

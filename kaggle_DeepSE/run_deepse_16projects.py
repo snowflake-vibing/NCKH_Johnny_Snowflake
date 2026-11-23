@@ -131,8 +131,8 @@ def run_single_project(
 ) -> Dict[str, Any]:
     """Train & evaluate Deep-SE on one project (or load resumed predictions)."""
     meta = BENCHMARK_PROJECTS[p_name]
-    rel_pred_path = f"predictions/{p_name}_predictions.csv"
-    local_pred_path = os.path.join(pred_dir, f"{p_name}_predictions.csv")
+    rel_pred_path = f"predictions/{p_name}.csv"
+    local_pred_path = os.path.join(pred_dir, f"{p_name}.csv")
 
     df_pred = None
     if args.resume:
@@ -379,16 +379,18 @@ def main() -> None:
     projects = parse_projects_arg(args.projects)
     run_name = (
         args.run_name
-        or f"deepse_16proj_{args.pretrain}_dim{args.dim}_seed{args.seed}"
+        or f"experiments/deepse/replication/{args.pretrain}_dim{args.dim}_seed{args.seed}"
     )
 
     out_dir = resolve_output_dir(args.output_dir, run_name)
     data_cache_dir = os.path.join(out_dir, "deepse_cache")
     pred_dir = os.path.join(out_dir, "predictions")
+    fig_dir = os.path.join(out_dir, "figures")
     ckpt_root = os.path.join(out_dir, "checkpoints")
     resume_cache_dir = os.path.join(out_dir, "hf_resume_cache")
     os.makedirs(data_cache_dir, exist_ok=True)
     os.makedirs(pred_dir, exist_ok=True)
+    os.makedirs(fig_dir, exist_ok=True)
     os.makedirs(ckpt_root, exist_ok=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -430,11 +432,8 @@ def main() -> None:
     df_results = pd.DataFrame(rows)
     df_results["Wilcoxon_p_Holm"] = holm_bonferroni(df_results["Wilcoxon_p_vs_Med"].tolist())
 
-    summary_path = os.path.join(out_dir, "deepse_16_projects_summary.csv")
+    summary_path = os.path.join(out_dir, "summary.csv")
     df_results.to_csv(summary_path, index=False)
-    hf_logger.upload_result(
-        summary_path, "deepse_16_projects_summary.csv", "Upload Deep-SE 16-project summary"
-    )
 
     stat_rows = []
     if len(df_results) >= 2:
@@ -473,20 +472,14 @@ def main() -> None:
             )
 
     df_stats = pd.DataFrame(stat_rows)
-    stats_path = os.path.join(out_dir, "deepse_16_projects_statistical_tests.csv")
+    stats_path = os.path.join(out_dir, "stat_tests.csv")
     df_stats.to_csv(stats_path, index=False)
-    hf_logger.upload_result(
-        stats_path, "deepse_16_projects_statistical_tests.csv", "Upload Deep-SE global stats"
-    )
 
-    plot_path = os.path.join(out_dir, "deepse_16_projects_benchmark_audit.png")
+    plot_path = os.path.join(fig_dir, "benchmark_audit.png")
     save_deepse_benchmark_plot(df_results, plot_path)
-    hf_logger.upload_result(
-        plot_path, "deepse_16_projects_benchmark_audit.png", "Upload Deep-SE 300 DPI audit chart"
-    )
 
     losses = int((df_results["Verdict"] == "LOSES_TO_MEDIAN").sum())
-    hf_logger.write_and_upload_metadata(
+    meta_path = hf_logger.write_and_upload_metadata(
         out_dir,
         vars(args),
         extra_info={
@@ -496,6 +489,16 @@ def main() -> None:
             "mean_delta_vs_paper_deepse": round(float(df_results["Delta_vs_Paper_DeepSE"].mean()), 4),
             "mean_sa_vs_real_median": round(float(df_results["SA_vs_Real_Median (%)"].mean()), 2),
         },
+        upload=False,
+    )
+    hf_logger.upload_results_batch(
+        [
+            (summary_path, "summary.csv"),
+            (stats_path, "stat_tests.csv"),
+            (plot_path, "figures/benchmark_audit.png"),
+            (meta_path, "metadata.json"),
+        ],
+        commit_message=f"Finalize {run_name} summary, stat tests, figure & metadata",
     )
 
     print("\n" + "=" * 85)

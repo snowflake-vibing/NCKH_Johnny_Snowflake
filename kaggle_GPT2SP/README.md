@@ -17,8 +17,8 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
                                            ▼ (git clone -b <branch>)
 [Kaggle GPU/CPU Runtime] ◄── [kaggle_runner.ipynb] (đọc HF_TOKEN / hf_token từ Secrets)
         │
-        ├──► Lưu Results (.csv, .png, run_metadata.json) ──► [HF Dataset Repo]
-        └──► Lưu Model Checkpoints (.bin, config.json)    ──► [HF Model Repo]
+        ├──► Lưu Results (.csv, .png, metadata.json) ──► [HF Dataset Repo: NCKH3-StoryPoint-Artifact]
+        └──► Lưu Model Checkpoints (.bin, config.json) ──► [HF Model Repo: NCKH3-StoryPoint-Checkpoints]
 ```
 
 ---
@@ -27,10 +27,10 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
 
 | File | Vai trò |
 | :--- | :--- |
-| [config.py](config.py) | Cấu hình repo, bảng tham chiếu 16 dự án (IEEE TSE 2019 & 2023), helper tải CSV & tách `train`/`val`/`test` |
+| [config.py](config.py) | Cấu hình repo (`NCKH3-StoryPoint-Artifact`), bảng tham chiếu 16 dự án (IEEE TSE 2019 & 2023), helper tải CSV & tách `train`/`val`/`test` |
 | [model.py](model.py) | Kiến trúc `GPT2SP(nn.Module)` thuần PyTorch (giữ nguyên MLP Head 2 tầng), `safe_torch_load` & dọn cache HF |
 | [metrics.py](metrics.py) | Tính MAE, MdAE, Standardized Accuracy ($SA$), `safe_wilcoxon`, `vargha_delaney_a12`, `holm_bonferroni` |
-| [hf_utils.py](hf_utils.py) | Đọc Kaggle Secrets (`HF_TOKEN`/`hf_token`), tự tạo HF repo, upload cuốn chiếu, auto-resume & ghi `run_metadata.json` |
+| [hf_utils.py](hf_utils.py) | Đọc Kaggle Secrets (`HF_TOKEN`/`hf_token`), tự tạo HF repo, `upload_results_batch` (`create_commit`), auto-resume & ghi `metadata.json` |
 | [run_gpt2sp_16projects.py](run_gpt2sp_16projects.py) | **Chiến lược 1:** Tái lập suy luận trên 16 dự án từ official HF checkpoints (`MickyMike/0-GPT2SP-*`) |
 | [run_gpt2sp_retrain.py](run_gpt2sp_retrain.py) | **Chiến lược 2:** Huấn luyện lại GPT2SP từ đầu (`title_20`, `full_128`, `planning_clean`) & đẩy checkpoint lên HF |
 | [kaggle_runner.ipynb](kaggle_runner.ipynb) | Thin Runner Notebook trên Kaggle cho GPT2SP (6 Markdown + 5 Code cells: cấu hình, auth HF Secrets, clone branch, run, xem tóm tắt) |
@@ -63,12 +63,12 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
 
 #### 1. `config.py` — Dữ liệu & Số liệu đối chứng 16 dự án ([config.py](config.py))
 * **Nguồn dữ liệu CSV:**
-  * [`config.py#L10-L12`](config.py#L10-L12) (`GPT2SP_DATA_BASE_URL`) & [`config.py#L226-L249`](config.py#L226-L249) (`load_gpt2sp_splits`): Trỏ tới thư mục [`sp_dataset/marked_data/`](https://github.com/awsm-research/gpt2sp/tree/main/sp_dataset/marked_data) của `awsm-research/gpt2sp` (tương ứng `DATA_PATH = './sp_dataset/marked_data/'` ở **Cell 4 L16** của [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb)), tách `train`/`val`/`test` theo cột `split_mark` (60/20/20).
-  * [`config.py#L252-L262`](config.py#L252-L262) (`format_issue_texts`): Điều khiển chọn `title`-only (mặc định theo code gốc) hoặc ghép `title + description` khi bật cờ full context.
+  * [`config.py#L10-L12`](config.py#L10-L12) (`GPT2SP_DATA_BASE_URL`) & [`config.py#L227-L250`](config.py#L227-L250) (`load_gpt2sp_splits`): Trỏ tới thư mục [`sp_dataset/marked_data/`](https://github.com/awsm-research/gpt2sp/tree/main/sp_dataset/marked_data) của `awsm-research/gpt2sp` (tương ứng `DATA_PATH = './sp_dataset/marked_data/'` ở **Cell 4 L16** của [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb)), tách `train`/`val`/`test` theo cột `split_mark` (60/20/20).
+  * [`config.py#L253-L263`](config.py#L253-L263) (`format_issue_texts`): Điều khiển chọn `title`-only (mặc định theo code gốc) hoặc ghép `title + description` khi bật cờ full context.
 * **Bảng tham chiếu `BENCHMARK_PROJECTS` ([`config.py#L20-L181`](config.py#L20-L181)):**
   * `reported_gpt2sp`, `reported_deepse_in_gpt2sp`, `rep_median`, `rep_mean`: Đối soát từ **Table 4** bài báo GPT2SP và file [`data_model_analysis/within_proj_data.csv`](https://github.com/awsm-research/gpt2sp/blob/main/data_model_analysis/within_proj_data.csv).
   * `reported_deepse`, `reported_deepse_sa`: Trích xuất từ **Table II (Trang 8)** bài báo Deep-SE (IEEE TSE 2019).
-* **Tiện ích CLI & tải file:** [`resolve_output_dir`](config.py#L184-L193) (`L184-L193`), [`parse_projects_arg`](config.py#L196-L205) (`L196-L205`), [`download_file_with_retry`](config.py#L208-L223) (`L208-L223`), cấu hình HF repos mặc định [`L14-L15`](config.py#L14-L15).
+* **Tiện ích CLI & tải file:** [`resolve_output_dir`](config.py#L184-L194) (`L184-L194`), [`parse_projects_arg`](config.py#L197-L206) (`L197-L206`), [`download_file_with_retry`](config.py#L209-L224) (`L209-L224`), cấu hình HF repos mặc định [`L14-L15`](config.py#L14-L15) (`NCKH3-StoryPoint-Artifact` & `NCKH3-StoryPoint-Checkpoints`).
 
 #### 2. `model.py` — Kiến trúc `GPT2SP` & Nạp Trọng Số Hugging Face ([model.py](model.py))
 * **Lấy nguyên bản từ đâu:** File [`GPT2SP.py#L7-L110`](https://github.com/awsm-research/gpt2sp/blob/main/GPT2SP.py#L7-L110) (`class GPT2ForSequenceClassification`) của `awsm-research/gpt2sp`:
@@ -88,20 +88,20 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
   * Trong [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb), **Cell 4 (`L5`)** đặt `SEQUENCE_LEN = 20` và **Cell 6 (`L111-L116`)** `prepare_dataframe()` chỉ lấy `data['title']` (bỏ qua cột `description`). Do đó mặc định [`parse_args`](run_gpt2sp_16projects.py#L40-L85) & [`infer_texts`](run_gpt2sp_16projects.py#L88-L112) chạy `Title-only, max_length=20` trên các official weights [`MickyMike/{seed}-GPT2SP-{p}`](run_gpt2sp_16projects.py#L153-L160) để tái lập công bằng.
   * Cờ `--include-description --max-length 128` bổ sung thiết lập Full Context (Title + Description) như bài báo tuyên bố.
   * **Truy vết PR #2 ([`awsm-research/gpt2sp#2`](https://github.com/awsm-research/gpt2sp/pull/2), commit [`1117294`](https://github.com/awsm-research/gpt2sp/commit/1117294), merge ngày 21/08/2022 bởi Michael Fu từ Vali Tawosi):** Trong **Cell 6 (`L248-L257`)** của `model_training_notebook.ipynb`, code gốc khi in bài báo tính `MAE = total_distance / total_data_point` với `total_data_point = len(predictions) * len(predictions[0])`. Với `BATCH_SIZE_RATIO = 0.3` (`Cell 4 L4`) và chia 60/20/20 (`Cell 6 L130-L135`), tập test $0.20N$ bị chia làm 2 batch có kích thước đầu $0.18N$, làm `total_data_point = 0.36N` (gấp $1.80\times$ tập test thật!), đẩy `MAE` Table 4 giảm nhân tạo ~`1.80x`. PR #2 sửa bằng `MAE = np.mean(np.array(distance_records))`. Nhóm tính `compute_mae_mdae` trung thực tại [`run_single_project`](run_gpt2sp_16projects.py#L115-L237).
-* **Đánh giá & kiểm định thống kê trung thực:** Tính `Real_Median_MAE` và `Real_Mean_MAE` **chỉ từ tập `train`** ([`L150-L151`](run_gpt2sp_16projects.py#L150-L151)), tính $SA$, Wilcoxon, $\hat{A}_{12}$ từng dự án ([`L206-L208`](run_gpt2sp_16projects.py#L206-L208)), điều chỉnh [`holm_bonferroni`](run_gpt2sp_16projects.py#L363) (`main` [`L313-L445`](run_gpt2sp_16projects.py#L313-L445)), kiểm định toàn cục 16 dự án ([`L374-L407`](run_gpt2sp_16projects.py#L374-L407)) và vẽ biểu đồ 300 DPI ([`save_audit_plot`](run_gpt2sp_16projects.py#L240-L310)).
+* **Đánh giá & kiểm định thống kê trung thực:** Tính `Real_Median_MAE` và `Real_Mean_MAE` **chỉ từ tập `train`** ([`L150-L151`](run_gpt2sp_16projects.py#L150-L151)), tính $SA$, Wilcoxon, $\hat{A}_{12}$ từng dự án ([`L206-L208`](run_gpt2sp_16projects.py#L206-L208)), điều chỉnh [`holm_bonferroni`](run_gpt2sp_16projects.py#L365) (`main` [`L313-L448`](run_gpt2sp_16projects.py#L313-L448)), kiểm định toàn cục 16 dự án ([`L373-L407`](run_gpt2sp_16projects.py#L373-L407)), vẽ biểu đồ 300 DPI ([`save_audit_plot`](run_gpt2sp_16projects.py#L240-L310)), và gom toàn bộ file kết thúc vào 1 commit via [`upload_results_batch`](run_gpt2sp_16projects.py#L428).
 
 #### 4. `run_gpt2sp_retrain.py` — Chiến lược 2: Huấn luyện lại từ `gpt2` gốc ([run_gpt2sp_retrain.py](run_gpt2sp_retrain.py))
 * **Siêu tham số gốc từ [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb):**
   * `EPOCHS = 20` (**Cell 4 L3**), `BATCH_SIZE_RATIO = 0.3` (**Cell 4 L4**), `SEQUENCE_LEN = 20` (**Cell 4 L5**), `LEARNING_RATE = 5e-4` (**Cell 4 L6**); `DYNAMIC_BATCH = True` / `int(len(train_text) * 0.3)` (**Cell 6 L3, L24-L25**); `AdamW` & `get_linear_schedule_with_warmup` (**Cell 6 L145-L149**); `nn.L1Loss()` (**Cell 6 L164**); `clip_grad_norm_(..., 1.0)` (**Cell 6 L184**).
-  * Đối ứng tại [`parse_args`](run_gpt2sp_retrain.py#L33-L67), [`set_seed`](run_gpt2sp_retrain.py#L70-L75), [`make_loader`](run_gpt2sp_retrain.py#L146-L157), [`evaluate_loader`](run_gpt2sp_retrain.py#L160-L171), [`train_one_seed`](run_gpt2sp_retrain.py#L188-L331) (`L215` `nn.L1Loss()`, `L216` `AdamW`, `L246` `clip_grad_norm_`), [`save_loss_curve`](run_gpt2sp_retrain.py#L174-L185), và [`main`](run_gpt2sp_retrain.py#L334-L383).
+  * Đối ứng tại [`parse_args`](run_gpt2sp_retrain.py#L33-L67), [`set_seed`](run_gpt2sp_retrain.py#L70-L75), [`make_loader`](run_gpt2sp_retrain.py#L146-L157), [`evaluate_loader`](run_gpt2sp_retrain.py#L160-L171), [`train_one_seed`](run_gpt2sp_retrain.py#L188-L339) (`L215` `nn.L1Loss()`, `L216` `AdamW`, `L246` `clip_grad_norm_`, `L308` batch upload), [`save_loss_curve`](run_gpt2sp_retrain.py#L174-L185), và [`main`](run_gpt2sp_retrain.py#L342-L395) (`L389`).
 * **Cải tiến kỹ thuật & Kiểm soát Leakage của Nhóm 3:**
   * **Micro-batching + Gradient Accumulation ([`L202-L205`](run_gpt2sp_retrain.py#L202-L205)):** Giữ nguyên effective batch size 30% tập train nhưng chia micro-batch vật lý (32 hoặc 64) và cộng dồn gradient (`loss / accum_steps`) để tránh OOM trên Kaggle T4 (15GB) khi chạy `seq_len=128`.
   * **3 nhánh thực nghiệm ([`prepare_setting_data`](run_gpt2sp_retrain.py#L93-L143)):** `title_20` & `full_128` ([`L129-L143`](run_gpt2sp_retrain.py#L129-L143)), và `planning_clean` ([`L98-L127`](run_gpt2sp_retrain.py#L98-L127)) tự động định vị bộ dữ liệu sạch tại `SP_Estimation_Date` qua [`resolve_clean_csv`](run_gpt2sp_retrain.py#L78-L90) từ [../docs/draft/springxd_cleaned_dataset.csv](../docs/draft/springxd_cleaned_dataset.csv) hoặc `data/clean/springxd_cleaned_dataset.csv`.
 
 #### 5. `metrics.py`, `hf_utils.py`, `kaggle_runner.ipynb` — Kiểm định & ResearchOps của Nhóm 3
 * [`metrics.py`](metrics.py): [`compute_mae_mdae`](metrics.py#L8-L13), [`compute_sa`](metrics.py#L16-L20), [`safe_wilcoxon`](metrics.py#L23-L33), [`vargha_delaney_a12`](metrics.py#L36-L57) ($>0.5$ nghĩa là mô hình vượt baseline), và [`holm_bonferroni`](metrics.py#L60-L73).
-* [`hf_utils.py`](hf_utils.py): [`resolve_hf_token`](hf_utils.py#L12-L38), [`get_git_info`](hf_utils.py#L41-L55), và [`HFExperimentLogger`](hf_utils.py#L58-L278) ([`remote_file_exists`](hf_utils.py#L143-L164), [`download_result_if_exists`](hf_utils.py#L166-L182), [`upload_result`](hf_utils.py#L196-L211), [`upload_checkpoint_dir`](hf_utils.py#L213-L230), [`write_and_upload_metadata`](hf_utils.py#L232-L278)).
-* [`kaggle_runner.ipynb`](kaggle_runner.ipynb): 5 Code cells (`L23-L48` Config, `L58-L95` HF Secrets Auth, `L105-L129` Git Clone/Pull, `L139-L182` Run Script stream log realtime, `L192-L218` Summary & HF Link).
+* [`hf_utils.py`](hf_utils.py): [`resolve_hf_token`](hf_utils.py#L12-L38), [`get_git_info`](hf_utils.py#L41-L55), và [`HFExperimentLogger`](hf_utils.py#L58-L306) ([`remote_file_exists`](hf_utils.py#L143-L164), [`download_result_if_exists`](hf_utils.py#L166-L182), [`upload_result`](hf_utils.py#L196-L211), [`upload_results_batch`](hf_utils.py#L213-L237), [`upload_checkpoint_dir`](hf_utils.py#L239-L256), [`write_and_upload_metadata`](hf_utils.py#L258-L306)).
+* [`kaggle_runner.ipynb`](kaggle_runner.ipynb): 5 Code cells (`L23-L48` Config, `L58-L95` HF Secrets Auth, `L105-L129` Git Clone/Pull, `L139-L183` Run Script stream log realtime — gồm `"migrate_hf_artifact"`, `L193-L219` Summary & HF Link).
 
 ---
 
@@ -109,15 +109,15 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
 
 | Thành phần | Nguồn gốc tác giả (File & Dòng) | Mã nguồn Nhóm 3 (File & Dòng) | Ghi chú đối soát |
 | :--- | :--- | :--- | :--- |
-| **Data URL & 60/20/20 split** | [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb) (Cell 4 `L16`; Cell 6 `L130-L135`) & [`within_proj_data.csv`](https://github.com/awsm-research/gpt2sp/blob/main/data_model_analysis/within_proj_data.csv) | [`config.py#L10-L12`](config.py#L10-L12), [`config.py#L20-L181`](config.py#L20-L181), [`config.py#L226-L249`](config.py#L226-L249) | Giữ nguyên CSV `marked_data`, bổ sung đối chứng Table II Deep-SE |
+| **Data URL & 60/20/20 split** | [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb) (Cell 4 `L16`; Cell 6 `L130-L135`) & [`within_proj_data.csv`](https://github.com/awsm-research/gpt2sp/blob/main/data_model_analysis/within_proj_data.csv) | [`config.py#L10-L12`](config.py#L10-L12), [`config.py#L20-L181`](config.py#L20-L181), [`config.py#L227-L250`](config.py#L227-L250) | Giữ nguyên CSV `marked_data`, bổ sung đối chứng Table II Deep-SE |
 | **Kiến trúc `GPT2SP` + MLP Head** | [`GPT2SP.py#L7-L110`](https://github.com/awsm-research/gpt2sp/blob/main/GPT2SP.py#L7-L110) (`L13`, `L14-L16`, `L61-L67`) | [`model.py#L11-L53`](model.py#L11-L53) (`L21`, `L22-L24`, `L35-L38`) | Bọc `nn.Module` thuần tránh lỗi `all_tied_weights_keys` / drop `dense1,dense2` |
 | **Last Token Pooling** | [`GPT2SP.py#L77-L89`](https://github.com/awsm-research/gpt2sp/blob/main/GPT2SP.py#L77-L89) | [`model.py#L40-L53`](model.py#L40-L53) (`torch.clamp` `L43`) | Bảo vệ khỏi chỉ số `-1` khi chuỗi toàn token padding |
 | **Xác thực Checkpoint HF** | HF Repo [`MickyMike/0-GPT2SP-*`](https://huggingface.co/MickyMike) | [`model.py#L76-L105`](model.py#L76-L105) (`L90-L101`), [`run_gpt2sp_16projects.py#L153-L160`](run_gpt2sp_16projects.py#L153-L160) | Bắt buộc khớp đủ 3 key head (`dense1`, `dense2`, `score`) & dọn cache [`L120-L133`](model.py#L120-L133) |
-| **Tiền xử lý Title-only (`len=20`)** | [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb) (Cell 4 `L5`; Cell 6 `L111-L116`) | [`config.py#L252-L262`](config.py#L252-L262), [`run_gpt2sp_16projects.py#L88-L112`](run_gpt2sp_16projects.py#L88-L112) | Thêm `--include-description --max-length 128` để test thiết lập Full Context |
+| **Tiền xử lý Title-only (`len=20`)** | [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb) (Cell 4 `L5`; Cell 6 `L111-L116`) | [`config.py#L253-L263`](config.py#L253-L263), [`run_gpt2sp_16projects.py#L88-L112`](run_gpt2sp_16projects.py#L88-L112) | Thêm `--include-description --max-length 128` để test thiết lập Full Context |
 | **Công thức tính MAE (PR #2)** | [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb) (Cell 6 `L248-L257`) & [PR #2 (`1117294`)](https://github.com/awsm-research/gpt2sp/commit/1117294) | [`metrics.py#L8-L13`](metrics.py#L8-L13), [`run_gpt2sp_16projects.py#L202-L212`](run_gpt2sp_16projects.py#L202-L212) | Giải thích sai số `1.80x` giữa Table 4 bài báo và official checkpoints |
-| **Vòng lặp Huấn luyện & Siêu tham số** | [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb) (Cell 4 `L3-L6`; Cell 6 `L3,L24-L25,L145-L184`) | [`run_gpt2sp_retrain.py#L188-L331`](run_gpt2sp_retrain.py#L188-L331) (`L202-L216`, `L246`) | Thêm micro-batch + gradient accumulation tránh OOM trên T4 |
+| **Vòng lặp Huấn luyện & Siêu tham số** | [`model_training_notebook.ipynb`](https://github.com/awsm-research/gpt2sp/blob/main/model_training_notebook.ipynb) (Cell 4 `L3-L6`; Cell 6 `L3,L24-L25,L145-L184`) | [`run_gpt2sp_retrain.py#L188-L339`](run_gpt2sp_retrain.py#L188-L339) (`L202-L216`, `L246`) | Thêm micro-batch + gradient accumulation tránh OOM trên T4 |
 | **Chống Temporal Leakage** | — *(bài báo dùng Final Snapshot)* | [`run_gpt2sp_retrain.py#L78-L127`](run_gpt2sp_retrain.py#L78-L127) | Dữ liệu `planning_clean` tại `SP_Estimation_Date` |
-| **Kiểm định Thống kê & HF Ops** | — *(bài báo không tính $SA$ / Holm / $\hat{A}_{12}$)* | [`metrics.py#L16-L73`](metrics.py#L16-L73), [`hf_utils.py#L12-L278`](hf_utils.py#L12-L278), [`kaggle_runner.ipynb`](kaggle_runner.ipynb) | Train-only Median, Wilcoxon, $\hat{A}_{12}$, Holm-Bonferroni & auto-resume HF Hub |
+| **Kiểm định Thống kê & HF Ops** | — *(bài báo không tính $SA$ / Holm / $\hat{A}_{12}$)* | [`metrics.py#L16-L73`](metrics.py#L16-L73), [`hf_utils.py#L12-L306`](hf_utils.py#L12-L306), [`kaggle_runner.ipynb`](kaggle_runner.ipynb) | Train-only Median, Wilcoxon, $\hat{A}_{12}$, Holm-Bonferroni, `upload_results_batch` |
 
 ---
 
@@ -125,11 +125,11 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
 
 | Thành phần | Giữ nguyên 100% từ tác giả gốc | Điều chỉnh kỹ thuật / Mở rộng của Nhóm 3 |
 | :--- | :--- | :--- |
-| **Dataset & Split** | 16 CSV `marked_data` (`train`/`val`/`test`) từ [`config.py#L226-L249`](config.py#L226-L249) | Thêm chế độ `planning_clean` tái dựng tại `SP_Estimation_Date` chống Temporal Leakage |
+| **Dataset & Split** | 16 CSV `marked_data` (`train`/`val`/`test`) từ [`config.py#L227-L250`](config.py#L227-L250) | Thêm chế độ `planning_clean` tái dựng tại `SP_Estimation_Date` chống Temporal Leakage |
 | **Kiến trúc GPT2SP** | `GPT2Model` + `dense1` (768→3072) + `dense2` (3072→768) + `score` (768→1), no bias, Last Token Pooling | Bọc bằng `nn.Module` thuần PyTorch tránh lỗi `all_tied_weights_keys`/drop head; `safe_torch_load`; dọn cache sau mỗi dự án |
 | **Huấn luyện & Input** | `title`-only `max_len=20`, `L1Loss`, `AdamW`, `lr=5e-4`, linear warmup, dynamic batch 30% | Thêm micro-batch + gradient accumulation (tránh OOM T4 15GB) và cờ `--include-description` (`full_128`) |
 | **Baseline & Kiểm định** | Đối chiếu kết quả báo cáo Table 4 (GPT2SP) & Table II (Deep-SE) | Bắt buộc tính Baseline chỉ từ `train`, truy vết lỗi MAE `1.80x` ([PR #2](https://github.com/awsm-research/gpt2sp/pull/2)), thêm `safe_wilcoxon`, `vargha_delaney_a12`, `holm_bonferroni`, `SA` chuẩn |
-| **Vận hành & Lưu trữ** | — | Thin Runner `kaggle_runner.ipynb`, đọc Secrets, auto-resume, push cuốn chiếu lên HF Dataset/Model repo & ghi `run_metadata.json` |
+| **Vận hành & Lưu trữ** | — | Thin Runner `kaggle_runner.ipynb`, chuẩn Phương án A (`NCKH3-StoryPoint-Artifact` / `NCKH3-StoryPoint-Checkpoints`), gom commit qua `create_commit` |
 
 ---
 
@@ -141,15 +141,16 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
    * **Label:** `hf_token` *(hoặc `HF_TOKEN` — code tự nhận diện cả hai)*.
    * **Value:** dán token vừa tạo và **bật tích xanh** cho notebook sử dụng.
 3. Ở cột phải Kaggle:
-   * **Accelerator:** `GPU T4 x 2` (hoặc `GPU P100`) cho cả `gpt2sp_16projects` và `gpt2sp_retrain`.
+   * **Accelerator:** `GPU T4 x 2` (cho `gpt2sp_16projects` và `gpt2sp_retrain`) hoặc `CPU` (cho `migrate_hf_artifact`).
    * **Internet:** gạt sang **ON**.
 
 ### Bước 2: Chỉnh tham số ở Cell 1 của `kaggle_runner.ipynb` và bấm Run All
 * `GIT_BRANCH`: tên branch chứa code (mặc định `"main"`).
-* `EXPERIMENT`: chọn `"gpt2sp_16projects"` hoặc `"gpt2sp_retrain"`.
-* `HF_RESULTS_REPO`: `"NCKH_GPT2SP"` *(HF Dataset Repo lưu `.csv`, `.png`, `run_metadata.json`)*.
-* `HF_CHECKPOINTS_REPO`: `"nckh3-gpt2sp-checkpoints"` *(HF Model Repo lưu weights khi chạy `gpt2sp_retrain`)*.
+* `EXPERIMENT`: chọn `"gpt2sp_16projects"`, `"gpt2sp_retrain"`, hoặc `"migrate_hf_artifact"`.
+* `HF_RESULTS_REPO`: `"NCKH3-StoryPoint-Artifact"` *(HF Dataset Repo trung tâm theo Phương án A)*.
+* `HF_CHECKPOINTS_REPO`: `"NCKH3-StoryPoint-Checkpoints"` *(HF Model Repo trung tâm lưu model weights khi chạy `gpt2sp_retrain`)*.
 * `EXTRA_ARGS` (tùy chọn):
+  * Gom kết quả đã chạy từ `NCKH_GPT2SP` + `NCKH_DeepSE` sang `NCKH3-StoryPoint-Artifact` (~15s CPU): đặt `EXPERIMENT = "migrate_hf_artifact"`, `EXTRA_ARGS = ""`
   * Test nhanh 2 dự án: `"--projects springxd,bamboo"`
   * Đánh giá GPT2SP với Full Context: `"--include-description --max-length 128"`
   * Huấn luyện lại trên dữ liệu sạch Planning-Time: `"--project springxd --setting planning_clean --epochs 20 --seeds 42,123"`
@@ -160,84 +161,72 @@ Tài liệu này vừa hướng dẫn vận hành luồng chạy Kaggle cho **GP
 ## 💻 5. Chạy Thử Cục Bộ (Không Đẩy Lên HF)
 
 ```bash
+python scripts/migrate_hf_artifact.py --no-hf-push
 python kaggle_GPT2SP/run_gpt2sp_16projects.py --projects springxd --no-hf-push
 python kaggle_GPT2SP/run_gpt2sp_retrain.py --project springxd --setting planning_clean --epochs 3 --no-hf-push
 ```
 
 ---
 
-## 📦 6. Giải Thích Các File Output Trên Hugging Face (`Snowflake06/NCKH_GPT2SP`)
+## 📦 6. Giải Thích Các File Output Theo Phương Án A (`Snowflake06/NCKH3-StoryPoint-Artifact`)
 
-Toàn bộ kết quả thực nghiệm của **GPT2SP** được công khai tại:  
-🔗 **HF Dataset Repo:** [`https://huggingface.co/datasets/Snowflake06/NCKH_GPT2SP`](https://huggingface.co/datasets/Snowflake06/NCKH_GPT2SP)
+Toàn bộ artifact chuẩn hóa của đề tài được quy về **1 HF Dataset Repo duy nhất** (kèm Model Repo `Snowflake06/NCKH3-StoryPoint-Checkpoints` cho trọng số `.bin`):  
+🔗 **Unified HF Artifact:** [`https://huggingface.co/datasets/Snowflake06/NCKH3-StoryPoint-Artifact`](https://huggingface.co/datasets/Snowflake06/NCKH3-StoryPoint-Artifact)  
+*(Dữ liệu gốc từ lần chạy trước hiện vẫn được bảo toàn nguyên vẹn tại [`Snowflake06/NCKH_GPT2SP`](https://huggingface.co/datasets/Snowflake06/NCKH_GPT2SP) và có thể đồng bộ 1-click qua `EXPERIMENT = "migrate_hf_artifact"` mà không cần train/suy luận lại 16 dự án).*
 
-### 6.1. Cấu trúc thư mục thực tế cho Chiến lược 1 (`gpt2sp_16proj_seed0_title_len20/`)
-
-Lần chạy đầy đủ 16 dự án trên Kaggle (`Tesla T4`, `PyTorch 2.11.0+cu130`, `Transformers 5.20.2`, commit `6270d5ad`) đã đẩy lên tổng cộng **20 file kết quả** (cùng `.gitattributes` gốc của HF Hub) trong thư mục [`gpt2sp_16proj_seed0_title_len20/`](https://huggingface.co/datasets/Snowflake06/NCKH_GPT2SP/tree/main/gpt2sp_16proj_seed0_title_len20):
+### 6.1. Cấu trúc chuẩn hóa cho Chiến lược 1 (`experiments/gpt2sp/replication/<run>/`)
 
 ```text
-Snowflake06/NCKH_GPT2SP/
-├── .gitattributes
-└── gpt2sp_16proj_seed0_title_len20/
-    ├── gpt2sp_16_projects_summary.csv             # Bảng tổng hợp 16 dự án (16 dòng x 18 cột)
-    ├── gpt2sp_16_projects_statistical_tests.csv   # Kiểm định Wilcoxon & A12 toàn cục (2 dòng x 6 cột)
-    ├── gpt2sp_16_projects_benchmark_audit.png     # Biểu đồ 2 panel 300 DPI đối chiếu MAE & SA
-    ├── run_metadata.json                          # Nhật ký tái lập phiên bản, phần cứng & tham số CLI
-    └── predictions/                               # Dự báo chi tiết từng Jira issue của 16 dự án
-        ├── appceleratorstudio_predictions.csv
-        ├── aptanastudio_predictions.csv
-        ├── ... (tổng 16 file *_predictions.csv)
-        └── usergrid_predictions.csv
+Snowflake06/NCKH3-StoryPoint-Artifact/
+├── README.md                                  # Dataset Card + YAML configs (bật HF Dataset Viewer)
+├── datasets/
+│   └── springxd_planning_clean.csv            # Bộ dữ liệu sạch không rò rỉ tại SP_Estimation_Date
+├── comparisons/
+│   ├── cross_model_16proj.csv                 # Bảng đối chiếu 16 dự án: Median vs Deep-SE vs GPT2SP
+│   └── figures/
+│       └── cross_model_benchmark.png          # Biểu đồ 300 DPI so sánh MAE & SA chéo mô hình
+└── experiments/gpt2sp/replication/seed0_title_len20/
+    ├── summary.csv                            # Bảng tổng hợp 16 dự án (16 dòng x 18 cột)
+    ├── stat_tests.csv                         # Kiểm định Wilcoxon & A12 toàn cục (2 dòng x 6 cột)
+    ├── metadata.json                          # Nhật ký tái lập phiên bản, phần cứng & tham số CLI
+    ├── figures/
+    │   └── benchmark_audit.png                # Biểu đồ 2 panel 300 DPI đối chiếu MAE & SA
+    └── predictions/                           # Dự báo chi tiết từng Jira issue của 16 dự án
+        ├── appceleratorstudio.csv
+        ├── ... (tổng 16 file <project>.csv)
+        └── usergrid.csv
 ```
 
-### 6.2. Ý nghĩa chi tiết từng file & từng cột
+### 6.2. Ý nghĩa từng file & kết quả đối chiếu đã kiểm chứng (`seed0_title_len20`)
 
-#### 1. `gpt2sp_16_projects_summary.csv` (16 dòng $\times$ 18 cột)
-Bảng tổng hợp định lượng từng dự án so sánh **Table 4 bài báo gốc**, **Official HF Checkpoints (`MickyMike/0-GPT2SP-*`)**, và **Baseline thực tế tính từ tập `train`**:
-
+#### 1. `summary.csv` (16 dòng $\times$ 18 cột)
 | Nhóm cột | Tên cột | Ý nghĩa chi tiết |
 | :--- | :--- | :--- |
-| **Định danh & Quy mô** | `Project`, `Abbr`, `Name`, `N_Test` | Tên khóa dự án, mã viết tắt (`AS`, `XD`...), tên đầy đủ và số lượng Jira issue trong tập `test` (20% cuối theo thời gian) |
-| **Kết quả GPT2SP** | `GPT2SP_Reported_MAE`, `GPT2SP_Actual_MAE`, `GPT2SP_Actual_MdAE`, `Reproduction_Gap` | MAE công bố trong Table 4 bài báo, MAE/MdAE chạy thật từ checkpoint trên HF, và độ lệch `Reproduction_Gap = Actual_MAE - Reported_MAE` |
-| **Baselines thật (`train`)** | `Real_Median_MAE`, `Real_Median_MdAE`, `Real_Mean_MAE` | MAE/MdAE khi luôn đoán bằng `median(y_train)` và MAE khi đoán bằng `mean(y_train)` (không rò rỉ `val`/`test`) |
-| **So sánh & Đối chứng** | `SA_vs_Median (%)`, `DeepSE_Reported_MAE` | Standardized Accuracy $\text{SA} = (1 - \text{Actual\_MAE} / \text{Real\_Median\_MAE}) \times 100\%$ (`> 0%` tốt hơn Median, `< 0%` thua Median); kèm MAE Deep-SE ghi trong `within_proj_data.csv` |
-| **Kiểm định thống kê** | `Wilcoxon_W_vs_Med`, `Wilcoxon_p_vs_Med`, `Wilcoxon_p_Holm`, `A12_vs_Med`, `Verdict` | Thống kê Wilcoxon ghép cặp giữa `Error_GPT2SP` và `Error_Median` từng issue, $p$-value gốc & sau hiệu chỉnh **Holm-Bonferroni**, effect size Vargha-Delaney $\hat{A}_{12}$ (`> 0.5` mô hình thắng), và nhãn kết luận (`BEATS_MEDIAN` / `LOSES_TO_MEDIAN`) |
+| **Định danh & Quy mô** | `Project`, `Abbr`, `Name`, `N_Test` | Khóa dự án, mã viết tắt (`AS`, `XD`...), tên đầy đủ và số Jira issue tập `test` |
+| **Kết quả GPT2SP** | `GPT2SP_Reported_MAE`, `GPT2SP_Actual_MAE`, `GPT2SP_Actual_MdAE`, `Reproduction_Gap` | MAE công bố ở Table 4, MAE/MdAE chạy thật từ official HF checkpoint, và độ lệch `Actual - Reported` |
+| **Baselines thật (`train`)** | `Real_Median_MAE`, `Real_Median_MdAE`, `Real_Mean_MAE` | Baseline chuẩn hóa tính thuần từ `train` (`median(y_train)`, `mean(y_train)`) |
+| **So sánh & Đối chứng** | `SA_vs_Median (%)`, `DeepSE_Reported_MAE` | Standardized Accuracy so với `Real_Median_MAE` (`> 0%` thắng Median) và MAE Deep-SE từ `within_proj_data.csv` |
+| **Kiểm định thống kê** | `Wilcoxon_W_vs_Med`, `Wilcoxon_p_vs_Med`, `Wilcoxon_p_Holm`, `A12_vs_Med`, `Verdict` | Wilcoxon ghép cặp theo issue, $p$-value sau hiệu chỉnh **Holm-Bonferroni**, $\hat{A}_{12}$ và nhãn `BEATS_MEDIAN` / `LOSES_TO_MEDIAN` |
 
-> **Kết quả ghi nhận trên bảng thật:** **9/16 dự án** bị gắn nhãn `LOSES_TO_MEDIAN`, độ chênh trung bình `Mean Reproduction_Gap = +1.1335 SP`, và `Mean SA vs Median = +0.07%`.
+> **Kết quả thực nghiệm đã xác nhận (`Tesla T4`, `PyTorch 2.11.0+cu130`, `Transformers 5.20.2`):** **9/16 dự án** gắn nhãn `LOSES_TO_MEDIAN`, `Mean Reproduction_Gap = +1.1335 SP`, và `Mean SA vs Median = +0.07%`.
 
-#### 2. `gpt2sp_16_projects_statistical_tests.csv` (2 dòng $\times$ 6 cột)
-Chứa kết quả 2 phép kiểm định **Wilcoxon Signed-Rank Test toàn cục** ở cấp độ 16 dự án (`Comparison`, `N_Projects`, `Mean_Diff`, `Wilcoxon_W`, `p_value`, `A12`):
-* **`Actual_Checkpoint_MAE vs Paper_Reported_MAE`** (`N_Projects=16`, `Mean_Diff=+1.1335`, `W=0.0`, `p=0.000031`, `A12=NaN`): Xác nhận 16/16 checkpoints chính thức đều cho MAE thực tế cao hơn Table 4 có ý nghĩa thống kê, khớp tỷ lệ `~1.80x` do lỗi chia `total_data_point` ([PR #2](https://github.com/awsm-research/gpt2sp/pull/2)).
-* **`Actual_Checkpoint_MAE vs Real_Median_MAE`** (`N_Projects=16`, `Mean_Diff=-0.0277`, `W=67.0`, `p=0.979950`, `A12=0.5078`): Khẳng định trên toàn cục 16 dự án, official checkpoints của GPT2SP **tương đương về mặt thống kê với dự đoán bằng Median tập train** ($p = 0.98$, $\hat{A}_{12} \approx 0.50$).
+#### 2. `stat_tests.csv` (2 dòng $\times$ 6 cột)
+* **`Actual_Checkpoint_MAE vs Paper_Reported_MAE`** (`N_Projects=16`, `Mean_Diff=+1.1335`, `W=0.0`, `p=0.000031`, `A12=NaN`): Xác nhận sai lệch `~1.80x` do lỗi chia mẫu số `total_data_point` ([PR #2](https://github.com/awsm-research/gpt2sp/pull/2)).
+* **`Actual_Checkpoint_MAE vs Real_Median_MAE`** (`N_Projects=16`, `Mean_Diff=-0.0277`, `W=67.0`, `p=0.979950`, `A12=0.5078`): Khẳng định trên toàn cục 16 dự án, official checkpoints tương đương thống kê với Median tập train ($p = 0.98$, $\hat{A}_{12} \approx 0.50$).
 
-#### 3. `predictions/<project>_predictions.csv` (16 file $\times$ 8 cột)
-Dữ liệu dự báo mức từng Jira issue trên tập test (ví dụ `springxd_predictions.csv` gồm **706 dòng**), phục vụ hậu kiểm phân phối sai số và kiểm định từng issue:
-* `issuekey`: Mã Jira issue (vd `XD-3016`).
-* `Ground_Truth_SP`: Giá trị Story Point thực tế trong CSV gốc.
-* `Pred_GPT2SP`: Giá trị Story Point dự báo từ official checkpoint.
-* `Pred_Median_Baseline`, `Pred_Mean_Baseline`: Giá trị dự báo hằng số theo `median(y_train)` và `mean(y_train)`.
-* `Error_GPT2SP`, `Error_Median`, `Error_Mean`: Sai số tuyệt đối $|y - \hat{y}|$ tương ứng cho từng issue.
+#### 3. `predictions/<project>.csv` (16 file $\times$ 8 cột)
+Gồm `issuekey`, `Ground_Truth_SP`, `Pred_GPT2SP`, `Pred_Median_Baseline`, `Pred_Mean_Baseline`, `Error_GPT2SP`, `Error_Median`, `Error_Mean` (vd `springxd.csv` có 706 dòng).
 
-#### 4. `gpt2sp_16_projects_benchmark_audit.png`
-Biểu đồ 2 panel độ phân giải 300 DPI sinh bởi [`save_audit_plot`](run_gpt2sp_16projects.py#L240-L310):
-* **Panel (A):** Biểu đồ cột nhóm 3 cột theo 16 dự án so sánh `Paper Reported MAE` (xanh dương) vs. `Actual Checkpoint MAE` (đỏ) vs. `Real Median Baseline MAE` (xanh lá).
-* **Panel (B):** Biểu đồ cột `Standardized Accuracy SA (%) vs. Median` (cột xanh lá khi mô hình tốt hơn Median `SA > 0%`, cột đỏ khi thua Median `SA <= 0%`).
-
-#### 5. `run_metadata.json`
-Hồ sơ tái lập chuẩn ResearchOps (không bao giờ lưu token/secret):
-* `timestamp_utc`, `git_branch` (`"main"`), `git_commit` (`"6270d5ad0033574978941258aea2ccdf53279345"`), `run_prefix`.
-* Thông tin phần cứng & môi trường: `device` (`"cuda"`), `gpu_name` (`"Tesla T4"`), `torch_version` (`"2.11.0+cu130"`), `transformers_version` (`"5.20.2"`).
-* Toàn bộ tham số `args` đã chạy và tóm tắt `extra_info` (`elapsed_sec: 152.51`, `n_projects: 16`, `projects_losing_to_median: 9`, `mean_reproduction_gap: 1.1335`, `mean_sa_vs_median: 0.07`).
+#### 4. `figures/benchmark_audit.png` & `metadata.json`
+* `benchmark_audit.png`: Biểu đồ 2 panel 300 DPI sinh bởi [`save_audit_plot`](run_gpt2sp_16projects.py#L240-L310).
+* `metadata.json`: Lưu `timestamp_utc`, `git_branch`, `git_commit`, `device`/`gpu_name`, phiên bản thư viện, CLI `args` (đã lọc bỏ secret) và `extra_info`.
 
 ---
 
 ### 6.3. Cấu trúc output khi chạy Chiến lược 2 (`run_gpt2sp_retrain.py`)
 
-Khi huấn luyện lại GPT2SP theo từng nhánh (`title_20`, `full_128`, `planning_clean`), pipeline tự đẩy song song vào hai kho HF:
-* **Dataset Repo (`Snowflake06/NCKH_GPT2SP/gpt2sp_retrain_<project>_<setting>/`):**
-  * `retrain_summary.csv`: Tổng hợp MAE/MdAE, Median Baseline, $SA$, Wilcoxon, $\hat{A}_{12}$ theo từng random seed.
-  * `run_metadata.json`: Cấu hình nhánh dữ liệu, seed, môi trường GPU và commit Git.
-  * `seed_<seed>/training_history.csv` & `seed_<seed>/loss_curve.png`: Đường cong `train_mae_loss` và `val_mae` qua 20 epochs.
-  * `seed_<seed>/test_predictions.csv`: Dự báo chi tiết từng issue trên tập test từ checkpoint có `val_mae` tốt nhất.
-* **Model Repo (`Snowflake06/nckh3-gpt2sp-checkpoints/gpt2sp_retrain_<project>_<setting>/seed_<seed>/`):**
-  * `pytorch_model.bin` & `config.json`: Trọng số checkpoint tốt nhất theo từng setting & seed để tái suy luận về sau.
+* **Dataset Repo (`experiments/gpt2sp/retrain/<project>_<setting>/`):**
+  * `summary.csv` & `metadata.json` (upload gộp cuối chạy)
+  * `seed_<seed>/history.csv`, `seed_<seed>/predictions.csv` & `figures/loss_curve_seed_<seed>.png` (upload gộp theo từng seed)
+* **Model Repo (`Snowflake06/NCKH3-StoryPoint-Checkpoints/experiments/gpt2sp/retrain/<project>_<setting>/seed_<seed>/`):**
+  * `pytorch_model.bin` & `config.json` (checkpoint có `val_mae` tốt nhất).

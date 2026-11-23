@@ -19,8 +19,8 @@ DEEPSE_BASE_URL = (
 DEEPSE_DATA_BASE_URL = DEEPSE_BASE_URL + "data/"
 DEEPSE_PRETRAIN_BASE_URL = DEEPSE_BASE_URL + "NCE/bestModels/"
 
-DEFAULT_RESULTS_REPO_NAME = "NCKH_DeepSE"
-DEFAULT_CHECKPOINTS_REPO_NAME = "nckh3-deepse-checkpoints"
+DEFAULT_RESULTS_REPO_NAME = "NCKH3-StoryPoint-Artifact"
+DEFAULT_CHECKPOINTS_REPO_NAME = "NCKH3-StoryPoint-Checkpoints"
 
 # Ground-truth values & repository mapping extracted from:
 # - Choetkiertikul et al. (IEEE TSE 2019, Table II)
@@ -175,12 +175,13 @@ BENCHMARK_PROJECTS: Dict[str, Dict[str, Any]] = {
 
 def resolve_output_dir(explicit_dir: Optional[str], default_subdir: str) -> str:
     """Resolve output directory based on explicit flag or Kaggle/local runtime."""
+    norm_sub = os.path.normpath(default_subdir.strip("/\\"))
     if explicit_dir:
         out_dir = explicit_dir
     elif os.path.exists("/kaggle/working"):
-        out_dir = os.path.join("/kaggle/working", "outputs", default_subdir)
+        out_dir = os.path.join("/kaggle/working", "outputs", norm_sub)
     else:
-        out_dir = os.path.join("kaggle_DeepSE", "outputs", default_subdir)
+        out_dir = os.path.join("kaggle_DeepSE", "outputs", norm_sub)
     os.makedirs(out_dir, exist_ok=True)
     return out_dir
 

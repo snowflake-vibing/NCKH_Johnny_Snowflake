@@ -124,8 +124,8 @@ def run_single_project(
 ) -> Dict:
     """Evaluate one project (or load existing resumed predictions) and return metrics dict."""
     meta = BENCHMARK_PROJECTS[p_name]
-    rel_pred_path = f"predictions/{p_name}_predictions.csv"
-    local_pred_path = os.path.join(pred_dir, f"{p_name}_predictions.csv")
+    rel_pred_path = f"predictions/{p_name}.csv"
+    local_pred_path = os.path.join(pred_dir, f"{p_name}.csv")
 
     df_pred = None
     if args.resume:
@@ -316,14 +316,16 @@ def main() -> None:
     mode_tag = "full" if args.include_description else "title"
     run_name = (
         args.run_name
-        or f"gpt2sp_16proj_seed{args.seed_prefix}_{mode_tag}_len{args.max_length}"
+        or f"experiments/gpt2sp/replication/seed{args.seed_prefix}_{mode_tag}_len{args.max_length}"
     )
 
     out_dir = resolve_output_dir(args.output_dir, run_name)
     csv_cache_dir = os.path.join(out_dir, "csv_cache")
     pred_dir = os.path.join(out_dir, "predictions")
+    fig_dir = os.path.join(out_dir, "figures")
     os.makedirs(csv_cache_dir, exist_ok=True)
     os.makedirs(pred_dir, exist_ok=True)
+    os.makedirs(fig_dir, exist_ok=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("=" * 85)
@@ -362,11 +364,8 @@ def main() -> None:
     df_results = pd.DataFrame(rows)
     df_results["Wilcoxon_p_Holm"] = holm_bonferroni(df_results["Wilcoxon_p_vs_Med"].tolist())
 
-    summary_path = os.path.join(out_dir, "gpt2sp_16_projects_summary.csv")
+    summary_path = os.path.join(out_dir, "summary.csv")
     df_results.to_csv(summary_path, index=False)
-    hf_logger.upload_result(
-        summary_path, "gpt2sp_16_projects_summary.csv", "Upload 16-project summary"
-    )
 
     # Project-level global statistical comparisons
     stat_rows = []
@@ -407,20 +406,14 @@ def main() -> None:
         )
 
     df_stats = pd.DataFrame(stat_rows)
-    stats_path = os.path.join(out_dir, "gpt2sp_16_projects_statistical_tests.csv")
+    stats_path = os.path.join(out_dir, "stat_tests.csv")
     df_stats.to_csv(stats_path, index=False)
-    hf_logger.upload_result(
-        stats_path, "gpt2sp_16_projects_statistical_tests.csv", "Upload global stats"
-    )
 
-    plot_path = os.path.join(out_dir, "gpt2sp_16_projects_benchmark_audit.png")
+    plot_path = os.path.join(fig_dir, "benchmark_audit.png")
     save_audit_plot(df_results, plot_path)
-    hf_logger.upload_result(
-        plot_path, "gpt2sp_16_projects_benchmark_audit.png", "Upload 300 DPI audit chart"
-    )
 
     losses = int((df_results["Verdict"] == "LOSES_TO_MEDIAN").sum())
-    hf_logger.write_and_upload_metadata(
+    meta_path = hf_logger.write_and_upload_metadata(
         out_dir,
         vars(args),
         extra_info={
@@ -430,6 +423,16 @@ def main() -> None:
             "mean_reproduction_gap": round(float(df_results["Reproduction_Gap"].mean()), 4),
             "mean_sa_vs_median": round(float(df_results["SA_vs_Median (%)"].mean()), 2),
         },
+        upload=False,
+    )
+    hf_logger.upload_results_batch(
+        [
+            (summary_path, "summary.csv"),
+            (stats_path, "stat_tests.csv"),
+            (plot_path, "figures/benchmark_audit.png"),
+            (meta_path, "metadata.json"),
+        ],
+        commit_message=f"Finalize {run_name} summary, stat tests, figure & metadata",
     )
 
     print("\n" + "=" * 85)

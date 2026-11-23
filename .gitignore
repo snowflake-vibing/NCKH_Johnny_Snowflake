@@ -131,7 +131,7 @@ docs/glossary/
 !docs/articles/paper-information/glossary/
 
 # ==============================================================================
-# 8. KAGGLE OUTPUT CỤC BỘ
+# 8. KAGGLE OUTPUT CỤC BỘ & STAGING SCRIPTS
 # ==============================================================================
 kaggle/output/
 kaggle/outputs/
@@ -139,6 +139,7 @@ kaggle_GPT2SP/output/
 kaggle_GPT2SP/outputs/
 kaggle_DeepSE/output/
 kaggle_DeepSE/outputs/
+scripts/outputs/
 
 # Deep-SE cache
 **/deep_se_cache/

@@ -11,8 +11,8 @@ GPT2SP_DATA_BASE_URL = (
     "https://raw.githubusercontent.com/awsm-research/gpt2sp/main/sp_dataset/marked_data/"
 )
 
-DEFAULT_RESULTS_REPO_NAME = "NCKH_GPT2SP"
-DEFAULT_CHECKPOINTS_REPO_NAME = "nckh3-gpt2sp-checkpoints"
+DEFAULT_RESULTS_REPO_NAME = "NCKH3-StoryPoint-Artifact"
+DEFAULT_CHECKPOINTS_REPO_NAME = "NCKH3-StoryPoint-Checkpoints"
 
 # Ground-truth values extracted from:
 # - Fu & Tantithamthavorn (IEEE TSE 2023, Table 4 & within_proj_data.csv)
@@ -181,14 +181,15 @@ BENCHMARK_PROJECTS = {
 }
 
 
-def resolve_output_dir(explicit_dir: str, default_subdir: str) -> str:
+def resolve_output_dir(explicit_dir: Optional[str], default_subdir: str) -> str:
     """Resolve output directory based on explicit flag or Kaggle/local runtime."""
+    norm_sub = os.path.normpath(default_subdir.strip("/\\"))
     if explicit_dir:
         out_dir = explicit_dir
     elif os.path.exists("/kaggle/working"):
-        out_dir = os.path.join("/kaggle/working", "outputs", default_subdir)
+        out_dir = os.path.join("/kaggle/working", "outputs", norm_sub)
     else:
-        out_dir = os.path.join("kaggle_GPT2SP", "outputs", default_subdir)
+        out_dir = os.path.join("kaggle_GPT2SP", "outputs", norm_sub)
     os.makedirs(out_dir, exist_ok=True)
     return out_dir
 

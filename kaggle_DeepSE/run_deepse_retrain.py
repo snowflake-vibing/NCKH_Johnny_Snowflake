@@ -254,7 +254,9 @@ def run_one_seed(
 ) -> Dict[str, Any]:
     seed_dir = os.path.join(out_dir, f"seed_{seed}")
     ckpt_dir = os.path.join(seed_dir, "best_checkpoint")
+    fig_dir = os.path.join(out_dir, "figures")
     os.makedirs(ckpt_dir, exist_ok=True)
+    os.makedirs(fig_dir, exist_ok=True)
 
     train_y = bundle["train_y"]
     val_y = bundle["val_y"]
@@ -290,11 +292,12 @@ def run_one_seed(
     )
 
     df_hist = pd.DataFrame(train_out["history"])
-    hist_path = os.path.join(seed_dir, "training_history.csv")
+    hist_path = os.path.join(seed_dir, "history.csv")
     df_hist.to_csv(hist_path, index=False)
-    hf_logger.upload_result(hist_path, f"seed_{seed}/training_history.csv")
 
-    curve_path = os.path.join(seed_dir, "loss_curve.png")
+    fig_dir = os.path.join(out_dir, "figures")
+    os.makedirs(fig_dir, exist_ok=True)
+    curve_path = os.path.join(fig_dir, f"loss_curve_seed_{seed}.png")
     if len(df_hist) > 0:
         save_loss_curve(
             df_hist,
@@ -302,7 +305,6 @@ def run_one_seed(
             f"Deep-SE Retrain ({args.project} | {args.setting} | {args.pretrain} | seed={seed})",
             args.loss,
         )
-        hf_logger.upload_result(curve_path, f"seed_{seed}/loss_curve.png")
 
     test_mae = train_out["test_mae"]
     test_mdae = train_out["test_mdae"]
@@ -333,9 +335,19 @@ def run_one_seed(
             "Error_Median": np.round(err_med, 6),
         }
     )
-    pred_path = os.path.join(seed_dir, "test_predictions.csv")
+    pred_path = os.path.join(seed_dir, "predictions.csv")
     pred_df.to_csv(pred_path, index=False)
-    hf_logger.upload_result(pred_path, f"seed_{seed}/test_predictions.csv")
+
+    batch_items = [
+        (hist_path, f"seed_{seed}/history.csv"),
+        (pred_path, f"seed_{seed}/predictions.csv"),
+    ]
+    if len(df_hist) > 0:
+        batch_items.append((curve_path, f"figures/loss_curve_seed_{seed}.png"))
+    hf_logger.upload_results_batch(
+        batch_items,
+        commit_message=f"Upload Deep-SE retrain artifacts for seed {seed}",
+    )
     hf_logger.upload_checkpoint_dir(
         ckpt_dir,
         f"seed_{seed}",
@@ -374,7 +386,7 @@ def main() -> None:
     seeds = [int(s.strip()) for s in args.seeds.split(",") if s.strip()]
     run_name = (
         args.run_name
-        or f"deepse_retrain_{args.project}_{args.setting}_{args.pretrain}_dim{args.dim}"
+        or f"experiments/deepse/retrain/{args.project}_{args.setting}_{args.pretrain}_dim{args.dim}"
     )
 
     out_dir = resolve_output_dir(args.output_dir, run_name)
@@ -406,10 +418,9 @@ def main() -> None:
     ]
 
     df_summary = pd.DataFrame(summary_rows)
-    summary_path = os.path.join(out_dir, "retrain_summary.csv")
+    summary_path = os.path.join(out_dir, "summary.csv")
     df_summary.to_csv(summary_path, index=False)
-    hf_logger.upload_result(summary_path, "retrain_summary.csv", "Upload Deep-SE retrain summary")
-    hf_logger.write_and_upload_metadata(
+    meta_path = hf_logger.write_and_upload_metadata(
         out_dir,
         vars(args),
         extra_info={
@@ -419,6 +430,11 @@ def main() -> None:
             "mean_test_mae": round(float(df_summary["test_mae"].mean()), 4),
             "std_test_mae": round(float(df_summary["test_mae"].std(ddof=0)), 4),
         },
+        upload=False,
+    )
+    hf_logger.upload_results_batch(
+        [(summary_path, "summary.csv"), (meta_path, "metadata.json")],
+        commit_message=f"Finalize {run_name} summary & metadata",
     )
 
     print("\n✅ Deep-SE Retraining complete! Summary:")

@@ -31,7 +31,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--projects", type=str, default="all")
     parser.add_argument("--output-dir", type=str, default=None)
     parser.add_argument("--results-repo", type=str, default=DEFAULT_RESULTS_REPO_NAME)
-    parser.add_argument("--run-name", type=str, default="deepse_16projects_audit")
+    parser.add_argument("--run-name", type=str, default="experiments/deepse/audit/16proj_table2")
     parser.add_argument("--private-hf", action="store_true")
     parser.add_argument("--no-hf-push", action="store_true")
     return parser.parse_args()
@@ -112,7 +112,9 @@ def main() -> None:
     projects = parse_projects_arg(args.projects)
     out_dir = resolve_output_dir(args.output_dir, args.run_name)
     cache_dir = os.path.join(out_dir, "deepse_cache")
+    fig_dir = os.path.join(out_dir, "figures")
     os.makedirs(cache_dir, exist_ok=True)
+    os.makedirs(fig_dir, exist_ok=True)
 
     print("=" * 85)
     print(f"🚀 DEEP-SE 16-PROJECT BASELINE & CODE-BIAS AUDIT ({len(projects)} projects)")
@@ -191,20 +193,14 @@ def main() -> None:
     w_gain, p_gain = safe_wilcoxon(df_audit["LD_RNN_MAE"], df_audit["Real_Med_MAE"])
     a12_gain = vargha_delaney_a12(df_audit["LD_RNN_MAE"], df_audit["Real_Med_MAE"])
 
-    csv_path = os.path.join(out_dir, "deep_se_16_projects_empirical_audit.csv")
+    csv_path = os.path.join(out_dir, "summary.csv")
     df_audit.to_csv(csv_path, index=False)
-    hf_logger.upload_result(
-        csv_path, "deep_se_16_projects_empirical_audit.csv", "Upload Deep-SE 16-project audit CSV"
-    )
 
-    plot_path = os.path.join(out_dir, "deep_se_baseline_inflation_audit.png")
+    plot_path = os.path.join(fig_dir, "baseline_inflation_audit.png")
     save_deepse_plot(df_audit, plot_path)
-    hf_logger.upload_result(
-        plot_path, "deep_se_baseline_inflation_audit.png", "Upload Deep-SE audit figure"
-    )
 
     inflated_n = int((df_audit["Med_Inflation"] > 0).sum())
-    hf_logger.write_and_upload_metadata(
+    meta_path = hf_logger.write_and_upload_metadata(
         out_dir,
         vars(args),
         extra_info={
@@ -215,6 +211,15 @@ def main() -> None:
             "wilcoxon_gain_p": p_gain,
             "a12_ld_rnn_vs_real_median": round(a12_gain, 4),
         },
+        upload=False,
+    )
+    hf_logger.upload_results_batch(
+        [
+            (csv_path, "summary.csv"),
+            (plot_path, "figures/baseline_inflation_audit.png"),
+            (meta_path, "metadata.json"),
+        ],
+        commit_message=f"Upload {args.run_name} audit summary, figure & metadata",
     )
 
     print("\n" + "=" * 85)

@@ -269,14 +269,15 @@ def train_one_seed(
 
         print(f"  Epoch {epoch:02d}/{args.epochs} | train_loss={avg_train_loss:.4f} | val_mae={val_mae:.4f}{marker}")
 
-    df_hist = pd.DataFrame(history)
-    hist_path = os.path.join(seed_dir, "training_history.csv")
-    df_hist.to_csv(hist_path, index=False)
-    hf_logger.upload_result(hist_path, f"seed_{seed}/training_history.csv")
+    fig_dir = os.path.join(out_dir, "figures")
+    os.makedirs(fig_dir, exist_ok=True)
 
-    curve_path = os.path.join(seed_dir, "loss_curve.png")
+    df_hist = pd.DataFrame(history)
+    hist_path = os.path.join(seed_dir, "history.csv")
+    df_hist.to_csv(hist_path, index=False)
+
+    curve_path = os.path.join(fig_dir, f"loss_curve_seed_{seed}.png")
     save_loss_curve(df_hist, curve_path, f"GPT2SP Retrain ({args.project} | {args.setting} | seed={seed})")
-    hf_logger.upload_result(curve_path, f"seed_{seed}/loss_curve.png")
 
     # Reload best checkpoint cleanly for honest test evaluation
     best_sd = safe_torch_load(os.path.join(ckpt_dir, "pytorch_model.bin"))
@@ -302,9 +303,16 @@ def train_one_seed(
             "Error_Median": np.round(err_med, 6),
         }
     )
-    pred_path = os.path.join(seed_dir, "test_predictions.csv")
+    pred_path = os.path.join(seed_dir, "predictions.csv")
     pred_df.to_csv(pred_path, index=False)
-    hf_logger.upload_result(pred_path, f"seed_{seed}/test_predictions.csv")
+    hf_logger.upload_results_batch(
+        [
+            (hist_path, f"seed_{seed}/history.csv"),
+            (curve_path, f"figures/loss_curve_seed_{seed}.png"),
+            (pred_path, f"seed_{seed}/predictions.csv"),
+        ],
+        commit_message=f"Upload GPT2SP retrain artifacts for seed {seed}",
+    )
     hf_logger.upload_checkpoint_dir(
         ckpt_dir, f"seed_{seed}", commit_message=f"Upload best GPT2SP ckpt (epoch {best_epoch})"
     )
@@ -334,7 +342,7 @@ def train_one_seed(
 def main() -> None:
     args = parse_args()
     seeds = [int(s.strip()) for s in args.seeds.split(",") if s.strip()]
-    run_name = args.run_name or f"gpt2sp_retrain_{args.project}_{args.setting}"
+    run_name = args.run_name or f"experiments/gpt2sp/retrain/{args.project}_{args.setting}"
 
     out_dir = resolve_output_dir(args.output_dir, run_name)
     cache_dir = os.path.join(out_dir, "csv_cache")
@@ -366,10 +374,9 @@ def main() -> None:
         summary_rows.append(row)
 
     df_summary = pd.DataFrame(summary_rows)
-    summary_path = os.path.join(out_dir, "retrain_summary.csv")
+    summary_path = os.path.join(out_dir, "summary.csv")
     df_summary.to_csv(summary_path, index=False)
-    hf_logger.upload_result(summary_path, "retrain_summary.csv", "Upload retrain summary")
-    hf_logger.write_and_upload_metadata(
+    meta_path = hf_logger.write_and_upload_metadata(
         out_dir,
         vars(args),
         extra_info={
@@ -377,6 +384,11 @@ def main() -> None:
             "mean_test_mae": round(float(df_summary["test_mae"].mean()), 4),
             "std_test_mae": round(float(df_summary["test_mae"].std(ddof=0)), 4),
         },
+        upload=False,
+    )
+    hf_logger.upload_results_batch(
+        [(summary_path, "summary.csv"), (meta_path, "metadata.json")],
+        commit_message=f"Finalize {run_name} summary & metadata",
     )
 
     print("\n✅ Retraining complete! Summary:")
