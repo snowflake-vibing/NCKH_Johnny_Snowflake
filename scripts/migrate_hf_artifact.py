@@ -11,7 +11,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from huggingface_hub import HfApi, hf_hub_download
+from huggingface_hub import CommitOperationAdd, HfApi, hf_hub_download
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, "kaggle_GPT2SP"))
@@ -34,6 +34,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--staging-dir", type=str, default=None)
     parser.add_argument("--private-hf", action="store_true")
     parser.add_argument("--no-hf-push", action="store_true")
+    parser.add_argument(
+        "--in-place",
+        action="store_true",
+        help=(
+            "Refresh README.md (YAML viewer configs), comparisons/, and datasets/ directly in --results-repo "
+            "using summaries already on that repo without touching existing experiments/."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -249,6 +257,7 @@ def write_dataset_card(
     df_deep_stats: pd.DataFrame,
     df_cross: pd.DataFrame,
     has_clean_dataset: bool,
+    extra_remote_files: Optional[List[str]] = None,
 ) -> str:
     """Write Hugging Face Dataset Card README.md with YAML configs for HF Viewer."""
     gpt_losses = int((df_gpt_sum["Verdict"] == "LOSES_TO_MEDIAN").sum())
@@ -279,7 +288,52 @@ def write_dataset_card(
             "      - split: full\n"
             "        path: datasets/springxd_planning_clean.csv\n"
         )
-        clean_tree_line = "├── datasets/\n│   └── springxd_planning_clean.csv     # Leakage-free Spring XD snapshot at SP_Estimation_Date\n"
+        clean_tree_line = "│   └── springxd_planning_clean.csv     # Leakage-free Spring XD snapshot at SP_Estimation_Date\n"
+
+    remote_set = set(extra_remote_files or [])
+    tawos_yaml = ""
+    tawos_tree_line = ""
+    tawos_snap_line = ""
+    if "datasets/tawos_snapshots/dataset_summary.csv" in remote_set:
+        tawos_yaml += (
+            "  - config_name: tawos_snapshots_summary\n"
+            "    data_files:\n"
+            "      - split: eval\n"
+            "        path: datasets/tawos_snapshots/dataset_summary.csv\n"
+        )
+        tawos_snap_line = "│   └── tawos_snapshots/              # 13-project TAWOS planning-time parquets & audit CSV\n"
+    if "experiments/tawos/baseline/13proj_3settings_seed42/summary.csv" in remote_set:
+        tawos_yaml += (
+            "  - config_name: tawos_baseline_summary\n"
+            "    data_files:\n"
+            "      - split: eval\n"
+            "        path: experiments/tawos/baseline/13proj_3settings_seed42/summary.csv\n"
+        )
+        tawos_tree_line += "    ├── tawos/baseline/13proj_3settings_seed42/\n"
+    if "experiments/tawos/baseline/13proj_3settings_seed42/wilcoxon.csv" in remote_set:
+        tawos_yaml += (
+            "  - config_name: tawos_baseline_wilcoxon\n"
+            "    data_files:\n"
+            "      - split: eval\n"
+            "        path: experiments/tawos/baseline/13proj_3settings_seed42/wilcoxon.csv\n"
+        )
+    if "experiments/tawos/gpt2sp/13proj_3settings_seed42/summary.csv" in remote_set:
+        tawos_yaml += (
+            "  - config_name: tawos_gpt2sp_summary\n"
+            "    data_files:\n"
+            "      - split: eval\n"
+            "        path: experiments/tawos/gpt2sp/13proj_3settings_seed42/summary.csv\n"
+        )
+        tawos_tree_line += "    ├── tawos/gpt2sp/13proj_3settings_seed42/\n"
+    if "experiments/tawos/gpt2sp/13proj_3settings_seed42/wilcoxon.csv" in remote_set:
+        tawos_yaml += (
+            "  - config_name: tawos_gpt2sp_wilcoxon\n"
+            "    data_files:\n"
+            "      - split: eval\n"
+            "        path: experiments/tawos/gpt2sp/13proj_3settings_seed42/wilcoxon.csv\n"
+        )
+
+    datasets_header = "├── datasets/\n" if (clean_tree_line or tawos_snap_line) else ""
 
     content = f"""---
 license: mit
@@ -318,7 +372,7 @@ configs:
     data_files:
       - split: test
         path: experiments/deepse/replication/fixed_lm_dim50_seed1234/predictions/*.csv
-{clean_yaml}---
+{clean_yaml}{tawos_yaml}---
 
 # NCKH 3 — Agile Story Point Estimation Artifact (WSESE / ICSE 2026 Research Track)
 
@@ -339,12 +393,12 @@ Source code & provenance: [`snowflake-vibing/NCKH_Johnny_Snowflake`](https://git
 ```text
 NCKH3-StoryPoint-Artifact/
 ├── README.md                           # Dataset Card + YAML viewer configs
-{clean_tree_line}├── comparisons/
+{datasets_header}{clean_tree_line}{tawos_snap_line}├── comparisons/
 │   ├── cross_model_16proj.csv          # Joined 16-project benchmark table (Median vs Deep-SE vs GPT2SP)
 │   └── figures/
 │       └── cross_model_benchmark.png   # 300 DPI cross-model MAE & SA chart
 └── experiments/
-    ├── gpt2sp/
+{tawos_tree_line}    ├── gpt2sp/
     │   └── replication/seed0_title_len20/
     │       ├── summary.csv
     │       ├── stat_tests.csv
@@ -375,40 +429,82 @@ def main() -> None:
     os.makedirs(staging_dir, exist_ok=True)
     os.makedirs(cache_dir, exist_ok=True)
 
-    token = None if args.no_hf_push else resolve_hf_token()
+    token = resolve_hf_token()
     api = HfApi(token=token) if token else HfApi()
 
-    print("=" * 85)
-    print("🔄 MIGRATING EXISTING HF ARTIFACTS TO OPTION A (ZERO-RERUN)")
-    print("=" * 85)
+    if "/" in args.results_repo:
+        target_repo_id = args.results_repo
+    elif token:
+        target_repo_id = f"{api.whoami()['name']}/{args.results_repo}"
+    else:
+        target_repo_id = f"Snowflake06/{args.results_repo}"
 
     gpt_rel = "experiments/gpt2sp/replication/seed0_title_len20"
-    gpt_files = download_and_reorganize_run(
-        api=api,
-        src_repo=args.gpt2sp_source_repo,
-        src_prefix=args.gpt2sp_source_prefix,
-        dest_root=staging_dir,
-        dest_run_rel=gpt_rel,
-        dl_cache_dir=os.path.join(cache_dir, "gpt2sp"),
-        token=token,
-        summary_filename="gpt2sp_16_projects_summary.csv",
-        stat_tests_filename="gpt2sp_16_projects_statistical_tests.csv",
-        figure_filename="gpt2sp_16_projects_benchmark_audit.png",
-    )
-
     deep_rel = "experiments/deepse/replication/fixed_lm_dim50_seed1234"
-    deep_files = download_and_reorganize_run(
-        api=api,
-        src_repo=args.deepse_source_repo,
-        src_prefix=args.deepse_source_prefix,
-        dest_root=staging_dir,
-        dest_run_rel=deep_rel,
-        dl_cache_dir=os.path.join(cache_dir, "deepse"),
-        token=token,
-        summary_filename="deepse_16_projects_summary.csv",
-        stat_tests_filename="deepse_16_projects_statistical_tests.csv",
-        figure_filename="deepse_16_projects_benchmark_audit.png",
-    )
+    extra_remote_files: Optional[List[str]] = None
+
+    print("=" * 85)
+    if args.in_place:
+        print(f"🔄 IN-PLACE REFRESH ON {target_repo_id} (README + comparisons + datasets)")
+    else:
+        print("🔄 MIGRATING EXISTING HF ARTIFACTS TO OPTION A (ZERO-RERUN)")
+    print("=" * 85)
+
+    if args.in_place:
+        dl_token = token
+        try:
+            extra_remote_files = sorted(
+                api.list_repo_files(repo_id=target_repo_id, repo_type="dataset", token=dl_token)
+            )
+        except Exception:
+            extra_remote_files = []
+
+        def _fetch_existing(rel_path: str) -> str:
+            dl_dir = os.path.join(cache_dir, "inplace")
+            os.makedirs(dl_dir, exist_ok=True)
+            return hf_hub_download(
+                repo_id=target_repo_id,
+                filename=rel_path,
+                repo_type="dataset",
+                local_dir=dl_dir,
+                token=dl_token,
+            )
+
+        gpt_files = {
+            "summary.csv": _fetch_existing(f"{gpt_rel}/summary.csv"),
+            "stat_tests.csv": _fetch_existing(f"{gpt_rel}/stat_tests.csv"),
+        }
+        deep_files = {
+            "summary.csv": _fetch_existing(f"{deep_rel}/summary.csv"),
+            "stat_tests.csv": _fetch_existing(f"{deep_rel}/stat_tests.csv"),
+        }
+        print(f"  ✓ Loaded existing GPT2SP & Deep-SE summaries directly from {target_repo_id}")
+    else:
+        dl_token = None if args.no_hf_push else token
+        gpt_files = download_and_reorganize_run(
+            api=api,
+            src_repo=args.gpt2sp_source_repo,
+            src_prefix=args.gpt2sp_source_prefix,
+            dest_root=staging_dir,
+            dest_run_rel=gpt_rel,
+            dl_cache_dir=os.path.join(cache_dir, "gpt2sp"),
+            token=dl_token,
+            summary_filename="gpt2sp_16_projects_summary.csv",
+            stat_tests_filename="gpt2sp_16_projects_statistical_tests.csv",
+            figure_filename="gpt2sp_16_projects_benchmark_audit.png",
+        )
+        deep_files = download_and_reorganize_run(
+            api=api,
+            src_repo=args.deepse_source_repo,
+            src_prefix=args.deepse_source_prefix,
+            dest_root=staging_dir,
+            dest_run_rel=deep_rel,
+            dl_cache_dir=os.path.join(cache_dir, "deepse"),
+            token=dl_token,
+            summary_filename="deepse_16_projects_summary.csv",
+            stat_tests_filename="deepse_16_projects_statistical_tests.csv",
+            figure_filename="deepse_16_projects_benchmark_audit.png",
+        )
 
     clean_src = resolve_clean_dataset_path()
     has_clean = False
@@ -417,7 +513,7 @@ def main() -> None:
         os.makedirs(ds_dir, exist_ok=True)
         shutil.copy2(clean_src, os.path.join(ds_dir, "springxd_planning_clean.csv"))
         has_clean = True
-        print(f"  ✓ Copied planning-time clean dataset -> datasets/springxd_planning_clean.csv")
+        print("  ✓ Copied planning-time clean dataset -> datasets/springxd_planning_clean.csv")
 
     cross_csv = os.path.join(staging_dir, "comparisons", "cross_model_16proj.csv")
     cross_fig = os.path.join(staging_dir, "comparisons", "figures", "cross_model_benchmark.png")
@@ -442,11 +538,19 @@ def main() -> None:
         df_deep_stats=df_deep_stats,
         df_cross=df_cross,
         has_clean_dataset=has_clean,
+        extra_remote_files=extra_remote_files,
     )
     print("  ✓ Generated HF Dataset Card README.md with YAML configs")
 
     if args.no_hf_push:
-        print(f"ℹ️ Dry-run complete (--no-hf-push). Staged locally at: {staging_dir}")
+        staged_rels = sorted(
+            os.path.relpath(os.path.join(r, f), staging_dir).replace("\\", "/")
+            for r, _, fs in os.walk(staging_dir)
+            for f in fs
+        )
+        print(f"ℹ️ Dry-run complete (--no-hf-push). Staged {len(staged_rels)} files at: {staging_dir}")
+        for rel in staged_rels:
+            print(f"   • {rel}")
         return
 
     if not token:
@@ -455,17 +559,33 @@ def main() -> None:
             "Pass --no-hf-push for local staging or configure a Write token."
         )
 
-    username = api.whoami()["name"]
-    target_repo_id = args.results_repo if "/" in args.results_repo else f"{username}/{args.results_repo}"
     api.create_repo(repo_id=target_repo_id, repo_type="dataset", private=args.private_hf, exist_ok=True)
-    api.upload_folder(
-        folder_path=staging_dir,
-        repo_id=target_repo_id,
-        repo_type="dataset",
-        commit_message="Initialize unified NCKH3-StoryPoint-Artifact (GPT2SP + Deep-SE + Cross-Model Comparison)",
-    )
-    print("\n" + "=" * 85)
-    print(f"✅ Migrated & published in 1 single commit!")
+    if args.in_place:
+        ops = [
+            CommitOperationAdd(
+                path_in_repo=os.path.relpath(os.path.join(r, f), staging_dir).replace("\\", "/"),
+                path_or_fileobj=os.path.join(r, f),
+            )
+            for r, _, fs in os.walk(staging_dir)
+            for f in sorted(fs)
+        ]
+        api.create_commit(
+            repo_id=target_repo_id,
+            repo_type="dataset",
+            operations=ops,
+            commit_message="Refresh Dataset Card YAML configs, cross-model comparisons & clean dataset in-place",
+        )
+        print("\n" + "=" * 85)
+        print(f"✅ Refreshed {len(ops)} files in-place on {target_repo_id} (existing experiments/ untouched)!")
+    else:
+        api.upload_folder(
+            folder_path=staging_dir,
+            repo_id=target_repo_id,
+            repo_type="dataset",
+            commit_message="Initialize unified NCKH3-StoryPoint-Artifact (GPT2SP + Deep-SE + Cross-Model Comparison)",
+        )
+        print("\n" + "=" * 85)
+        print("✅ Migrated & published in 1 single commit!")
     print(f"   • View unified HF Artifact: https://huggingface.co/datasets/{target_repo_id}")
     print("=" * 85)
 

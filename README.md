@@ -185,6 +185,19 @@ flowchart LR
 │   ├── run_deepse_16projects.py # Chiến lược 1: Tái lập huấn luyện Deep-SE trên 16 dự án
 │   ├── run_deepse_retrain.py    # Chiến lược 2: Huấn luyện Deep-SE qua official_pkl / final_raw / planning_clean
 │   └── kaggle_runner.ipynb      # Thin Runner Notebook chạy Deep-SE (hoặc migrate_hf_artifact) trên Kaggle
+├── kaggle_TAWOS/             # Framework GitHub -> Kaggle -> HF Artifact (13 dự án TAWOS x 3 setting: final/cross/planning)
+│   ├── README.md             # Hướng dẫn chuẩn bị TAWOS.sql không cần MySQL, chạy baseline/GPT2SP & truy vết nguồn
+│   ├── requirements.txt      # Thư viện tối thiểu (torch, transformers, pyarrow, scikit-learn, pymysql, ...)
+│   ├── config.py             # Cấu hình 13 dự án TAWOS, SP_FIELDS, SETTINGS (final/cross/planning) & snapshot discovery
+│   ├── prepare_tawos_dataset.py # Script tạo/làm sạch <PROJECT>_snapshot.parquet từ TAWOS.sql(.gz/.zip)/interim/snapshot/MySQL
+│   ├── dataset.py            # Chronological split 60/20/20 theo Planning_Date & StoryPointDataset
+│   ├── model.py              # Kiến trúc GPT2SP(nn.Module) ported từ JohnnyPhan1712/SR-G3_planning-time-sp
+│   ├── metrics.py            # PR #2 bug-fixed MAE/MdAE/SA, SA_vs_Median, Wilcoxon & Vargha-Delaney Â12
+│   ├── compare.py            # Kiểm định cặp setting (Wilcoxon, Â12, hiệu chỉnh Holm) & vẽ biểu đồ 300 DPI
+│   ├── hf_utils.py           # Kaggle Secrets auth, batch create_commit & kéo tự động TAWOS snapshots từ HF
+│   ├── run_tawos_baseline.py # Chạy Mean / Median / TF-IDF+Ridge x 13 dự án x 3 setting & compare
+│   ├── run_tawos_gpt2sp.py   # Huấn luyện GPT2SP (2-model optimization) x 13 dự án x 3 setting + Auto-Resume
+│   └── kaggle_runner.ipynb   # Thin Runner Notebook cho chuẩn bị dữ liệu, baseline, GPT2SP & refresh HF Dataset Card
 ├── notebooks/                # Jupyter Notebooks phục vụ phân tích & thực nghiệm
 │   └── EDA_TAWOS.ipynb       # EDA tổng quan trên toàn bộ CSDL TAWOS v1.1
 ├── scripts/                  # Tiện ích gom & chuẩn hóa HF Artifact không cần chạy lại mô hình
