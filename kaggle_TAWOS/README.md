@@ -11,9 +11,9 @@ Thư mục `kaggle_TAWOS/` đóng gói và mở rộng toàn bộ pipeline thự
 ## 🔄 1. Luồng Dữ Liệu & Thực Nghiệm
 
 ```text
-[TAWOS.sql(.gz/.zip) / Interim Parquet / Snapshot Parquet / MySQL]
+[TAWOS.sql(.gz/.zip) / SQLite (.db) / Interim Parquet / Snapshot Parquet / MySQL]
         │
-        ▼ (prepare_tawos_dataset.py — không cần cài MySQL khi đọc TAWOS.sql)
+        ▼ (prepare_tawos_dataset.py — không cần cài MySQL khi đọc TAWOS.sql / SQLite)
 [13 x <PROJECT>_snapshot.parquet + dataset_summary.csv]
         │
         ├──(1 commit)──► [HF: NCKH3-StoryPoint-Artifact / datasets/tawos_snapshots/]
@@ -30,7 +30,7 @@ Thư mục `kaggle_TAWOS/` đóng gói và mở rộng toàn bộ pipeline thự
 | File trong `kaggle_TAWOS/` | Nguồn gốc từ `JohnnyPhan1712/SR-G3_planning-time-sp` | Chức năng chính & mở rộng trên Kaggle |
 | :--- | :--- | :--- |
 | [config.py](config.py) | `src/config.py`, `src/snapshot.py`, `src/baseline.py` | 13 `PROJECTS` ([`L18-L32`](config.py#L18-L32)), `SP_FIELDS` gồm cả `story points (obsolete)` ([`L54`](config.py#L54)), `SETTINGS` [`final`/`cross`/`planning`](config.py#L79-L83), `discover_snapshot_file` ([`L116-L161`](config.py#L116-L161)) |
-| [prepare_tawos_dataset.py](prepare_tawos_dataset.py) | `src/snapshot.py` & `src/extract.py` | [`build_snapshot`](prepare_tawos_dataset.py#L137-L188) khớp 100% `test_snapshot()`; parser streaming 2 lượt [`build_snapshots_from_sql`](prepare_tawos_dataset.py#L435-L559) đọc trực tiếp `TAWOS.sql`/`.gz`/`.zip` không cần MySQL; [`compute_project_audit_row`](prepare_tawos_dataset.py#L676-L711) & upload HF 1 commit |
+| [prepare_tawos_dataset.py](prepare_tawos_dataset.py) | `src/snapshot.py` & `src/extract.py` | [`build_snapshot`](prepare_tawos_dataset.py#L139-L190) khớp 100% `test_snapshot()`; parser 2 lượt [`build_snapshots_from_sql`](prepare_tawos_dataset.py#L482-L615) (`TAWOS.sql`/`.gz`/`.zip`, không cần MySQL) + [`build_snapshots_from_sqlite`](prepare_tawos_dataset.py#L618-L669) (`tawos_eda.db`); [`compute_project_audit_row`](prepare_tawos_dataset.py#L800-L835) & upload HF 1 commit |
 | [dataset.py](dataset.py) | `src/gpt2sp/dataset.py` | [`StoryPointDataset`](dataset.py#L20-L69), chia thời gian 60/20/20 [`load_tawos_snapshot`](dataset.py#L72-L134) (`SP <= 100`, sort `Planning_Date, ID`) |
 | [model.py](model.py) | `src/gpt2sp/model.py` | [`GPT2SP`](model.py#L15-L87) (GPT-2 small + 3 tầng MLP không bias `768->3072->768->1` + Last Token Pooling + `nn.L1Loss`) |
 | [metrics.py](metrics.py) | `src/gpt2sp/metrics.py` | [`compute_metrics`](metrics.py#L20-L58) sửa lỗi PR #2 + SA random guessing, [`sa_vs_median`](metrics.py#L61-L65), [`safe_wilcoxon`](metrics.py#L73-L82), [`vargha_delaney_a12`](metrics.py#L85-L100) |
@@ -45,28 +45,34 @@ Thư mục `kaggle_TAWOS/` đóng gói và mở rộng toàn bộ pipeline thự
 
 ## 🛠️ 3. Cách Chạy Script Chỉnh & Chuẩn Bị Dataset (`prepare_tawos_dataset.py`)
 
-Điểm mạnh của [`prepare_tawos_dataset.py`](prepare_tawos_dataset.py#L770-L863) là **xây dựng lại toàn bộ 13 file `<PROJECT>_snapshot.parquet` không rò rỉ dữ liệu ngay trên Kaggle mà không cần cài MySQL Server** (hỗ trợ xử lý thứ tự bảng chữ cái `Change_Log` ➔ `Issue` ➔ `Project` của `mysqldump` bằng parser 2 lượt [`build_snapshots_from_sql`](prepare_tawos_dataset.py#L435-L559)).
+Điểm mạnh của [`prepare_tawos_dataset.py`](prepare_tawos_dataset.py#L901-L999) là **xây dựng lại toàn bộ 13 file `<PROJECT>_snapshot.parquet` không rò rỉ dữ liệu ngay trên Kaggle mà không cần cài MySQL Server** (hỗ trợ xử lý thứ tự bảng chữ cái `Change_Log` ➔ `Issue` ➔ `Project` của `mysqldump` bằng parser 2 lượt [`build_snapshots_from_sql`](prepare_tawos_dataset.py#L482-L615), hoặc đọc SQLite trực tiếp qua [`build_snapshots_from_sqlite`](prepare_tawos_dataset.py#L618-L669)).
 
-### 4 chế độ đầu vào (`--source`):
+### 5 chế độ đầu vào (`--source`):
 
-1. **Từ file dump `TAWOS.sql` / `.sql.gz` / `.sql.zip` (Khuyên dùng trên Kaggle CPU):**
+1. **Từ file dump `TAWOS.sql` / `.sql.gz` / `.sql.zip` (Khuyên dùng — đầy đủ gốc 9,25 triệu dòng `Change_Log`):**
    ```bash
    python kaggle_TAWOS/prepare_tawos_dataset.py --source sql --sql-path /kaggle/input/tawos-sql/TAWOS.sql
    ```
-   *(Hoặc truyền `--download-url <URL>` nếu kéo trực tiếp file zip/sql từ URL công khai.)*
+   *(Hoặc để `--source auto` — mặc định trên Kaggle — script tự quét `/kaggle/input/**`, hoặc truyền `--download-url <URL>` nếu kéo từ URL công khai.)*
 
-2. **Từ bộ snapshot đã dựng sẵn trên máy Johnny (`<PROJECT>_snapshot.parquet` / `.csv`):**
+2. **Từ file SQLite (`tawos_eda.db` / `.sqlite`):**
+   ```bash
+   python kaggle_TAWOS/prepare_tawos_dataset.py --source sqlite --sqlite-path /kaggle/input/tawos-db/tawos_eda.db
+   ```
+   *(Lưu ý: `tawos_eda.db` trên máy cũ có `9.114.602` dòng `Change_Log`, ít hơn ~`138k` dòng so với `TAWOS.sql` gốc `9.253.419` dòng — ưu tiên `TAWOS.sql` nếu có thể.)*
+
+3. **Từ bộ snapshot đã dựng sẵn trên máy Johnny (`<PROJECT>_snapshot.parquet` / `.csv`):**
    ```bash
    python kaggle_TAWOS/prepare_tawos_dataset.py --source snapshot --input-dir D:/NCKH_Johnny/data/processed
    ```
    Kiểm tra đủ 10 cột chuẩn (`SNAPSHOT_REQUIRED_COLS`), chuẩn hóa kiểu dữ liệu và khoảng trắng (không unquote kép sai dữ liệu), xuất bảng kiểm định `dataset_summary.csv` rồi đẩy lên `Snowflake06/NCKH3-StoryPoint-Artifact/datasets/tawos_snapshots/` chỉ trong **1 commit**.
 
-3. **Từ bảng trung gian (`<PROJECT>_issue.parquet` + `<PROJECT>_changelog.parquet`):**
+4. **Từ bảng trung gian (`<PROJECT>_issue.parquet` + `<PROJECT>_changelog.parquet`):**
    ```bash
    python kaggle_TAWOS/prepare_tawos_dataset.py --source interim --input-dir D:/NCKH_Johnny/data/interim
    ```
 
-4. **Trực tiếp từ MySQL cục bộ (`MYSQL_USER`, `MYSQL_PWD`, `MYSQL_DB`):**
+5. **Trực tiếp từ MySQL cục bộ (`MYSQL_USER`, `MYSQL_PWD`, `MYSQL_DB`):**
    ```bash
    python kaggle_TAWOS/prepare_tawos_dataset.py --source mysql
    ```

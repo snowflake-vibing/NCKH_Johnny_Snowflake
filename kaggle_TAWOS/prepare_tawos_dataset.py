@@ -1,8 +1,9 @@
-"""Multi-source TAWOS dataset builder, cleaner, and HF uploader (no MySQL required for TAWOS.sql).
+"""Multi-source TAWOS dataset builder, cleaner, and HF uploader (no MySQL required for TAWOS.sql / SQLite).
 
 Supported sources (`--source`):
-- `auto`: automatically detects TAWOS.sql(.gz/.zip), interim parquets, existing snapshots, or MySQL env.
+- `auto`: automatically detects TAWOS.sql(.gz/.zip), SQLite (.db/.sqlite), interim parquets, snapshots, or MySQL env.
 - `sql`: 2-pass streaming pure-Python parser for `TAWOS.sql` (handles Change_Log -> Issue -> Project dump order).
+- `sqlite`: single-scan SQLite reader (`tawos_eda.db`, stdlib `sqlite3`, zero MySQL required).
 - `interim`: loads `<PROJECT>_issue.parquet` and `<PROJECT>_changelog.parquet` and builds planning-time snapshots.
 - `snapshot`: validates, normalizes, audits, and packages existing `<PROJECT>_snapshot.{parquet,csv}` files.
 - `mysql`: extracts directly from local/remote MySQL `tawos` database via SQLAlchemy + PyMySQL.
@@ -19,6 +20,7 @@ import gzip
 import io
 import os
 import re
+import sqlite3
 import sys
 import time
 import urllib.request
@@ -79,8 +81,8 @@ DEFAULT_TABLE_COLS: Dict[str, List[str]] = {
         "Creator_ID", "Reporter_ID", "Assignee_ID", "Project_ID", "Sprint_ID",
     ],
     "Change_Log": [
-        "ID", "Issue_ID", "Author_ID", "Field", "From_Value", "To_Value",
-        "From_String", "To_String", "Change_Type", "Creation_Date",
+        "ID", "Field", "From_Value", "To_Value", "From_String", "To_String",
+        "Change_Type", "Creation_Date", "Author_ID", "Issue_ID",
     ],
 }
 
@@ -212,14 +214,22 @@ def normalize_existing_snapshot(df: pd.DataFrame, project: str) -> pd.DataFrame:
 
 @contextmanager
 def open_sql_text_stream(sql_path: str) -> Iterator[io.TextIOBase]:
-    """Open plain `.sql`, `.sql.gz`, or `.sql.zip` seamlessly as a UTF-8 text stream."""
+    """Open plain `.sql`, `.sql.gz`, or `.sql.zip` seamlessly (ext or magic bytes) as UTF-8 stream."""
+    with open(sql_path, "rb") as probe:
+        magic = probe.read(4)
+
     lower = sql_path.lower()
-    if lower.endswith(".gz"):
+    is_gzip = lower.endswith(".gz") or magic[:2] == b"\x1f\x8b"
+    is_zip = lower.endswith(".zip") or zipfile.is_zipfile(sql_path)
+
+    if is_gzip:
         with gzip.open(sql_path, "rt", encoding="utf-8", errors="replace") as fh:
             yield fh
-    elif lower.endswith(".zip"):
+    elif is_zip:
         with zipfile.ZipFile(sql_path, "r") as zf:
             sql_members = [m for m in zf.namelist() if m.lower().endswith(".sql") and not m.startswith("__MACOSX/")]
+            if not sql_members:
+                sql_members = [m for m in zf.namelist() if not m.endswith("/") and not m.startswith("__MACOSX/")]
             if not sql_members:
                 raise FileNotFoundError(f"No .sql entry found inside zip archive: {sql_path}")
             member = sql_members[0]
@@ -355,12 +365,12 @@ def _statement_ends_outside_quotes(chunk: str, in_quote: bool, escape: bool) -> 
 
 
 def _iter_table_inserts(
-    sql_path: str, target_tables: Set[str]
+    sql_path: str, target_tables: Set[str], stop_after_tables: bool = False
 ) -> Tuple[Dict[str, List[str]], Iterator[Tuple[str, Optional[List[str]], List[Optional[str]]]]]:
     """First scan CREATE TABLE definitions, then yield rows for `target_tables`."""
-    # Because callers iterate lazily, return a single-pass generator + shared schema dict.
     table_cols: Dict[str, List[str]] = {k: list(v) for k, v in DEFAULT_TABLE_COLS.items()}
     canonical_targets = {t.lower(): t for t in target_tables}
+    expected_targets = set(canonical_targets.values())
 
     def _row_generator() -> Iterator[Tuple[str, Optional[List[str]], List[Optional[str]]]]:
         in_create_table: Optional[str] = None
@@ -370,6 +380,9 @@ def _iter_table_inserts(
         buf_lines: List[str] = []
         in_quote = False
         escape = False
+
+        active_lock_target: Optional[str] = None
+        completed_targets: Set[str] = set()
 
         with open_sql_text_stream(sql_path) as fh:
             for line in fh:
@@ -385,6 +398,7 @@ def _iter_table_inserts(
                         if val_start != -1:
                             for row in iter_insert_rows(stmt, val_start):
                                 yield canon_tbl, explicit_cols, row
+                        completed_targets.add(canon_tbl)
                     continue
 
                 if in_create_table is not None:
@@ -401,7 +415,28 @@ def _iter_table_inserts(
                     continue
 
                 s_line = line.lstrip()
-                if s_line[:12].upper() == "CREATE TABLE":
+                s_head = s_line[:12].upper()
+
+                if s_head.startswith("UNLOCK TABLE"):
+                    if active_lock_target is not None:
+                        completed_targets.add(active_lock_target)
+                        active_lock_target = None
+                        if stop_after_tables and completed_targets == expected_targets:
+                            break
+                    continue
+
+                if s_head.startswith("LOCK TABLES "):
+                    m_lk = re.match(r"LOCK\s+TABLES\s+`?([A-Za-z0-9_]+)`?", s_line, re.I)
+                    if m_lk:
+                        lk_key = m_lk.group(1).lower()
+                        active_lock_target = canonical_targets.get(lk_key)
+                        if stop_after_tables and active_lock_target is None and completed_targets == expected_targets:
+                            break
+                    continue
+
+                if s_head == "CREATE TABLE":
+                    if stop_after_tables and completed_targets == expected_targets:
+                        break
                     m_ct = re.match(r"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`?([A-Za-z0-9_]+)`?", s_line, re.I)
                     if m_ct:
                         t_raw = m_ct.group(1)
@@ -413,21 +448,33 @@ def _iter_table_inserts(
                                 break
                     continue
 
-                if s_line[:6].upper() == "INSERT":
+                if s_head.startswith("INSERT"):
                     m_ins = re.match(r"INSERT\s+(?:IGNORE\s+)?INTO\s+`?([A-Za-z0-9_]+)`?", s_line, re.I)
                     if m_ins:
                         t_key = m_ins.group(1).lower()
                         if t_key in canonical_targets:
                             canon_tbl = canonical_targets[t_key]
-                            done, in_quote, escape = _statement_ends_outside_quotes(line, False, False)
+                            s_r = line.rstrip()
+                            if s_r.endswith(");"):
+                                done = True
+                            elif not s_r.endswith(";"):
+                                done, in_quote, escape = False, False, False
+                                # Run full quote scan on first chunk of multi-line statement
+                                done, in_quote, escape = _statement_ends_outside_quotes(line, False, False)
+                            else:
+                                done, in_quote, escape = _statement_ends_outside_quotes(line, False, False)
+
                             if done:
                                 _, explicit_cols, val_start = _extract_insert_table_and_header(line)
                                 if val_start != -1:
                                     for row in iter_insert_rows(line, val_start):
                                         yield canon_tbl, explicit_cols, row
+                                completed_targets.add(canon_tbl)
                             else:
                                 collecting_insert_table = canon_tbl
                                 buf_lines = [line]
+                        elif stop_after_tables and completed_targets == expected_targets:
+                            break
 
     return table_cols, _row_generator()
 
@@ -437,12 +484,14 @@ def build_snapshots_from_sql(
 ) -> Dict[str, pd.DataFrame]:
     """2-pass streaming parser building per-project snapshot DataFrames straight from TAWOS.sql."""
     target_set = {p.upper() for p in projects}
+    t0 = time.time()
     print(f"🔎 [SQL Pass 1/2] Scanning Project & Issue tables in {sql_path} ...")
 
     proj_key_by_id: Dict[int, str] = {}
     issues_by_pid: Dict[int, List[Tuple[int, str, str, float, Optional[str], Optional[str]]]] = {}
 
-    table_cols, gen1 = _iter_table_inserts(sql_path, {"Project", "Issue"})
+    table_cols, gen1 = _iter_table_inserts(sql_path, {"Project", "Issue"}, stop_after_tables=False)
+    p1_issues_seen = 0
     for tbl, explicit_cols, row in gen1:
         cols = explicit_cols or table_cols[tbl]
         idx = {c: pos for pos, c in enumerate(cols)}
@@ -457,6 +506,9 @@ def build_snapshots_from_sql(
             if pkey in target_set:
                 proj_key_by_id[int(pid_raw)] = pkey
         elif tbl == "Issue":
+            p1_issues_seen += 1
+            if p1_issues_seen % 150000 == 0:
+                print(f"    ... Pass 1 scanned {p1_issues_seen:,} Issue rows ({time.time() - t0:.1f}s)")
             needed = (idx["ID"], idx["Issue_Key"], idx["Creation_Date"], idx["Story_Point"], idx["Title"], idx["Description"], idx["Project_ID"])
             if len(row) <= max(needed):
                 continue
@@ -492,20 +544,24 @@ def build_snapshots_from_sql(
 
     valid_issue_ids: Set[int] = set(issue_to_proj.keys())
     print(
-        f"  ✓ Pass 1 complete: {len(filtered_issues_by_proj)} projects matched, "
-        f"{len(valid_issue_ids)} issues with Story_Point."
+        f"  ✓ Pass 1 complete ({time.time() - t0:.1f}s): {len(filtered_issues_by_proj)} projects matched, "
+        f"{len(valid_issue_ids):,} issues with Story_Point."
     )
 
-    print(f"🔎 [SQL Pass 2/2] Filtering Change_Log rows for target issues & fields ...")
+    t1 = time.time()
+    print("🔎 [SQL Pass 2/2] Filtering Change_Log rows for target issues & fields ...")
     cl_by_proj: Dict[str, List[Tuple[int, int, str, Optional[str], Optional[str], str]]] = {
         p: [] for p in filtered_issues_by_proj
     }
-    table_cols2, gen2 = _iter_table_inserts(sql_path, {"Change_Log"})
-    # Seed column layout discovered in Pass 1 if available
+    table_cols2, gen2 = _iter_table_inserts(sql_path, {"Change_Log"}, stop_after_tables=True)
     table_cols2["Change_Log"] = table_cols.get("Change_Log", table_cols2["Change_Log"])
 
+    cl_scanned = 0
     cl_kept = 0
     for _, explicit_cols, row in gen2:
+        cl_scanned += 1
+        if cl_scanned % 1000000 == 0:
+            print(f"    ... Pass 2 scanned {cl_scanned:,} Change_Log rows | kept {cl_kept:,} ({time.time() - t1:.1f}s)")
         cols = explicit_cols or table_cols2["Change_Log"]
         idx = {c: pos for pos, c in enumerate(cols)}
         need = (idx["ID"], idx["Issue_ID"], idx["Field"], idx["From_String"], idx["To_String"], idx["Creation_Date"])
@@ -540,7 +596,7 @@ def build_snapshots_from_sql(
         )
         cl_kept += 1
 
-    print(f"  ✓ Pass 2 complete: kept {cl_kept} relevant Change_Log entries.")
+    print(f"  ✓ Pass 2 complete ({time.time() - t1:.1f}s): kept {cl_kept:,} relevant Change_Log entries (from {cl_scanned:,} scanned).")
 
     snapshots: Dict[str, pd.DataFrame] = {}
     for p in projects:
@@ -556,6 +612,60 @@ def build_snapshots_from_sql(
             columns=["ID", "Issue_ID", "Field", "From_String", "To_String", "Creation_Date"],
         )
         snapshots[p_up] = build_snapshot(iss_df, cl_df)
+    return snapshots
+
+
+def build_snapshots_from_sqlite(
+    db_path: str, projects: Sequence[str]
+) -> Dict[str, pd.DataFrame]:
+    """Single-scan SQLite extractor building per-project snapshot DataFrames without MySQL."""
+    target_keys = [p.upper() for p in projects]
+    placeholders = ",".join("?" for _ in target_keys)
+    t0 = time.time()
+    print(f"🔎 [SQLite] Reading Project, Issue & Change_Log from {db_path} ...")
+
+    con = sqlite3.connect(db_path)
+    try:
+        iss_sql = (
+            "SELECT UPPER(p.Project_Key) AS _ProjKey, i.ID, i.Issue_Key, "
+            "i.Creation_Date, i.Story_Point, i.Title, i.Description "
+            "FROM Issue i "
+            "JOIN Project p ON p.ID = i.Project_ID "
+            f"WHERE UPPER(p.Project_Key) IN ({placeholders}) AND i.Story_Point IS NOT NULL"
+        )
+        all_iss = pd.read_sql_query(iss_sql, con, params=target_keys)
+        if all_iss.empty:
+            raise ValueError(f"No matching issues with Story_Point for {target_keys} in {db_path}.")
+
+        valid_ids = set(pd.to_numeric(all_iss["ID"], errors="coerce").dropna().astype("int64").tolist())
+
+        field_placeholders = ",".join("?" for _ in sorted(TARGET_CHANGELOG_FIELDS))
+        cl_sql = (
+            "SELECT c.ID, c.Issue_ID, c.Field, c.From_String, c.To_String, c.Creation_Date "
+            "FROM Change_Log c "
+            f"WHERE LOWER(c.Field) IN ({field_placeholders})"
+        )
+        all_cl = pd.read_sql_query(cl_sql, con, params=sorted(TARGET_CHANGELOG_FIELDS))
+    finally:
+        con.close()
+
+    all_cl["Issue_ID"] = pd.to_numeric(all_cl["Issue_ID"], errors="coerce")
+    all_cl = all_cl[all_cl["Issue_ID"].isin(valid_ids)].copy()
+    print(
+        f"  ✓ SQLite read complete ({time.time() - t0:.1f}s): "
+        f"{len(all_iss):,} issues, {len(all_cl):,} relevant Change_Log entries."
+    )
+
+    issue_to_proj = dict(zip(all_iss["ID"].astype("int64"), all_iss["_ProjKey"]))
+    all_cl["_ProjKey"] = all_cl["Issue_ID"].astype("int64").map(issue_to_proj)
+
+    snapshots: Dict[str, pd.DataFrame] = {}
+    for p in target_keys:
+        sub_iss = all_iss[all_iss["_ProjKey"] == p].drop(columns=["_ProjKey"])
+        if sub_iss.empty:
+            continue
+        sub_cl = all_cl[all_cl["_ProjKey"] == p].drop(columns=["_ProjKey"])
+        snapshots[p] = build_snapshot(sub_iss, sub_cl)
     return snapshots
 
 
@@ -581,7 +691,21 @@ def _find_sql_file(explicit_sql: Optional[str], input_dir: Optional[str]) -> Opt
     if explicit_sql and os.path.isfile(explicit_sql):
         return explicit_sql
     for root in _search_roots(input_dir):
-        for pat in ("*.sql", "*.sql.gz", "*.sql.zip"):
+        for pat in ("*.sql", "*.sql.gz", "*.sql.zip", "*tawos*.zip", "*tawos*.gz"):
+            matches = sorted(glob.glob(os.path.join(root, "**", pat), recursive=True))
+            tawos_first = [m for m in matches if "tawos" in os.path.basename(m).lower()]
+            if tawos_first:
+                return tawos_first[0]
+            if matches:
+                return matches[0]
+    return None
+
+
+def _find_sqlite_file(explicit_db: Optional[str], input_dir: Optional[str]) -> Optional[str]:
+    if explicit_db and os.path.isfile(explicit_db):
+        return explicit_db
+    for root in _search_roots(input_dir):
+        for pat in ("*.db", "*.sqlite", "*.sqlite3"):
             matches = sorted(glob.glob(os.path.join(root, "**", pat), recursive=True))
             tawos_first = [m for m in matches if "tawos" in os.path.basename(m).lower()]
             if tawos_first:
@@ -715,19 +839,20 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Build, clean, audit, and publish TAWOS 13-project planning-time snapshots "
-            "without requiring MySQL (supports TAWOS.sql(.gz/.zip), interim parquet, snapshot parquet/csv, or MySQL)."
+            "without requiring MySQL (supports TAWOS.sql(.gz/.zip), SQLite .db, interim parquet, snapshot parquet/csv, or MySQL)."
         )
     )
     parser.add_argument(
         "--source",
         type=str,
         default="auto",
-        choices=["auto", "sql", "mysql", "interim", "snapshot"],
+        choices=["auto", "sql", "sqlite", "mysql", "interim", "snapshot"],
         help="Input source mode (default: auto).",
     )
     parser.add_argument("--sql-path", type=str, default=None, help="Path to TAWOS.sql / .sql.gz / .sql.zip")
+    parser.add_argument("--sqlite-path", type=str, default=None, help="Path to TAWOS SQLite database (.db/.sqlite)")
     parser.add_argument("--download-url", type=str, default=None, help="Optional URL to download TAWOS.sql archive")
-    parser.add_argument("--input-dir", type=str, default=None, help="Directory holding SQL, interim, or snapshot files")
+    parser.add_argument("--input-dir", type=str, default=None, help="Directory holding SQL, SQLite, interim, or snapshot files")
     parser.add_argument("--output-dir", type=str, default=None, help="Directory to save <PROJECT>_snapshot.parquet files")
     parser.add_argument("--projects", type=str, default="all", help="'all' or comma-separated TAWOS project keys")
     parser.add_argument("--results-repo", type=str, default=DEFAULT_RESULTS_REPO_NAME)
@@ -737,32 +862,38 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def resolve_source_mode(args: argparse.Namespace) -> Tuple[str, Optional[str]]:
-    """Determine concrete source type and optional sql_path when --source auto is used."""
+def resolve_source_mode(args: argparse.Namespace) -> Tuple[str, Optional[str], Optional[str]]:
+    """Determine concrete source type and optional sql_path / sqlite_path when --source auto is used."""
     out_dir = resolve_data_dir(args.output_dir)
     sql_path = args.sql_path
+    sqlite_path = args.sqlite_path
     if args.download_url and (not sql_path or not os.path.isfile(sql_path)):
         sql_path = _download_sql_if_needed(args.download_url, os.path.join(out_dir, "_downloads"))
 
     if args.source != "auto":
-        return args.source, sql_path
+        return args.source, sql_path, sqlite_path
 
     detected_sql = _find_sql_file(sql_path, args.input_dir)
     if detected_sql:
-        return "sql", detected_sql
+        return "sql", detected_sql, None
+
+    detected_db = _find_sqlite_file(sqlite_path, args.input_dir)
+    if detected_db:
+        return "sqlite", None, detected_db
 
     roots = _search_roots(args.input_dir)
     if _find_project_pair("BAM", roots, "issue.parquet", "changelog.parquet"):
-        return "interim", None
+        return "interim", None, None
     if _find_existing_snapshot("BAM", roots):
-        return "snapshot", None
+        return "snapshot", None, None
     if os.environ.get("MYSQL_USER") and os.environ.get("MYSQL_PWD") is not None:
-        return "mysql", None
+        return "mysql", None, None
 
     raise FileNotFoundError(
         "Could not auto-detect any TAWOS source. Provide one of:\n"
         "  • --sql-path <path/to/TAWOS.sql(.gz/.zip)>\n"
-        "  • --input-dir <dir with <PROJECT>_{issue,changelog}.parquet or <PROJECT>_snapshot.parquet>\n"
+        "  • --sqlite-path <path/to/tawos_eda.db>\n"
+        "  • --input-dir <dir with TAWOS.sql / *.db / <PROJECT>_{issue,changelog}.parquet or <PROJECT>_snapshot.parquet>\n"
         "  • --source mysql with MYSQL_USER / MYSQL_PWD / MYSQL_DB configured"
     )
 
@@ -773,7 +904,7 @@ def main() -> None:
     out_dir = resolve_data_dir(args.output_dir)
     roots = _search_roots(args.input_dir)
 
-    mode, sql_path = resolve_source_mode(args)
+    mode, sql_path, sqlite_path = resolve_source_mode(args)
     print("=" * 85)
     print(f"🛠️ TAWOS DATASET PREPARATION | source={mode} | projects={len(projects)} | out={out_dir}")
     print("=" * 85)
@@ -784,6 +915,11 @@ def main() -> None:
         if not final_sql or not os.path.isfile(final_sql):
             raise FileNotFoundError(f"SQL file not found: {final_sql}")
         snapshots = build_snapshots_from_sql(final_sql, projects)
+    elif mode == "sqlite":
+        final_db = sqlite_path or _find_sqlite_file(None, args.input_dir)
+        if not final_db or not os.path.isfile(final_db):
+            raise FileNotFoundError(f"SQLite file not found: {final_db}")
+        snapshots = build_snapshots_from_sqlite(final_db, projects)
     elif mode == "interim":
         for p in projects:
             pair = _find_project_pair(p, roots, "issue.parquet", "changelog.parquet")
